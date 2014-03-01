@@ -86,7 +86,10 @@ function regular_board_shortcode ( $content = null ) {
 		 * Variables used throughout the plugin.
 		 */
 		 
-		 
+		$user_logged_in        = 0;
+		if ( is_user_logged_in() ) {
+			$user_logged_in    = 1;
+		}
 		$user_exists           = 0;
 		$require_logged        = 0;
 		$query                 = '';
@@ -384,13 +387,15 @@ function regular_board_shortcode ( $content = null ) {
 		if( $board_mods ) {
 			$usermods = explode ( ',', $board_mods );
 			if ( in_array ( $current_user_login, $usermods ) || in_array ( $profileid, $usermods ) ) {
-				$is_user_mod = true;
+				$is_user_mod    = true;
+				$user_logged_in = 1;
 			}
 		}
 		if ( $board_jans ) {
 			$userjanitors = explode ( ',', $board_jans );
 			if (in_array ( $current_user_login, $userjanitors ) || in_array ( $profileid, $userjanitors ) ) {
 				$is_user_janitor = true;
+				$user_logged_in  = 1;
 			}
 		}
 		if ( $usermod ) {
@@ -630,9 +635,9 @@ function regular_board_shortcode ( $content = null ) {
 		} elseif ( $the_board ) {
 			include ( plugin_dir_path(__FILE__) . '/regular_board_posting_checkflood.php' );
 				if ( count ( $get_current_board ) > 0 ) {
-					if ( !is_user_logged_in() && $require_logged == 1 ) {
+					if ( !$user_logged_in && $require_logged == 1 ) {
 						echo '<div class="thread"><p>You are not logged in.</p></div></div>';
-					} elseif ( !is_user_logged_in() && $require_logged == 0 || is_user_logged_in() ) {
+					} elseif ( !$user_logged_in && $require_logged == 0 || $user_logged_in ) {
 						foreach ( $get_current_board as $gotCurrentBoard ) {
 							$boardName = $gotCurrentBoard->board_name;
 							$boardShort = $gotCurrentBoard->board_shortname;
@@ -729,6 +734,7 @@ function regular_board_shortcode ( $content = null ) {
 					}
 				}
 		} elseif ( $this_area == 'post' ) {
+			echo '<div id="post">';
 			if ( isset ( $_POST['FORMSUBMIT'] ) ) {			
 				$img = $_FILES['img'];
 				if ( $_FILES['img']['size'] != 0 ) {
@@ -757,7 +763,21 @@ function regular_board_shortcode ( $content = null ) {
 				}
 				include ( plugin_dir_path(__FILE__) . '/regular_board_post_action.php' );
 			}
-			echo '</div>';
+			echo '</div></div>';
+		} elseif ( $this_area == 'gallery' || $this_area == 'all' || $this_area == 'replies' || $this_area == 'topics' || !$this_area ) {
+			if ( $this_area == 'gallery' ) {
+				echo '<div class="imgs js-masonry" data-masonry-options=\'{ "columnWidth": 10, "itemSelector": "div" }\'>';
+			}
+			foreach ( $getposts as $posts ) {
+				if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
+					include ( ABSPATH . '/regular_board_child/regular_board_loop.php' );
+				} else {
+					include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
+				}
+			}
+			if ( $this_area == 'gallery' ) {
+				echo '</div>';
+			}
 		}
 	echo '</div>';
 	}

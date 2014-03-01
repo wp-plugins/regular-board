@@ -130,7 +130,7 @@ if ( $posting == 0 || $archived == 1 ) {
 									echo '	</select>
 									</div>';
 								}
-								echo '<input type="submit" name="FORMSUBMIT" id="FORMSUBMIT" value="';
+								echo '<input type="submit" data="' . $current_page . '?a=post" name="FORMSUBMIT" id="FORMSUBMIT" value="';
 									if ( $this_thread ) { 
 										echo 'Reply';
 									} else { 

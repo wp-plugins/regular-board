@@ -200,7 +200,7 @@ if ( count ( $posts ) > 0 ) {
 					}
 					
 					if ( $id_display ) {
-						echo '<em> <strong class="user_hash">' . wp_hash ( $posts->post_board . $posts->post_userid ) . '</strong> ';
+						echo '<em> <strong class="user_hash">id ##: ' . $posts->post_userid . '</strong> ';
 					}
 					if ( $posts->post_moderator == 1 ) { 
 						echo '<small>' . $mod_code . '</small> '; 
@@ -390,7 +390,6 @@ if ( count ( $posts ) > 0 ) {
 		}
 	}
 	if ( $this_area == 'gallery' ) {
-		echo '<div class="gallery">';
 			if ( filter_var( $posts->post_url, FILTER_VALIDATE_URL ) ) {
 				$path_info = pathinfo ( $posts->post_url );
 				if ( 
@@ -399,6 +398,7 @@ if ( count ( $posts ) > 0 ) {
 					$path_info['extension'] == 'jpeg' ||
 					$path_info['extension'] == 'png'
 				) {
+					echo '<div class="gallery">';
 					echo '<a href="' . $posts->post_url . '"><img src=" ' . $posts->post_url . '" alt="Image" /></a><br />
 					<a href="' . $current_page . '?b=' . $posts->post_board . '&amp;t=';
 					if ( $posts->post_parent == 0 ) { echo $posts->post_id; }
@@ -406,9 +406,8 @@ if ( count ( $posts ) > 0 ) {
 					if ( $posts->post_title == '' ) { $posts->post_title = 'No subject'; }
 					echo '">' . str_replace ( '\\', '', $posts->post_title ) . '</a> 
 					( <a href="' . $current_page . '?b=' . $posts->post_board . '">' . $posts->post_board . '</a> )';
-					
+					echo '</div>';
 				}
 			}
-		echo '</div>';
 	}
 }

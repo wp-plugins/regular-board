@@ -3,8 +3,8 @@
  * Plugin Name: Regular Board
  * Plugin URI: https://github.com/onebillion/regular_board
  * Description: Standalone (continuation) project for Regular Board, an anonymous text-based WordPress powered bbs.
- * Version: 1
- * Author: onebillion
+ * Version: 1.01
+ * Author: boyevul
  * License: GNU General Public License v2
  * License URI: //www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: regular_board
@@ -33,7 +33,7 @@
  *
  */
 
-$regular_board_version = '1.2-stable';
+$regular_board_version = '1.01-stable';
 
 register_activation_hook ( __FILE__, 'regular_board_installation_option' );
 function regular_board_installation_option() {
