@@ -20,6 +20,15 @@
   *
   * Typographical specifications
   */
+ .boardAll .countdown {
+	display: block; 
+	padding: 5px;
+	text-align: center;
+ }
+ .boardAll .countdown span {
+ 	background-color: #000;
+	color: #fff;
+ }
  .boardAll .announcement {
 	background-color: rgba(0,0,0,.1);
 	color: rgba(0,0,0,.8);
@@ -52,7 +61,8 @@
 	line-height: 18px; 
 	padding: 2px;
  }
- .boardAll .reply h1 {
+ .boardAll .reply h1,
+ .boardAll .reply h3 {
 	color: rgba(255,255,255,.5)!important;
 	text-align: center;
  }
@@ -125,6 +135,7 @@
 	padding: 2px;
 	overflow: hidden;
 	text-align: center;
+	min-height: 150px;
 	width: 22%;
  }
  .boardAll .thread .imgs img {

@@ -61,7 +61,11 @@ foreach ( $getposts as $posts ) {
 		echo '</div>';
 	}
 	if ( $this_thread ) {
-		include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
+		if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_post_form.php' ) ) {
+			include ( ABSPATH . '/regular_board_child/regular_board_post_form.php' );
+		} else {
+			include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
+		}
 	}
 }
 

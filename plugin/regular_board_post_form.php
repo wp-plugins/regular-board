@@ -8,6 +8,29 @@
  * @package regular_board
  */
 
+ /**
+  *
+  * While there is no built-in option panel to do something like, say, disable links on Fridays, or force image-only posts for
+  * for Saturdays, you CAN alter the display of the form to only include certain elements on certain days. 
+  *
+  * if ( date ( 'D' ) === 'Sun' ) { code to execute only on Sundays }
+  * if ( date ( 'D' ) === 'Mon' ) { code to execute only on Mondays }
+  * if ( date ( 'D' ) === 'Tue' ) { code to execute only on Tuesdays }
+  * if ( date ( 'D' ) === 'Wed' ) { code to execute only on Wednesdays }
+  * if ( date ( 'D' ) === 'Thu' ) { code to execute only on Thursdays }
+  * if ( date ( 'D' ) === 'Fri' ) { code to execute only on Fridays }
+  * if ( date ( 'D' ) === 'Sat' ) { code to execute only on Saturdays }
+  *
+  * A basic example would be the following:
+  *     $active = 1 // set the following to be active by default
+  *     if ( date ( 'D' ) === 'Sun' ) { $active = 0; } // set $active to 0
+  *     if ( $active == 1 ) {
+  *         // some block of code that relies on active to be 1
+  *         // if active is not 1, then this block of code will not render.
+  *     }
+  *
+  */ 
+ 
 if ( !defined ( 'regular_board_plugin' ) ) {
 	die();
 }

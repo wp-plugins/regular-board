@@ -36,8 +36,6 @@ if ( count ( $posts ) > 0 ) {
 			 * Determine last poster and disable commenting based 
 			 * on this determination (if last poster userid belongs to 
 			 * currently viewing user's profile.
-			 * Also return post count for the poster (not the user) from 
-			 * $poster_post_count.
 			 */
 			 
 			if ( $posts->post_parent == 0 ) {
@@ -62,7 +60,6 @@ if ( count ( $posts ) > 0 ) {
 			
 			// Strip www from all instances of post_url.
 			$posts->post_url = str_replace( array('//www.', 'https://www.' ), array( '//', 'https://' ), $posts->post_url );
-			$poster_post_count  = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_userid = $posts->post_userid " );
 			
 			/**
 			 * If creating a child template, begin editing below this
@@ -208,7 +205,7 @@ if ( count ( $posts ) > 0 ) {
 					if ( $posts->post_moderator == 2 ) {
 						echo '<small>' . $user_mod_code . '</small> '; 
 					}
-					echo '<small> ++' . $poster_post_count . '</small> <br /> <a href="' . $current_page . '?b=' . $posts->post_board . '&amp;';
+					echo '<br /> <a href="' . $current_page . '?b=' . $posts->post_board . '&amp;';
 					if ( $posts->post_parent == 0 ) {
 						echo 't=' . $posts->post_id . '">';
 						if ( $thread_reply_count == 0 ) { echo 'no comments '; }
@@ -336,7 +333,13 @@ if ( count ( $posts ) > 0 ) {
 						$n    = 0;
 						foreach ( $urls as $url ) {
 							if ( filter_var( $url, FILTER_VALIDATE_URL ) ) {
-								if ( regular_board_get_domain ( $url ) != 'imgur.com' ) {
+									$path_info = pathinfo ( $url );
+									if ( 
+										$path_info['extension'] != 'jpg' ||
+										$path_info['extension'] != 'gif' ||
+										$path_info['extension'] != 'jpeg' ||
+										$path_info['extension'] != 'png'
+									) {
 									$n++;
 									if ( $n <= $max_links ) {
 										echo '<a href="' . $url . '">' . $n . ': ' . regular_board_get_domain ( $url ) . '</a>';

@@ -3,7 +3,7 @@ Contributors: boyevul
 Tags: anonymous, bbs, bulletin board system, forum
 Requires at least: 3.8
 Tested up to: 3.8
-Stable tag: 1.02
+Stable tag: 1.03
 
 == Description ==
 Regular Board is a text-based anonymous message board to which anyone may post without the need for account registration.  
@@ -46,6 +46,7 @@ and not be offset by the current theme's style.
 7. Done.
 
 == Changelog ==
+* 1.03 _post_form added to children theming; countdown clock updated; CSS update; lazy load inclusion fixed.
 * 1.02 Github->WordPress repo FOLDER change
 * 1.01 Hotfix for multiple board installation activity loops.
 * 1.00 Initial release.

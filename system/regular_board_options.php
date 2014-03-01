@@ -130,7 +130,10 @@ if( current_user_can( 'manage_options' )) {
 						03: Copy the appropriate files <strong>from</strong> the Regular Board plugin folder <strong>to</strong> this new folder.<br />
 						04: Edit them.
 					</p>
-					<p> <em>Supported files for templating:</em><br /> <code>[1] regular_board_loop.php</code></p>
+					<p> <em>Supported files for templating:</em><br /> 
+						<code>[1] regular_board_loop.php</code>
+						<code>[1] regular_board_post_form.php</code>
+					</p>
 					<p> <strong>Be careful!</strong>: If you don\'t know what you\'re doing, it is quite possible that you can break 
 					the functionality of this plugin with a child template.  Always make sure you have some solid grasp 
 					on what the code is, and what it is that you are editing (or adding) before doing so.</p>

@@ -19,25 +19,27 @@ function regular_board_style(){
 	global $wp, $post, $regular_board_version;
 	$content = $post->post_content;
 	if( has_shortcode ( $content, 'regular_board' ) ) {
-		$regularboard = plugins_url() . '/regular-board/system/js/regular_board.js?' . $regular_board_version;
-		$masonry      = plugins_url() . '/regular-board/system/js/masonry.pkgd.min.js?' . $regular_board_version;
+		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board.js?' . $regular_board_version;
+		$masonry        = plugins_url() . '/regular-board/system/js/masonry.pkgd.min.js?' . $regular_board_version;
 		if ( get_option ( 'regular_board_css_url' ) ) {
-			$css_file = get_option ( 'regular_board_css_url' );
+			$css_file   = get_option ( 'regular_board_css_url' );
 		} else { 
-			$css_file = str_replace ( 'http:', '', plugins_url() ) . '/regular-board/system/css/regular_board_0000000007.css';
+			$css_file   = str_replace ( 'http:', '', plugins_url() ) . '/regular-board/system/css/regular_board_0000000009.css';
 		}
-		$regbostyle   = str_replace ( 'http:', '', $css_file . '?' . $regular_board_version );
+		$regbostyle     = str_replace ( 'http:', '', $css_file . '?' . $regular_board_version );
 
+		// Selectively load lazyload!
 		if ( get_option ( 'regular_board_lazyload' ) ) {
 			$lazy_load           = '//cdn.jsdelivr.net/jquery.lazyload/1.9.0/jquery.lazyload.min.js';
 			$lazy_load_functions = str_replace ( 'http:', '', plugins_url() ) . '/regular-board/system/js/lazyload.js';
-			wp_deregister_script('lazyload');
-			wp_register_script('lazyload', $lazy_load, array( 'jquery' ), '', null, false);
-			wp_enqueue_script('lazyload');
-			wp_deregister_script('lazy_load_functions');
-			wp_register_script('lazy_load_functions', $lazy_load_functions, array( 'jquery' ), '', null, false);
-			wp_enqueue_script('lazy_load_functions');
+			wp_deregister_script ( 'regular_board-lazyload');
+			wp_register_script   ( 'regular_board-lazyload', $lazy_load, array( 'jquery' ), '', null, false);
+			wp_enqueue_script    ( 'regular_board-lazyload');
 		}
+
+		wp_deregister_script ( 'regular_board-lazy_load_functions');
+		wp_register_script   ( 'regular_board-lazy_load_functions', $lazy_load_functions, array( 'jquery' ), '', null, false);
+		wp_enqueue_script    ( 'regular_board-lazy_load_functions');
 		
 		wp_register_style    ( 'font-awesome', str_replace ( 'http:', '', plugins_url() ) . '/regular-board/system/css/fontawesome/css/font-awesome.min.css' );
 		wp_enqueue_style     ( 'font-awesome' );
@@ -277,17 +279,17 @@ function regular_board_shortcode ( $content = null ) {
 					$board_life = ( intval ( $board_date ) + intval ( $uptime ) );
 					$next_wipe = ( intval ( $uptime ) - ( intval ( $today_is ) - intval ( $board_date ) ) );
 					$wipe = number_format ( intval ( $today_is ) - intval ( $board_date ) ) / intval ( $uptime ) * 100;
-					
-					
+					$next_clean = date($boarddate, time() + $nextwipe);
+
 					if ( strpos( $next_wipe, '-' ) !== true && $display_wipe && $display_wipe == 1 ) { 
-						$wipe_countdown = '<br /><br />This board resets ' . $interval . '.  Next reset in ' . $next_wipe . ' seconds.';
+						$wipe_countdown = '<i class="fa fa-clock-o"> ' . $next_clean . ' ( ' . $next_wipe . ' seconds ) </i>';
 					}
 				}
 				if( $board_description ) {
-					$boardheader      = '<p class="boardheader"><a href="' . $current_page . '?b=' . $board_short . '">' . $board_name . '</a> &mdash; [ ' . $board_short . ' ] &mdash; ' . $board_description . $wipe_countdown . '</p>';
+					$boardheader      = '<p class="boardheader"><a href="' . $current_page . '?b=' . $board_short . '">' . $board_name . '</a> &mdash; [ ' . $board_short . ' ] &mdash; ' . $board_description . ' &mdash; ' . $wipe_countdown . '</p>';
 				}
 				if( !$board_description ) {
-					$boardheader      = '<p class="boardheader"><a href="' . $current_page . '?b=' . $board_short . '">' . $board_name . '</a> &mdash; [ ' . $board_short . ' ] </p>' . $wipe_countdown;
+					$boardheader      = '<p class="boardheader"><a href="' . $current_page . '?b=' . $board_short . '">' . $board_name . '</a> &mdash; [ ' . $board_short . ' ] &mdash; ' . $wipe_countdown;
 				}
 				echo '<script type="text/javascript">document.title = \'' . $board_name . ' / ' . $board_short . '\';</script>';
 			}
@@ -591,9 +593,14 @@ function regular_board_shortcode ( $content = null ) {
 		}
 		
 		if ( $the_board && !$this_thread || $thisboard && !$this_thread) { 
-			include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
+			if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_post_form.php' ) ) {
+				include ( ABSPATH . '/regular_board_child/regular_board_post_form.php' );
+			} else {
+				include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
+			}
 		}
 		echo $boardheader;
+		
 		if ( $this_area == 'newtopic' ) {
 			if ( count ( $getboards ) == 1 ) {
 				foreach ( $getboards as $board ) {
@@ -681,7 +688,11 @@ function regular_board_shortcode ( $content = null ) {
 									}
 									if ( !isset ( $_POST['FORMSUBMIT'] ) ) {
 										if ( $this_area == 'editpost' ) { 
-											include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
+											if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_post_form.php' ) ) {
+												include ( ABSPATH . '/regular_board_child/regular_board_post_form.php' );
+											} else {
+												include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
+											}
 										}
 										if ( $this_area != 'newtopic' && $correct != 3 ) {
 										
@@ -706,13 +717,7 @@ function regular_board_shortcode ( $content = null ) {
 												</form>';
 											}										
 											if ( $totalpages > 0 ) {
-												if ( $this_area == 'gallery' ) {
-													echo '<div class="imgs js-masonry" data-masonry-options=\'{ "columnWidth": 10, "itemSelector": "div" }\'>';
-												}
 												include ( plugin_dir_path(__FILE__) . '/regular_board_board_loop.php' );
-												if ( $this_area == 'gallery' ) {
-													echo '</div>';
-												}												
 											} else {
 												echo '<p>No results.</p>';
 											}
@@ -765,18 +770,12 @@ function regular_board_shortcode ( $content = null ) {
 			}
 			echo '</div></div>';
 		} elseif ( $this_area == 'gallery' || $this_area == 'all' || $this_area == 'replies' || $this_area == 'topics' || !$this_area ) {
-			if ( $this_area == 'gallery' ) {
-				echo '<div class="imgs js-masonry" data-masonry-options=\'{ "columnWidth": 10, "itemSelector": "div" }\'>';
-			}
 			foreach ( $getposts as $posts ) {
 				if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
 					include ( ABSPATH . '/regular_board_child/regular_board_loop.php' );
 				} else {
 					include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
 				}
-			}
-			if ( $this_area == 'gallery' ) {
-				echo '</div>';
 			}
 		}
 	echo '</div>';
