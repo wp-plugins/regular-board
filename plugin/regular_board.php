@@ -19,18 +19,18 @@ function regular_board_style(){
 	global $wp, $post, $regular_board_version;
 	$content = $post->post_content;
 	if( has_shortcode ( $content, 'regular_board' ) ) {
-		$regularboard = plugins_url() . '/regular_board/system/js/regular_board.js?' . $regular_board_version;
-		$masonry      = plugins_url() . '/regular_board/system/js/masonry.pkgd.min.js?' . $regular_board_version;
+		$regularboard = plugins_url() . '/regular-board/system/js/regular_board.js?' . $regular_board_version;
+		$masonry      = plugins_url() . '/regular-board/system/js/masonry.pkgd.min.js?' . $regular_board_version;
 		if ( get_option ( 'regular_board_css_url' ) ) {
 			$css_file = get_option ( 'regular_board_css_url' );
 		} else { 
-			$css_file = str_replace ( 'http:', '', plugins_url() ) . '/regular_board/system/css/regular_board_0000000007.css';
+			$css_file = str_replace ( 'http:', '', plugins_url() ) . '/regular-board/system/css/regular_board_0000000007.css';
 		}
 		$regbostyle   = str_replace ( 'http:', '', $css_file . '?' . $regular_board_version );
 
 		if ( get_option ( 'regular_board_lazyload' ) ) {
 			$lazy_load           = '//cdn.jsdelivr.net/jquery.lazyload/1.9.0/jquery.lazyload.min.js';
-			$lazy_load_functions = str_replace ( 'http:', '', plugins_url() ) . '/regular_board/system/js/lazyload.js';
+			$lazy_load_functions = str_replace ( 'http:', '', plugins_url() ) . '/regular-board/system/js/lazyload.js';
 			wp_deregister_script('lazyload');
 			wp_register_script('lazyload', $lazy_load, array( 'jquery' ), '', null, false);
 			wp_enqueue_script('lazyload');
@@ -39,7 +39,7 @@ function regular_board_style(){
 			wp_enqueue_script('lazy_load_functions');
 		}
 		
-		wp_register_style    ( 'font-awesome', str_replace ( 'http:', '', plugins_url() ) . '/regular_board/system/css/fontawesome/css/font-awesome.min.css' );
+		wp_register_style    ( 'font-awesome', str_replace ( 'http:', '', plugins_url() ) . '/regular-board/system/css/fontawesome/css/font-awesome.min.css' );
 		wp_enqueue_style     ( 'font-awesome' );
 		wp_register_style    ( 'regular_board', str_replace ( 'http:', '', $regbostyle ) );
 		wp_enqueue_style     ( 'regular_board' );
