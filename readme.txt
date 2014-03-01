@@ -46,5 +46,5 @@ and not be offset by the current theme's style.
 7. Done.
 
 == Changelog ==
-1.01 Hotfix for multiple board installation activity loops.
-1.00 Initial release.
+* 1.01 Hotfix for multiple board installation activity loops.
+* 1.00 Initial release.
