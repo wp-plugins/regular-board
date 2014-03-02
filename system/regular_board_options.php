@@ -360,6 +360,7 @@ if( current_user_can( 'manage_options' )) {
 				} else {
 
 						if(isset($_POST['save'])){
+							update_option ( 'regular_board_ascii', str_replace ( array ('\\', '"' ), '', $_REQUEST['ascii']) );
 							update_option ( 'regular_board_announcements', str_replace ( '\\', '', $_REQUEST['announcements'] ) );
 							update_option ( 'regular_board_hideannouncements', str_replace ( '\\', '', $_REQUEST['hideannouncements'] ) );
 							update_option ( 'regular_board_robots', str_replace ( '\\', '', $_REQUEST['robots'] ) );
@@ -468,6 +469,7 @@ if( current_user_can( 'manage_options' )) {
 								<section><label>25:: Enable Lazy Load:</label><select name="lazyload" id="lazyload">'; regular_board_hideannouncements_option(); echo '</select></section>
 								<section><label>26:: Category id for board announcements:</label><input type="text" id="announcements" name="announcements" value="' . get_option ( 'regular_board_announcements' ) . '" /></section>
 								<section><label>27:: Hide announcements from the front page of the blog:</label><select name="hideannouncements" id="hideannouncements">'; regular_board_lazyload_option(); echo '</select></section>
+								<section><label>28:: ASCII for header (completely optional, and completely useless.)</label><textarea name="ascii" id="ascii">' . get_option ( 'regular_board_ascii' ) . '</textarea></section>
 								<section><input type="submit" name="save" value="Save options" /></section>
 							</form>
 						</div>
@@ -500,6 +502,7 @@ if( current_user_can( 'manage_options' )) {
 							<p><label for="lazyload">25:: Whether or not to enable Lazy Load for images on the boards, decreasing load time.</label></p>
 							<p><label for="announcements">26:: The category id for which category you will use to post board announcements.</label></p>
 							<p><label for="hideannouncements">27:: Whether or not you wish to hide the announcements category posts from showing up on the front page of the blog.</label></p>
+							<p><label for="ascii">28:: A completely useless way to add ascii art to your HTML (header).  Removes backslashes and quotation-marks.  Use a service like <a href="http://picascii.com/">picascii.com</a> to make something useful(ish).</label></p>
 						</div>
 					
 						<div>

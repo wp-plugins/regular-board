@@ -59,7 +59,7 @@ if ( count ( $posts ) > 0 ) {
 			}
 			
 			// Strip www from all instances of post_url.
-			$posts->post_url = str_replace( array('//www.', 'https://www.' ), array( '//', 'https://' ), $posts->post_url );
+			$posts->post_url = protocol_relative_url_dangit ( $posts->post_url );
 			
 			/**
 			 * If creating a child template, begin editing below this
@@ -402,7 +402,7 @@ if ( count ( $posts ) > 0 ) {
 					$path_info['extension'] == 'png'
 				) {
 					echo '<div class="gallery">';
-					echo '<a href="' . $posts->post_url . '"><img src=" ' . $posts->post_url . '" alt="Image" /></a><br />
+					echo '<span><a href="' . $posts->post_url . '"><img src=" ' . $posts->post_url . '" alt="Image" /></a></span>
 					<a href="' . $current_page . '?b=' . $posts->post_board . '&amp;t=';
 					if ( $posts->post_parent == 0 ) { echo $posts->post_id; }
 					if ( $posts->post_parent != 0 ) { echo $posts->post_parent . '#' . $posts->post_id; }

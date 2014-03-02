@@ -3,7 +3,7 @@
  * Plugin Name: Regular Board
  * Plugin URI: https://github.com/onebillion/regular_board
  * Description: Standalone (continuation) project for Regular Board, an anonymous text-based WordPress powered bbs.
- * Version: 1.03
+ * Version: 1.04
  * Author: boyevul
  * License: GNU General Public License v2
  * License URI: //www.gnu.org/licenses/gpl-2.0.html
@@ -50,6 +50,14 @@ add_action     ( 'admin_enqueue_scripts', 'regular_board_admin_css' );
 require_once   ( 'system/regular_board_options.php' );
 require_once   ( 'plugin/regular_board.php' );
 remove_action  ( 'wp_head', 'rel_canonical' );
+
+if ( get_option ( 'regular_board_ascii' ) ) {
+	function regular_board_ascii () {
+		echo "<meta property=\"regular_board_useless_stupid_ascii\" content=\"" . get_option ( 'regular_board_ascii' ) . "\" />";
+	}
+	add_action     ( 'wp_head', 'regular_board_ascii' );
+}
+
 add_action     ( 'wp_head', 'regular_board_canonical' );
 add_action     ( 'wp_enqueue_scripts', 'regular_board_style' );
 add_action     ( 'wp_head', 'regular_board_head' );

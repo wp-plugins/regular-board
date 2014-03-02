@@ -14,6 +14,7 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
 
 function regular_board_installation(){
+	add_option ( 'regular_board_ascii' );
 	add_option ( 'regular_board_announcements' );
 	add_option ( 'regular_board_hideannouncements' );
 	add_option ( 'regular_board_postingoptions', 1 );

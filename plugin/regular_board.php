@@ -12,49 +12,6 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
 
 /**
- * Enqueue scripts and styles if post content contains the shortcode
- */
- 
-function regular_board_style(){
-	global $wp, $post, $regular_board_version;
-	$content = $post->post_content;
-	if( has_shortcode ( $content, 'regular_board' ) ) {
-		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board.js?' . $regular_board_version;
-		$masonry        = plugins_url() . '/regular-board/system/js/masonry.pkgd.min.js?' . $regular_board_version;
-		if ( get_option ( 'regular_board_css_url' ) ) {
-			$css_file   = get_option ( 'regular_board_css_url' );
-		} else { 
-			$css_file   = str_replace ( 'http:', '', plugins_url() ) . '/regular-board/system/css/regular_board_0000000009.css';
-		}
-		$regbostyle     = str_replace ( 'http:', '', $css_file . '?' . $regular_board_version );
-
-		// Selectively load lazyload!
-		if ( get_option ( 'regular_board_lazyload' ) ) {
-			$lazy_load           = '//cdn.jsdelivr.net/jquery.lazyload/1.9.0/jquery.lazyload.min.js';
-			$lazy_load_functions = str_replace ( 'http:', '', plugins_url() ) . '/regular-board/system/js/lazyload.js';
-			wp_deregister_script ( 'regular_board-lazyload');
-			wp_register_script   ( 'regular_board-lazyload', $lazy_load, array( 'jquery' ), '', null, false);
-			wp_enqueue_script    ( 'regular_board-lazyload');
-		}
-
-		wp_deregister_script ( 'regular_board-lazy_load_functions');
-		wp_register_script   ( 'regular_board-lazy_load_functions', $lazy_load_functions, array( 'jquery' ), '', null, false);
-		wp_enqueue_script    ( 'regular_board-lazy_load_functions');
-		
-		wp_register_style    ( 'font-awesome', str_replace ( 'http:', '', plugins_url() ) . '/regular-board/system/css/fontawesome/css/font-awesome.min.css' );
-		wp_enqueue_style     ( 'font-awesome' );
-		wp_register_style    ( 'regular_board', str_replace ( 'http:', '', $regbostyle ) );
-		wp_enqueue_style     ( 'regular_board' );
-		wp_deregister_script ( 'regularboard' );
-		wp_register_script   ( 'regularboard', str_replace ( 'http:', '', $regularboard ), array( 'jquery' ), '', null, false );
-		wp_enqueue_script    ( 'regularboard' );
-		wp_deregister_script ( 'masonry' );
-		wp_register_script   ( 'masonry', str_replace ( 'http:', '', $masonry ), array( 'jquery' ), '', null, false );
-		wp_enqueue_script    ( 'masonry' );
-	}
-}
-
-/**
  * Include header information if post content contains the shortcode
  */
  
@@ -128,7 +85,7 @@ function regular_board_shortcode ( $content = null ) {
 		$id_display            = get_option ( 'regular_board_ids' );
 		$mod_code              = '<strong>' . get_option ( 'regular_board_modcode', '##MOD' ) . '</strong>';
 		$user_mod_code         = '<strong>' . get_option ( 'regular_board_usermodcode', '##JRMOD' ) . '</strong>';
-		$current_page          = str_replace ( 'http:', '', get_permalink() );
+		$current_page          = protocol_relative_url_dangit( get_permalink() );
 		$the_ip                 = $ipaddress;
 		$user_ip               = wp_hash ( $the_ip );
 		$check_this_ip         = esc_sql ( $the_ip );
@@ -504,7 +461,7 @@ function regular_board_shortcode ( $content = null ) {
 					echo '<span class="announcement">Latest announcement(s): ';
 					foreach($posts as $post) {
 						setup_postdata($post); 
-							echo '<a href="' . str_replace ( 'http:', '', get_permalink($post->ID) ) . '" rel="bookmark" title="Permanent Link to '; the_title_attribute(); echo '">'; the_title(); echo '</a>';
+							echo '<a href="' . protocol_relative_url_dangit ( get_permalink($post->ID) ) . '" rel="bookmark" title="Permanent Link to '; the_title_attribute(); echo '">'; the_title(); echo '</a>';
 					}
 					
 					echo '</span>';

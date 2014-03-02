@@ -34,6 +34,53 @@ if ( get_option ( 'regular_board_announcements' ) && get_option ( 'regular_board
 }
 
 /**
+ * Enqueue scripts and styles if post content contains the shortcode
+ */
+function regular_board_style(){
+	global $wp, $post, $regular_board_version;
+	$content = $post->post_content;
+	if( has_shortcode ( $content, 'regular_board' ) ) {
+		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board.js?' . $regular_board_version;
+		$masonry        = plugins_url() . '/regular-board/system/js/masonry.pkgd.min.js?' . $regular_board_version;
+		if ( get_option ( 'regular_board_css_url' ) ) {
+			$css_file   = get_option ( 'regular_board_css_url' );
+		} else { 
+			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_0000000012.css';
+		}
+		$regbostyle     = $css_file . '?' . $regular_board_version;
+		// Selectively load lazyload!
+		if ( get_option ( 'regular_board_lazyload' ) ) {
+			$lazy_load           = '//cdn.jsdelivr.net/jquery.lazyload/1.9.0/jquery.lazyload.min.js';
+			$lazy_load_functions = plugins_url() . '/regular-board/system/js/lazyload.js';
+			wp_deregister_script ( 'regular_board-lazyload');
+			wp_register_script   ( 'regular_board-lazyload', protocol_relative_url_dangit ( $lazy_load ), array( 'jquery' ), '', null, false);
+			wp_enqueue_script    ( 'regular_board-lazyload');
+		}
+		wp_deregister_script ( 'regular_board-lazy_load_functions');
+		wp_register_script   ( 'regular_board-lazy_load_functions', protocol_relative_url_dangit ( $lazy_load_functions ), array( 'jquery' ), '', null, false);
+		wp_enqueue_script    ( 'regular_board-lazy_load_functions');
+		wp_register_style    ( 'font-awesome', plugins_url() . '/regular-board/system/css/fontawesome/css/font-awesome.min.css' );
+		wp_enqueue_style     ( 'font-awesome' );
+		wp_register_style    ( 'regular_board', protocol_relative_url_dangit ( $regbostyle ) );
+		wp_enqueue_style     ( 'regular_board' );
+		wp_deregister_script ( 'regularboard' );
+		wp_register_script   ( 'regularboard', protocol_relative_url_dangit ( $regularboard ) , array( 'jquery' ), '', null, false );
+		wp_enqueue_script    ( 'regularboard' );
+		wp_deregister_script ( 'masonry' );
+		wp_register_script   ( 'masonry', protocol_relative_url_dangit ( $masonry ), array( 'jquery' ), '', null, false );
+		wp_enqueue_script    ( 'masonry' );
+	}
+}
+
+/**
+ * Automatically remove http from links 
+ */
+function protocol_relative_url_dangit ( $u ) {
+	return str_replace ( 'http:', '', esc_url ( $u ) );
+}
+
+
+/**
  * Automatically apply quotes to a group of items for SQL use
  */
 function regular_board_apply_quotes($i){
