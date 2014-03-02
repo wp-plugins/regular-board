@@ -213,6 +213,67 @@
   *
   * All elements that are related to forms
   */
+ .boardAll .user-options {
+	background-color: #000;
+	color: rgba(255,255,255,.8);
+	display: block; 
+	width: 100%;
+	margin: auto;
+ } 
+ .boardAll .user-options span {
+	display: none;
+	visibility: hidden; 
+	height: 0;
+ } 
+ .boardAll .user-options select,
+ .boardAll .user-options input {
+	border: none!important;
+	border-radius:0!important;
+	clear: none!important;
+	cursor: pointer!important;
+	display: block!important; 
+	float: right!important;
+	height: 31px!important;
+	font-size: 10px!important;
+	margin: 0!important;
+	width: 70%!important;
+ }
+ .boardAll .user-options input[type="text"]:focus ~ span,
+ .boardAll .user-options input[type="password"]:focus ~ span {
+	clear: both;
+	color: rgba(255,255,255,.5);
+	display: block;
+	height: auto;
+	margin: 5px;
+	padding: 5px;
+	visibility: visible;
+ }
+ .boardAll .user-options label {
+	clear: none!important;
+	display: block!important; 
+	float: left!important;
+	height: 32px!important;
+	font-size: 10px!important;
+	text-align: left!important;
+	width: 30%!important;
+ } 
+ .boardAll .user-options h3 {
+	color: rgba(255,255,255,.9);
+	display: block;
+	text-align: center;
+ }
+ .boardAll .user-options section {
+	clear: both; 
+	display: block;
+	margin: 0;
+	width: 100%;
+ }
+ .boardAll .user-options section:after {
+	clear: both; 
+	content: "";
+	display: table;
+ }
+  
  .boardAll .registration {
 	display: block;
 	width: 100%;
@@ -255,6 +316,13 @@
 	padding: 5px;
 	text-align: center;
 	width: 100%;
+ }
+ .boardAll form p {
+	background-color: rgba(0,0,0,.8);
+	color: rgba(255,255,255,.8);
+	clear: both; 
+	display: block;
+	padding: 5px;
  }
  .boardAll #FORMSUBMIT {
 	cursor: pointer;

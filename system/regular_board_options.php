@@ -263,7 +263,7 @@ if( current_user_can( 'manage_options' )) {
 				$getusers = $wpdb->get_results ( "SELECT * FROM $regular_board_bans WHERE banned_banned = 1" );
 				
 				if(isset($_POST['BAN']) && $_REQUEST['IP'] != ''){
-					$ip = wp_hash ( $_REQUEST['IP'] );
+					$ip = sanitize_text_field ( wp_hash ( $_REQUEST['IP'] ) );
 					$message = ' (Banned by admin).';
 					$length  = 0;
 					$wpdb->query($wpdb->prepare("INSERT INTO $regular_board_bans 

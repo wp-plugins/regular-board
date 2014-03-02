@@ -87,18 +87,18 @@ function regular_board_shortcode ( $content = null ) {
 		$user_mod_code         = '<strong>' . get_option ( 'regular_board_usermodcode', '##JRMOD' ) . '</strong>';
 		$current_page          = protocol_relative_url_dangit( get_permalink() );
 		$the_ip                 = $ipaddress;
-		$user_ip               = wp_hash ( $the_ip );
-		$check_this_ip         = esc_sql ( $the_ip );
+		$user_ip               = sanitize_text_field ( wp_hash ( $the_ip ) );
+		$check_this_ip         = sanitize_text_field ( $the_ip );
 		$current_timestamp     = date ( 'Y-m-d H:i:s' );
 		$regular_board_posts   = $wpdb->prefix . 'regular_board_posts';
 		$regular_board_boards  = $wpdb->prefix . 'regular_board_boards';
 		$regular_board_users   = $wpdb->prefix . 'regular_board_users';
 		$regular_board_bans    = $wpdb->prefix . 'regular_board_bans';
 		$regular_board_logs    = $wpdb->prefix . 'regular_board_logs';
-		$query                 = esc_sql ( $_SERVER['QUERY_STRING'] );
-		$the_board             = esc_sql ( strtolower( $_GET['b'] ) );
-		$this_area             = esc_sql ( strtolower( $_GET['a'] ) );
-		$this_user             = esc_sql ( strtolower( $_GET['u'] ) );
+		$query                 = sanitize_text_field ( $_SERVER['QUERY_STRING'] );
+		$the_board             = sanitize_text_field ( strtolower( $_GET['b'] ) );
+		$this_area             = sanitize_text_field ( strtolower( $_GET['a'] ) );
+		$this_user             = sanitize_text_field ( strtolower( $_GET['u'] ) );
 		$this_thread           = intval ( $_GET['t'] );
 		$is_user_mod           = false;
 		$is_user               = true;
@@ -414,17 +414,17 @@ function regular_board_shortcode ( $content = null ) {
 				</form>';
 				if ( isset ( $_POST['i_am_a_human'] ) ) {
 					$name     = sanitize_text_field ( $_REQUEST['USERNAME'] );
-					$email    = wp_hash ( $_REQUEST['email'] );
-					$password = wp_hash ( $_REQUEST['password'] );
+					$email    = sanitize_text_field ( wp_hash ( $_REQUEST['email'] ) );
+					$password = sanitize_text_field ( wp_hash ( $_REQUEST['password'] ) );
 					$wpdb->query( $wpdb->prepare ( "INSERT INTO $regular_board_users ( user_id, user_date, user_ip, user_name, user_email, user_password, user_heaven, user_boards, user_follow ) VALUES ( %d, %s, %s, %s, %s, %s, %d, %s, %s )", '', $current_timestamp, $user_ip, $name, $email, $password, 0, '', '' ) );
 					echo '<meta http-equiv="refresh" content="0">';			
 				}
 
 				if ( isset ( $_POST['restore'] ) ) {
 					if ( $_REQUEST['oldinternalid'] && $_REQUEST['userpassword'] ) {
-						$userpassword = wp_hash ( $_REQUEST['userpassword'] );
-						$userip       = esc_sql ( $_REQUEST['oldinternalid'] );
-						$email        = wp_hash ( $_REQUEST['oldemail'] );
+						$userpassword = sanitize_text_field ( wp_hash ( $_REQUEST['userpassword'] ) );
+						$userip       = sanitize_text_field ( $_REQUEST['oldinternalid'] );
+						$email        = sanitize_text_field ( wp_hash ( $_REQUEST['oldemail'] ) );
 						$check_this = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_users WHERE user_password = %s AND user_ip = %s", $userpassword, $userip ) );
 						if ( count ( $check_this ) > 0 ) {
 							$wpdb->query ( "UPDATE $regular_board_users SET user_ip = '$user_ip' WHERE user_ip = $userip AND user_password = '$userpassword' AND user_email = '$email'" );

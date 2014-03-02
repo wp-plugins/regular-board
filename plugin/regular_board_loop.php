@@ -59,7 +59,7 @@ if ( count ( $posts ) > 0 ) {
 			}
 			
 			// Strip www from all instances of post_url.
-			$posts->post_url = protocol_relative_url_dangit ( $posts->post_url );
+			$posts->post_url = str_replace( array('//www.', 'https://www.' ), array( '//', 'https://' ), $posts->post_url );
 			
 			/**
 			 * If creating a child template, begin editing below this
@@ -138,8 +138,8 @@ if ( count ( $posts ) > 0 ) {
 					
 					
 					// Get the domain of the URL (if URL), return a youtube icon (if youtube), or return the board (if a post that isn't youtube or URL)
-					if ( $posts->post_url && $posts->post_type == 'URL' || $posts->post_url && $posts->post_type == 'image' ) { 
-						echo '( <a href="//' . regular_board_get_domain ( $posts->post_url ) . '">' . regular_board_get_domain ( $posts->post_url ) . '</a> )' ; 
+					if ( $posts->post_url && $posts->post_type != 'youtube' ) { 
+						echo '( <a href="' . regular_board_get_domain ( $posts->post_url ) . '">' . regular_board_get_domain ( $posts->post_url ) . '</a> )' ; 
 					}
 					if ( $posts->post_url && $posts->post_type == 'youtube' ) { 
 						echo '( <a href="//www.youtube.com/"><i class="fa fa-youtube-square"></i></a> )' ; 
