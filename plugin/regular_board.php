@@ -63,12 +63,12 @@ function regular_board_shortcode ( $content = null ) {
 		$board_jans            = '';
 		$board_posts           = '';
 		$blog_title            = get_bloginfo();
+		$formatting            = get_option ( 'regular_board_formatting' );
+		$auto_url              = get_option ( 'regular_board_autourl' );
 		$announcements         = get_option ( 'regular_board_announcements' );
 		$max_links             = get_option ( 'regular_board_maxlinks' );
 		$posting_options       = get_option ( 'regular_board_postingoptions' );
 		$search_enabled        = get_option ( 'regular_board_search' );
-		$display_boards        = get_option ( 'regular_board_displayboards' );
-		$display_menu          = get_option ( 'regular_board_displaymenu' );
 		$display_wipe          = get_option ( 'regular_board_wipedisplay' );
 		$enable_url            = get_option ( 'regular_board_enableurl' );
 		$enable_rep            = get_option ( 'regular_board_enablerep' );
@@ -128,6 +128,8 @@ function regular_board_shortcode ( $content = null ) {
 		$myinformation = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_users WHERE user_ip = %s LIMIT 1", $user_ip ) );
 		if ( count ( $myinformation ) > 0 ) {
 			foreach ( $myinformation as $myinfo ) {
+				$profileavatar    = sanitize_text_field ( $myinfo->user_avatar );
+				$profileslogan    = sanitize_text_field ( str_replace ( '\\', '', $myinfo->user_slogan ) );
 				$profileid        = intval ( $myinfo->user_id );
 				$profileheaven    = intval ( $myinfo->user_heaven );
 				$profile_email    = sanitize_text_field ( $myinfo->user_email );
@@ -186,7 +188,7 @@ function regular_board_shortcode ( $content = null ) {
 		 */
 		 
 		if ( $search_enabled && isset ( $_POST['regular_board_search_submit'] ) && $_REQUEST['regular_board_search'] ) {
-			$search = esc_sql ( $_REQUEST['regular_board_search'] );
+			$search = esc_sql ( str_replace ( '\'', '\\\'', $_REQUEST['regular_board_search'] ) );
 		}
 		
 		/**
@@ -422,7 +424,7 @@ function regular_board_shortcode ( $content = null ) {
 					$name     = sanitize_text_field ( $_REQUEST['USERNAME'] );
 					$email    = sanitize_text_field ( wp_hash ( $_REQUEST['email'] ) );
 					$password = sanitize_text_field ( wp_hash ( $_REQUEST['password'] ) );
-					$wpdb->query( $wpdb->prepare ( "INSERT INTO $regular_board_users ( user_id, user_date, user_ip, user_name, user_email, user_password, user_heaven, user_boards, user_follow ) VALUES ( %d, %s, %s, %s, %s, %s, %d, %s, %s )", '', $current_timestamp, $user_ip, $name, $email, $password, 0, '', '' ) );
+					$wpdb->query( $wpdb->prepare ( "INSERT INTO $regular_board_users ( user_id, user_date, user_ip, user_name, user_email, user_password, user_heaven, user_boards, user_follow, user_avatar ) VALUES ( %d, %s, %s, %s, %s, %s, %d, %s, %s )", '', $current_timestamp, $user_ip, $name, $email, $password, 0, '', '', '' ) );
 					echo '<meta http-equiv="refresh" content="0">';			
 				}
 
@@ -475,48 +477,8 @@ function regular_board_shortcode ( $content = null ) {
 			}
 		}
 		
-		if ( $display_menu ) {
-			echo '<p class="boardList">';
-			echo '<span class="navi">';
-			if ( $user_exists && $profileboards ) {
-				echo ' <a href="' . $current_page . '?a=subscribed">subscribed</a> ';
-			}
-			if ( $user_exists && $profilefollow ) {
-				echo ' <a href="' . $current_page . '?a=following">following</a> ';
-			}
-			echo ' <a href="' . $current_page . '?a=topics">topics</a> 
-			<a href="' . $current_page . '?a=replies">replies</a> 
-			<a href="' . $current_page . '?a=all">all</a> 
-			<a href="' . $current_page . '?a=gallery">gallery</a> 
-			<a href="' . $current_page . '?a=stats">stats</a> ';
-			if ( $user_exists ) {
-				echo ' <a href="' . $current_page . '?a=history">history</a> ';
-				echo ' <a href="' . $current_page . '?a=options">options</a> ';
-			}
-			if ( $is_moderator && count($get_reports) > 0 ) {
-				echo '<a href="' . $current_page . '?a=reports">reports ( ' . count ( $get_reports ) . ' )</a>';
-			}
-			if ( $is_moderator && count($get_deleted) > 0 ) {
-				echo '<a href="' . $current_page . '?a=deleted">deleted ( ' . count ( $get_deleted ) . ' )</a>';
-			}		
-			if ( $this_area != 'newtopic' && $user_exists ) {
-				if ( $the_board && $posting == 1 && $user_exists && !$this_area || $thisboard ) {
-					if ( $thisboard ) {
-						echo ' <a class="newtopic" href="' . $current_page . '?a=newtopic">new</a> ';
-					} else {
-						echo ' <a class="newtopic" href="' . $current_page . '?b=' . $the_board . '&amp;a=newtopic">new</a> ';
-					}
-					echo '<span class="hidden notopic">cancel</span>';
-				}
-			}
-			echo '</span>';
-			echo '</p>';
-			echo '<p class="newtopic"></p>';
-		}
 		if ( count ( $getboards ) > 0 ) {
-			if ( $display_boards ) {
-				echo '<span class="boards">';
-			}
+			echo '<span class="navi">[';
 			foreach ( $getboards as $gotboards ) {
 					if( $gotboards->board_wipe && $gotboards->board_wipe != 'never' ) {
 						$board_date = strtotime($gotboards->board_date);
@@ -546,15 +508,46 @@ function regular_board_shortcode ( $content = null ) {
 						}
 						
 					}
-				if ( $display_boards ) {
-					echo ' <a href="' . $current_page . '?b=' . $gotboards->board_shortname . '">' . $gotboards->board_shortname . ' ( ' . $gotboards->board_name . ' ) </a> ';
+					echo ' <a href="' . $current_page . '?b=' . $gotboards->board_shortname . '">' . $gotboards->board_shortname . '</a> / ';
+			}
+			echo ' <a href="' . $current_page . '?a=all">all</a> / ';
+
+			if ( $user_exists && $profileboards ) {
+				echo ' <a href="' . $current_page . '?a=subscribed">subscribed</a> / ';
+			}
+			if ( $user_exists && $profilefollow ) {
+				echo ' <a href="' . $current_page . '?a=following">following</a> / ';
+			}
+			echo ' <a href="' . $current_page . '?a=topics">topics</a> / 
+			<a href="' . $current_page . '?a=replies">replies</a> / ';
+			if ( $enablerep || $enableurl || $imgurid ) {
+				echo '<a href="' . $current_page . '?a=gallery">gallery</a> / ';
+			}
+			echo '<a href="' . $current_page . '?a=stats">stats</a> / ';
+			if ( $user_exists ) {
+				echo ' <a href="' . $current_page . '?a=history">history</a> / ';
+				echo ' <a href="' . $current_page . '?a=options">options</a> ';
+			}
+			if ( $is_moderator && count($get_reports) > 0 ) {
+				echo '<a href="' . $current_page . '?a=reports">reports ( ' . count ( $get_reports ) . ' )</a> / ';
+			}
+			if ( $is_moderator && count($get_deleted) > 0 ) {
+				echo '<a href="' . $current_page . '?a=deleted">deleted ( ' . count ( $get_deleted ) . ' )</a> / ';
+			}		
+			if ( $this_area != 'newtopic' && $user_exists ) {
+				if ( $the_board && $posting == 1 && $user_exists && !$this_area || $thisboard ) {
+					if ( $thisboard ) {
+						echo ' / <a class="newtopic" href="' . $current_page . '?a=newtopic">new</a> / ';
+					} else {
+						echo ' / <a class="newtopic" href="' . $current_page . '?b=' . $the_board . '&amp;a=newtopic">new</a> ';
+					}
+					echo '<span class="hidden notopic">cancel</span>';
 				}
 			}
-			if ( $display_boards ) {
-				echo '</span>';
-			}
-		}
-		
+			echo ']</span>';
+		}		
+		echo '<p class="newtopic"></p>';
+
 		if ( $the_board && !$this_thread || $thisboard && !$this_thread) { 
 			if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_post_form.php' ) ) {
 				include ( ABSPATH . '/regular_board_child/regular_board_post_form.php' );

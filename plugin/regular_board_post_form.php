@@ -95,7 +95,7 @@ if ( $posting == 0 || $archived == 1 ) {
 					if ( $this_area != 'editpost' && $the_board && $archived == 0 ) {
 						if($correct == 0 && $this_area == 'newtopic' || $correct == 0 && $this_thread && count($getposts) > 0){
 							if ( $tlast != 1 ) {
-								echo '<div class="reply">';
+								echo '<div id="reply" class="reply">';
 								if ( $this_area == 'newtopic' ) {
 									echo '<h1>Submit new topic to ' . $thisboard . '</h1>';
 								}
@@ -163,7 +163,7 @@ if ( $posting == 0 || $archived == 1 ) {
 									</form>
 									</div>';
 								} else {
-									echo '<p>You were the last poster.  Edit your previous post or wait for a new post to comment further.</p>';
+									echo '<div id="reply"><p>You were the last poster.  Edit your previous post or wait for a new post to comment further.</p></div>';
 								}
 							}
 						}

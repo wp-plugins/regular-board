@@ -25,12 +25,22 @@
 			$('p.newtopic').load(newtopic_href + ' div.reply');
 			$('div.reply').hide();
 		});
+		$(document).on('click','.quickreply',function(e){
+			e.preventDefault();
+			var quick_action = $(this).attr('href');
+			var post_id = $(this).attr('data');
+			var child_id = $(this).attr('childid');
+			$('#replyto' + post_id + '').load(quick_action + ' div#reply');
+			$('#replyto' + post_id + '').toggleClass('hidden');
+		});
+		
 		$(document).on('click','.post_action a',function(e){
 			e.preventDefault();
 			var post_action = $(this).attr('href');
-			var post_id = $(this).attr('data');
-			$('#load' + post_id + '').load(post_action + ' div#post_action');
-		});		
+			var this_id = $(this).attr('data');
+			$('#load'+this_id+'').load(post_action + ' div#post_action');
+		});
+		
 		$(document).on('click','span.notopic',function(e){
 			e.preventDefault();
 			$(this).addClass('hidden');

@@ -22,7 +22,11 @@ if ( $is_moderator ) {
 }
 if ( count ( $checkPass ) > 0 ) {
 	foreach($checkPass as $EDITTHREAD){
-		$editComment = str_replace ( '\\', '', $EDITTHREAD->post_comment );
+		if ( $formatting ) {
+			$editComment = str_replace ( '\\', '', $EDITTHREAD->post_comment );
+		} else {
+			$editComment = $EDITTHREAD->post_comment;
+		}
 		$editSubject = str_replace ( '\\', '', $EDITTHREAD->post_title );
 		echo '<div class="reply">
 			<h1>Editing mode</h1>

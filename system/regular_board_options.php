@@ -388,6 +388,8 @@ if( current_user_can( 'manage_options' )) {
 							update_option ( 'regular_board_search', str_replace ( '\\', '', $_REQUEST['search'] ) );
 							update_option ( 'regular_board_postingoptions', str_replace ( '\\', '', $_REQUEST['postingoptions'] ) );
 							update_option ( 'regular_board_lazyload', str_replace ( '\\', '', $_REQUEST['lazyload'] ) );
+							update_option ( 'regular_board_autourl', str_replace ( '\\', '', $_REQUEST['autourl'] ) );
+							update_option ( 'regular_board_formatting', str_replace ( '\\', '', $_REQUEST['formatting'] ) );
 						}
 						
 						function regular_board_enableurl_option() {
@@ -405,14 +407,6 @@ if( current_user_can( 'manage_options' )) {
 						function regular_board_iddisplay_option() {
 							echo '<option value="0"'; if ( get_option ( 'regular_board_ids' ) == 0 ) { echo ' selected="selected"'; } echo '>No</option>';
 							echo '<option value="1"'; if ( get_option ( 'regular_board_ids' ) == 1 ) { echo ' selected="selected"'; } echo '>Yes</option>';
-						}
-						function regular_board_boarddisplay_option() {
-							echo '<option value="0"'; if ( get_option ( 'regular_board_displayboards' ) == 0 ) { echo ' selected="selected"'; } echo '>No</option>';
-							echo '<option value="1"'; if ( get_option ( 'regular_board_displayboards' ) == 1 ) { echo ' selected="selected"'; } echo '>Yes</option>';
-						}
-						function regular_board_menudisplay_option() {
-							echo '<option value="0"'; if ( get_option ( 'regular_board_displaymenu' ) == 0 ) { echo ' selected="selected"'; } echo '>No</option>';
-							echo '<option value="1"'; if ( get_option ( 'regular_board_displaymenu' ) == 1 ) { echo ' selected="selected"'; } echo '>Yes</option>';
 						}
 						function regular_board_search_option() {
 							echo '<option value="0"'; if ( get_option ( 'regular_board_search' ) == 0 ) { echo ' selected="selected"'; } echo '>No</option>';
@@ -433,7 +427,15 @@ if( current_user_can( 'manage_options' )) {
 						function regular_board_hideannouncements_option() {
 							echo '<option value="0"'; if ( get_option ( 'regular_board_hideannouncements' ) == 0 ) { echo ' selected="selected"'; } echo '>No</option>';
 							echo '<option value="1"'; if ( get_option ( 'regular_board_hideannouncements' ) == 1 ) { echo ' selected="selected"'; } echo '>Yes</option>';
-						}						
+						}
+						function regular_board_autourl_option() {
+							echo '<option value="0"'; if ( get_option ( 'regular_board_autourl' ) == 0 ) { echo ' selected="selected"'; } echo '>No</option>';
+							echo '<option value="1"'; if ( get_option ( 'regular_board_autourl' ) == 1 ) { echo ' selected="selected"'; } echo '>Yes</option>';
+						}
+						function regular_board_formatting_option() {
+							echo '<option value="0"'; if ( get_option ( 'regular_board_formatting' ) == 0 ) { echo ' selected="selected"'; } echo '>No</option>';
+							echo '<option value="1"'; if ( get_option ( 'regular_board_formatting' ) == 1 ) { echo ' selected="selected"'; } echo '>Yes</option>';
+						}
 						echo '
 						<div>
 							<p>
@@ -459,16 +461,16 @@ if( current_user_can( 'manage_options' )) {
 								<section><label>15:: Range for rolls:</label><input type="text" id="roll" name="roll" value="' . get_option ( 'regular_board_roll' ) . '" /></section>
 								<section><label>16:: Display wipe countdown for boards:</label><select name="wipedisplay" id="wipedisplay">'; regular_board_wipedisplay_option(); echo '</select></section>
 								<section><label>17:: Display IDs:</label><select name="ids" id="ids">'; regular_board_iddisplay_option(); echo '</select></section>
-								<section><label>18:: Display board navigation:</label><select name="displayboards" id="displayboards">'; regular_board_boarddisplay_option(); echo '</select></section>
-								<section><label>19:: Display main menu:</label><select name="displaymenu" id="displaymenu">'; regular_board_menudisplay_option(); echo '</select></section>
+								<section><label>18:: Auto-link images and urls in comments:</label><select name="autourl" id="autourl">'; regular_board_autourl_option(); echo '</select></section>
+								<section><label>19:: Use Regular Board formatting for comments:</label><select name="formatting" id="formatting">'; regular_board_formatting_option(); echo '</select></section>
 								<section><label>20:: Display search form:</label><select name="search" id="search">'; regular_board_search_option(); echo '</select></section>
 								<section><label>21:: URL to your <em>custom</em> stylesheet (<strong>optional</strong>):</label><input type="text" id="cssurl" name="cssurl" value="' . get_option ( 'regular_board_css_url' ) . '" /></section>
 								<section><label>22:: Enable posting options:</label><select name="postingoptions" id="postingoptions">'; regular_board_postingoptions_option(); echo '</select></section>
 								<section><label>23:: Maximum amount of links allowed:</label><input type="text" name="maxlinks" id="maxlinks" value="' . get_option ( 'regular_board_maxlinks' ) . '" /></section>
 								<section><label>24:: Enable no index, no follow:</label><select name="robots" id="robots">'; regular_board_robots_option(); echo '</select></section>
-								<section><label>25:: Enable Lazy Load:</label><select name="lazyload" id="lazyload">'; regular_board_hideannouncements_option(); echo '</select></section>
+								<section><label>25:: Enable Lazy Load:</label><select name="lazyload" id="lazyload">'; regular_board_lazyload_option(); echo '</select></section>
 								<section><label>26:: Category id for board announcements:</label><input type="text" id="announcements" name="announcements" value="' . get_option ( 'regular_board_announcements' ) . '" /></section>
-								<section><label>27:: Hide announcements from the front page of the blog:</label><select name="hideannouncements" id="hideannouncements">'; regular_board_lazyload_option(); echo '</select></section>
+								<section><label>27:: Hide announcements from the front page of the blog:</label><select name="hideannouncements" id="hideannouncements">'; regular_board_hideannouncements_option(); echo '</select></section>
 								<section><label>28:: ASCII for header (completely optional, and completely useless.)</label><textarea name="ascii" id="ascii">' . get_option ( 'regular_board_ascii' ) . '</textarea></section>
 								<section><input type="submit" name="save" value="Save options" /></section>
 							</form>
@@ -492,8 +494,7 @@ if( current_user_can( 'manage_options' )) {
 							<p><label for="roll">15:: Range for dice rolls (min,max)</label></p>
 							<p><label for="wipedisplay">16:: Display a countdown for a board\'s wipe status (if it exists), alerting users to the time of the next board wipe.</label></p>
 							<p><label for="iddisplay">17:: Display IDs next to the names of the people who post. IDs are a hashed combination of the board that the post belongs to and the ID of the user.  IDs are unique to the boards to which they belong.</label></p>
-							<p><label for="displayboards">18:: If you wish to create your own board navigation, you may disable the default board navigation.  ( Board URLs will be :: shortcode_page_url?b=board_shortname ).</label></p>
-							<p><label for="displaymenu">19:: If you wish to create your own menu navigation, you may disable the default menu navigation.  ( topic ( ?a=topics ) :: replies (?a=replies) :: all ( ?a=all ) :: stats ( ?a=stats ) :: history ( ?a=history ) :: options ( ?a=options ) :: reports ( ?a=reports ) :: deleted ( ?a=deleted ) :: new topic ( ?b=board_shortname&a=newtopic / ?a=newtopic (if there is only one board on installation) ) )</label></p>
+							<p><label for="autourl">18:: Automatically turn links and images in comment into links and an image gallery for the comment.</label></p>
 							<p><label for="search">20:: Enable or disable the search function.</label></p>
 							<p><label for="cssurl">21:: If you wish to use your own stylesheet (and not the default), enter the URL to it in this box.  (Blank for default)</label></p>
 							<p><label for="postingoptions">22:: Enable extra posting options on the post form, like posting anonymously or rolling.</label></p>

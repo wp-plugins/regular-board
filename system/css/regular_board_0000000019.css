@@ -20,6 +20,13 @@
   *
   * Typographical specifications
   */
+ .boardAll .profile_deets {
+	clear: both; 
+	display: block; 
+	padding: 5px;
+	text-align: center;
+	
+ }
  .boardAll .countdown {
 	display: block; 
 	padding: 5px;
@@ -96,6 +103,7 @@
  }
  .boardAll p{
 	height: auto!important;
+	margin: 0!important;
 	padding: 5px!important;
 	width: auto!important;
 	word-wrap: break-word!important;
@@ -469,7 +477,7 @@
 	margin: 10px auto;
 	padding: 0 5px;
 	position: relative;
-	width: 95%;
+	width: 100%;
  }
  .boardAll .thread:after,
  .boardAll:after {
@@ -499,32 +507,16 @@
  }
  .boardAll span.boards {
 	display: block; 
-	height: 35px; 
 	margin: -15px 0 0 -5px;
-	overflow: hidden; 
 	padding: 5px;
 	position: relative;
 	width: 100%; 
 	z-index: 2;
  }
- .boardAll span.boards a{
-	clear: none!important;
-	float: left!important;
-	margin: 5px;
- }
- .boardAll span.boards:hover {
-	height: auto;
-	width: 100%;
-	overflow: auto;
- }
  .boardAll span.navi {
 	margin: 0;
 	position: relative;
 	z-index: 3;
- }
- .boardAll span.boards a {
-	clear: both; 
-	display: block; 
  }
  .boardAll .userbar {
 	clear: both; 

@@ -3,7 +3,7 @@
  * Plugin Name: Regular Board
  * Plugin URI: https://github.com/onebillion/regular_board
  * Description: Standalone (continuation) project for Regular Board, an anonymous text-based WordPress powered bbs.
- * Version: 1.06
+ * Version: 1.07
  * Author: boyevul
  * License: GNU General Public License v2
  * License URI: //www.gnu.org/licenses/gpl-2.0.html
@@ -33,10 +33,28 @@
  *
  */
 
-$regular_board_version = '1.03-stable';
+$regular_board_version = '1.07-stable';
 
 register_activation_hook ( __FILE__, 'regular_board_installation_option' );
 function regular_board_installation_option() {
+	
+	global $wpdb;
+	$regular_board_posts  = $wpdb->prefix.'regular_board_posts';
+	$regular_board_boards = $wpdb->prefix.'regular_board_boards';
+	$regular_board_users  = $wpdb->prefix.'regular_board_users';
+	$regular_board_bans   = $wpdb->prefix.'regular_board_bans';
+	$regular_board_logs   = $wpdb->prefix.'regular_board_logs';	
+	// Upgrades - for when the plugin has already been installed and we need to 
+	// alter tables without forcing the user to completely uninstall everything.
+	$wpdb->query ( 
+		"ALTER TABLE $regular_board_users 
+		ADD user_avatar TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci AFTER user_follow"
+	);
+	$wpdb->query ( 
+		"ALTER TABLE $regular_board_users 
+		ADD user_slogan TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci AFTER user_avatar"
+	);	
+	
 	add_option ( 'regular_board_installation', 0 );
 }
 

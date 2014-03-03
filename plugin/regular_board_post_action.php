@@ -1,84 +1,114 @@
-<?php 
+<?php
 
 /**
- * Post Functions
+ * Post form action
  *
- * (1) Handle post and reply creation
+ * (1) Handle post and reply creation/editing
  *
  * @package regular_board
  */
  
-if ( !defined ( 'regular_board_plugin' ) ) {
-	die();
-}
-if ( isset ( $_POST['FORMSUBMIT'] ) && !$_REQUEST['_wp_http_referer'] ) {
+// die() if referer non-existent or calling file directly
+if ( !defined ( 'regular_board_plugin' ) || isset ( $_POST['FORMSUBMIT']) && !$_REQUEST['_wp_http_referer'] ) {
 	die();
 }
 
-$archived = 0;
+$archived       = 0;
+$edited         = 0;
+
+$_REQUEST['board']   = sanitize_text_field ( $_REQUEST['board'] );
+$_REQUEST['SUBJECT'] = sanitize_text_field ( $_REQUEST['SUBJECT'] );
+$_REQUEST['URL']     = sanitize_text_field ( $_REQUEST['URL'] );
+$_REQUEST['EMAIL']   = sanitize_text_field ( $_REQUEST['EMAIL'] );
+$_REQUEST['COMMENT'] = sanitize_text_field ( $_REQUEST['COMMENT'] );
+
+// Check if board exists before making a post 
 if ( $thisboard ) {
-	$the_board = $thisboard;
+	// board exists, set the board for post creation
+	$the_board  = $thisboard;
 } else {
-	$the_board = esc_sql ( $_REQUEST['board'] );
-	$checkboard = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $regular_board_boards WHERE board_shortname = %s", $the_board ) );
-	if ( count( $checkboard ) == 0 ) {
+	$the_board  = $_REQUEST['board'];
+	$checkboard = $wpdb->get_results ( "SELECT board_shortname FROM $regular_board_boards WHERE board_shortname = '$the_board' " );
+	if ( count ( $checkboard ) == 0 ) {
+		// board doesn't exist, don't post anything
 		$timegateactive = true;
 	}
 }
+
 if ( $_REQUEST['password'] ) {
-	$timegateactive = false;
+	// Most likely editing a post - we don't neeed flood protection.
+	$timegateactive     = false;
 }
+
+
+// Are we making a reply or a new thread?
 if ( $_REQUEST['PARENT'] ) {
-	$enteredPARENT = intval ( $_REQUEST['PARENT'] );
-	$checkPARENT = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_posts WHERE post_id = %d AND post_public != %d AND post_public = %d", $enteredPARENT, 2, 1 ) );
-	foreach ( $checkPARENT as $checked ) {
-		$checkTIME = strtotime ( $checked->post_date );
-		$currentTIME = strtotime ( $current_timestamp );
-		$finalTIME = $currentTIME - $checkTIME;
-		if ( $finalTIME > $archive_gate ) {
+	// If parent exists in the form, let's check and make sure it exists in the database
+	$post_parent        = $_REQUEST['PARENT'];
+	$check_parent       = $wpdb->get_results (
+							$wpdb->prepare ( 
+								"SELECT * FROM $regular_board_posts WHERE 
+								post_id = %d AND post_public != %d AND post_public = %d",
+								$post_parent,
+								2,
+								1
+							)
+						);
+	foreach ( $check_parent as $checked ) {
+		$check_time   = strtotime ( $checked->post_date );
+		$current_time = strtotime ( $current_timestamp );
+		$final_time   = $current_time - $check_time;
+		if ( $final_time > $archive_gate ) {
 			$archived = 1;
 		}
-		if( $checked->post_locked == 1 ) {
+		if ( $checked->post_locked ) {
 			$archived = 1;
 		}
 	}
 } elseif ( !$this_thread ) {
-	$enteredPARENT = 0;
+	$post_parent   = 0;
 }
-if ( count( $getuser ) == 0 ) {
-	if( $archived == 0 ) {
-		if( $timegateactive !== true ) {
-			if( $posting == 1 && !$this_thread || $currentCountNomber < $max_replies && $posting == 1 && $this_thread || $this_area == 'post' ) {
+
+if ( count ( $getuser ) == 0 ) {
+	if ( $archived == 0 ) {
+		echo $timegateactive;
+		if ( $timegateactive !== true ) {
+			if ( $this_area == 'post' ) {
 				$IS_IT_SPAM = 0;
+				
+				// Check for spam
 				if ( function_exists ( 'akismet_admin_init' ) ) {
 					$APIKey = get_option ( 'wordpress_api_key' );
-					if( $the_board && !$this_thread ){
+					if ( $the_board && !$this_thread ) {
 						$website_url = $current_page . '?b=' . $the_board;
 					}
-					if( $the_board && $this_thread ) {
+					if ( $the_board && $this_thread ) {
 						$website_url = $current_page . '?b=' . $the_board . '&amp;t=' . $this_thread;
 					}
-					$akismet = new Akismet( $website_url, $APIKey );
-					if( $akismet->isKeyValid() ) { }else{ echo 'Your API key is NOT valid!'; die(); }
-					if ( $_SERVER["REQUEST_METHOD"] == 'POST' ) {
-						$akismet = new Akismet( $website_url, $APIKey );
-						$akismet->setCommentAuthorEmail( esc_sql( $_REQUEST["EMAIL"] ) );
-						$akismet->setCommentAuthorURL( esc_sql( $_REQUEST["URL"] ) );
-						$akismet->setCommentContent( esc_sql( $_REQUEST["COMMENT"] ) );
-						$akismet->setPermalink( esc_url( $_SERVER["HTTP_REFERER"] ) );
+					$akismet = new Akismet ( $website_url, $APIKey );
+					if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
+						$akismet = new Akismet ( $website_url, $APIKey );
+						$akismet->setCommentAuthorEmail ( $_REQUEST['EMAIL'] );
+						$akismet->setCommentAuthorURL   ( $_REQUEST['URL'] );
+						$akismet->setCommentContent     ( $_REQUEST['COMMENT'] );
+						$akismet->setPermalink          ( $website_url );
 						if ( $akismet->isCommentSpam() ) {
-							$IS_IS_SPAM = 1;
+							$IS_IT_SPAM = 1;
 						}
 					}
 				}
-				$IS_IT_SPAM = $empty = 0;				
+			
+				$IS_IT_SPAM = 0;
+				$empty      = 0;
+				
 				if ( !$_REQUEST['COMMENT'] && !$URL ) {
-					$empty = 1;
-				}elseif( $_REQUEST['LINK'] || $_REQUEST['PAGE'] || $_REQUEST['LOGIN'] || $_REQUEST['USERNAME'] ) {
-					$wpdb->query(
-						$wpdb->prepare(
-							"INSERT INTO $regular_board_bans 
-							( 
+					$empty  = 1;
+				} elseif ( $_REQUEST['LINK'] || $_REQUEST['PAGE'] || $_REQUEST['LOGIN'] || $_REQUEST['USERNAME'] ) {
+					// Hidden fields have been filled.
+					$wpdb->query (
+						$wpdb->prepare (
+							"INSERT INTO $regular_board_bans
+							(
 								banned_id,
 								banned_date,
 								banned_ip,
@@ -86,7 +116,7 @@ if ( count( $getuser ) == 0 ) {
 								banned_message,
 								banned_length
 							) 
-							VALUES ( 
+							VALUES (
 								%d,
 								%s,
 								%s,
@@ -102,11 +132,12 @@ if ( count( $getuser ) == 0 ) {
 							0
 						)
 					);
-				}elseif ( $IS_IT_SPAM == 1 ) {
-					$wpdb->query(
-						$wpdb->prepare(
-							"INSERT INTO $regular_board_bans 
-							( 
+				} elseif ( $IS_IT_SPAM == 1 ) {
+					// Spam detected
+					$wpdb->query (
+						$wpdb->prepare (
+							"INSERT INTO $regular_board_bans
+							(
 								banned_id,
 								banned_date,
 								banned_ip,
@@ -114,7 +145,7 @@ if ( count( $getuser ) == 0 ) {
 								banned_message,
 								banned_length
 							) 
-							VALUES ( 
+							VALUES (
 								%d,
 								%s,
 								%s,
@@ -126,199 +157,270 @@ if ( count( $getuser ) == 0 ) {
 							$current_timestamp,
 							$user_ip,
 							1,
-							'AKISMET detected you as a spammer',
+							'You have been flagged as a spammer',
 							0
 						)
 					);
 				} else {
-					if ( $IS_IT_SPAM == 0 ) {
-						if ( !$this_thread && $enable_url == 1 || $this_thread  && $enable_rep == 1 ) {
-							
-							if ( !$URL ){
-								$cleanURL = sanitize_text_field($_REQUEST['URL']);
+					if ( !$IS_IT_SPAM ) {
+						
+						/**
+						 * Nothing suspicious detected so far,
+						 * proceed with creating the comment.
+						 */
+						
+						// If URLs are enabled, prepare the entered URL
+						if ( $_REQUEST['PARENT'] && $enable_rep || !$_REQUEST['PARENT'] && $enable_url ) {
+							if ( !$URL ) {
+								$clean_url = $_REQUEST['URL'];
 							} elseif ( $URL ) {
-								$cleanURL = $URL;
+								$clean_url = $URL;
 							}
-							
-							$ch = curl_init();
-							$opts = array ( 
+							$ch   = curl_init();
+							$opts = array (
 								CURLOPT_RETURNTRANSFER => true,
-								CURLOPT_URL => $cleanURL,
-								CURLOPT_NOBODY => true,
-								CURLOPT_TIMEOUT => 10
+								CURLOPT_URL            => $clean_url,
+								CURLOPT_NOBODY         => true,
+								CURLOPT_TIMEOUT        => 10
 							);
 							curl_setopt_array ( $ch, $opts );
 							curl_exec ( $ch );
 							$status = curl_getinfo ( $ch, CURLINFO_HTTP_CODE );
 							curl_close ( $ch );
-
-							if ( $cleanURL ) {
-								$path_info = pathinfo ( $cleanURL );
-								if ( preg_match ('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $cleanURL, $match ) ) {
-									$VIDEOID = $match[1];																
-									$TYPE = 'youtube';
-									$URL = sanitize_text_field ( $VIDEOID );
-								} elseif ( $status == '200' && getimagesize ( $cleanURL ) !== false ) {
+							if ( $clean_url ) {
+								$path_info = pathinfo ( $clean_url );
+								if ( preg_match ('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $clean_url, $match ) ) {
+									// Youtube
+									$video_id  = $match[1];
+									$post_type = 'youtube';
+									$post_url  = $video_id;
+								} elseif ( $status == '200' && getimagesize ( $clean_url ) !== false ) {
+									// image
 									if ( 
-										$path_info['extension'] == 'jpg' ||
-										$path_info['extension'] == 'gif' ||
-										$path_info['extension'] == 'jpeg' ||
+										$path_info['extension'] == 'jpg'  || 
+										$path_info['extension'] == 'gif'  || 
+										$path_info['extension'] == 'jpeg' || 
 										$path_info['extension'] == 'png'
-									){
-										$TYPE = 'image';
-										$URL = $cleanURL;
+									) {
+										$post_type = 'image';
+										$post_url  = $clean_url;
+									} else {
+										// link
+										$post_type = 'URL';
+										if ( false === strpos ( $clean_url, '://' ) ) {
+											$post_url = '//' . $clean_url;
+										} else {
+											$post_url = esc_url ( $clean_url );
+										}
 									}
 								} else {
-									$TYPE = 'URL';
-									if ( false === strpos ( $cleanURL, '://' ) ) {
-										$URL = '//' . $cleanURL;
-									} else {
-										$URL = esc_url ( $cleanURL );
-									}
+									// none of the above link types
+									$post_type = 'post';
+									$post_url  = '';
 								}
-							} else {
-								$TYPE = $URL = '';
 							}
 						}
-						if ( $_REQUEST ['COMMENT'] ) {
-							$enteredCOMMENT = $_REQUEST['COMMENT'];
-							$checkCOMMENT = $enteredCOMMENT = substr ( $enteredCOMMENT, 0, $max_body );
-							$checkCOMMENT = $enteredCOMMENT = sanitize_text_field ( $enteredCOMMENT ) ;
+						
+						// Comment
+						if ( $_REQUEST['COMMENT'] ) {
+							$post_comment = substr ( $_REQUEST['COMMENT'], 0, $max_body );
 						} else {
-							$enteredCOMMENT = '';
+							$post_comment = '';
 						}
-						$checkURL = $URL;
-						$enteredSUBJECT = sanitize_text_field ( $_REQUEST['SUBJECT'] );
-						$enteredSUBJECT = substr( $enteredSUBJECT, 0, $max_text );
-
+						
+						// Subject
+						if ( $_REQUEST['SUBJECT'] ) {
+							$post_subject = substr ( $_REQUEST['SUBJECT'], 0, $max_text );
+						} else {
+							$post_subject = '';
+						}
+						
+						// Password (if profile password is not present, a random password will be generated for this post
 						if ( $profilepassword ) {
-							$enteredPASSWORD = $profilepassword;
-						}
-						if ( !$profilepassword ) {
-							$enteredPASSWORD = wp_hash ( $random_password ) ;
-						}
-						
-						if ( !$_REQUEST['password'] ) {
-							if ( !$enteredCOMMENT && $URL ) {
-								$getDuplicate = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $regular_board_posts WHERE post_url = %s AND post_board = %s", $checkURL, $the_board ) );
-							}
-							if ( $enteredCOMMENT && !$URL ) {
-								$getDuplicate = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $regular_board_posts WHERE post_comment = %s AND post_board = %s", $checkCOMMENT, $the_board ) );
-							}
-							if ( $enteredCOMMENT && $URL ) {
-								$getDuplicate = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $regular_board_posts WHERE (post_comment = %s OR post_url = %s) AND post_board = %s", $checkCOMMENT, $checkURL, $the_board ) );
-							}
+							$post_password = $profilepassword;
+						} else {
+							$post_password = wp_hash ( $random_password );
 						}
 						
-						if ( count ( $getDuplicate ) == 0 || $_REQUEST['editthisthread'] ) {
+						// Previously, we WERE dismissing duplicates if editing
+						// but if we are editing, then it shouldn't be duplicate content, anyway
+						// and disabling duplicate check just allowed for abuse
+						if ( !$post_comment && $post_url ) {
+							$get_duplicate = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $regular_board_posts WHERE post_url = %s AND post_board = %s", $post_url, $the_board ) );
+						}
+						if ( $post_comment && !$post_url ) {
+							$get_duplicate = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $regular_board_posts WHERE post_comment = %s AND post_board = %s", $post_comment, $the_board ) );
+						}
+						if ( $post_comment && $post_url ) {
+							$get_duplicate = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $regular_board_posts WHERE (post_comment = %s OR post_url = %s) AND post_board = %s", $post_comment, $post_url, $the_board ) );
+						}
 						
+						if ( count ( $get_duplicate ) == 0 ) {
+							// If posting options are enabled
 							if ( $posting_options ) {
 								if ( $_REQUEST['EMAIL'] == 'roll' ) {
-									$roll = explode(',',$roll);
-									$enteredEMAIL = wp_rand($roll[0],$roll[1]); 
+									$roll       = explode ( ',', $roll );
+									$post_email = wp_rand ( $roll[0], $roll[1] );
 								} elseif ( $_REQUEST['EMAIL'] == strtolower ( 'heaven' ) ) {
-									$enteredEMAIL = 'heaven';
+									$post_email   = 'heaven';
 									$profile_name = 'null';
 								} elseif ( $_REQUEST['EMAIL'] == strtolower ( 'sage' ) ) {
-									$enteredEMAIL = 'sage';
+									$post_email   = 'sage';
 								} else {
-									$enteredEMAIL = '';
+									$post_email   = '';
 								}
-							} else {						
-								$enteredEMAIL = '';
+							} else {
+								$post_email       = '';
 							}
 							
 							if ( $profileheaven ) {
-								$enteredEMAIL = 'heaven';
+								$post_email   = 'heaven';
 								$profile_name = 'null';
 							}
 							
 							if ( $is_moderator ) {
-								$modCode = 1;
+								$mod_code = 1;
 							} elseif ( $is_user_mod ) {
-								$modCode = 2;
+								$mod_code = 2;
 							} elseif ( $is_user ) {
-								$modCode = 0;
+								$mod_code = 0;
+							} else {
+								$mod_code = 0;
 							}
 							
-							
-							$edited = 0;
-							
+							// Password was sent with form, we're editing something
 							if ( $_REQUEST['password'] ) {
-								$checkPassword = esc_sql( $_REQUEST['password'] );
-								$checkID = intval ( $_REQUEST['editthisthread'] );							
-								if ( !$is_moderator ) {
-									$checkPass = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_posts WHERE post_password = %s AND post_id = %d", $checkPassword, $checkID ) );
-									if ( count ( $checkPass ) > 0 ) {
-										foreach ( $checkPass as $Pass ) {
-											$last = $Pass->post_last;
-											$wpdb->update (
-												$regular_board_posts,
-												array( 
-													'post_title' => $enteredSUBJECT, 'post_comment' => $enteredCOMMENT, 'post_url' => $URL, 'post_type' => $TYPE
-												),
-												array( 
-													'post_id' => $checkID
-												),
-												array( 
-													'%s', '%s', '%s', '%s', '%d'
-												)
-											);
-											$edited = 1;
-											$LAST = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $regular_board_posts WHERE (post_id = %d OR post_parent = %d) AND post_public != %d AND post_public = %d ORDER BY post_id DESC", $checkID, $checkID, 2, 1 ) );
-											echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $current_page . '?b=' . $the_board . '"></p>';
-										}
-									} else {
-										$edited = 3;
-										echo 'Wrong password.';
+								$check_password = $_REQUEST['password'];
+								$check_id       = $_REQUEST['editthisthread'];
+								$check_pass     = $wpdb->get_results ( 
+													$wpdb->prepare (
+														"SELECT * FROM $regular_board_posts WHERE 
+														post_password = %s AND post_id = %d", 
+														$check_password, 
+														$check_id 
+													) 
+												  );
+								if ( count ( $check_pass ) > 0 ) {
+									foreach ( $check_pass as $pass ) {
+										$last = $pass->post_last;
+										$wpdb->update (
+											$regular_board_posts,
+											array ( 
+												'post_title'   => $post_title,
+												'post_comment' => $post_comment,
+												'post_url'     => $post_url,
+												'post_type'    => $post_type
+											),
+											array ( 
+												'post_id'      => $check_id
+											),
+											array ( 
+												'%s', 
+												'%s', 
+												'%s', 
+												'%s', 
+												'%d'
+											)
+										);
+										$edited        = 1;
+										$update_post   = $wpdb->get_row ( 
+															$wpdb->prepare ( 
+																"SELECT * FROM $regular_board_posts 
+																WHERE ( post_id = %d OR post_parent = %d ) AND post_public != %d AND post_public = %d 
+																ORDER BY post_id DESC", 
+																$check_id, 
+																$check_id, 
+																2, 
+																1 
+															) 
+														 );
+										echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $current_page . '?b=' . $the_board . '"></p>';
 									}
+								} else {
+									$edited = 3;
 								}
-								if ( $is_moderator ) {
-									$checkPass = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_posts WHERE post_password = %s AND post_id = %d", $checkPassword, $checkID ) );
-									if (count ( $checkPass ) > 0 ) {
-										foreach ( $checkPass as $Pass ) {
-											$last = $Pass->post_last;
-											$wpdb->update ( 
-												$regular_board_posts,
-												array( 
-													'post_title' => $enteredSUBJECT, 'post_comment' => $enteredCOMMENT, 'post_url' => $URL, 'post_type' => $TYPE 
-												),
-												array( 
-													'post_id' => $checkID
-												),
-												array( 
-													'%s', '%s', '%s', '%s', '%s', '%d'
-												)
-											);
-											$edited = 1;
-											$LAST = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $regular_board_posts WHERE (post_id = %d OR post_parent = %d) AND post_public != %d AND post_public = %d ORDER BY post_id DESC", $checkID, $checkID, 2, 1 ) );
-											echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $current_page . '?b=' . $the_board . '"></p>';
-										}
-									} else {
-										$edited = 3;
-										echo 'Wrong password.';
-									}
-								}												
 							} elseif ( $timegateactive !== true ) {
-								$wpdb->query(
-									$wpdb->prepare(
+								$wpdb->query (
+									$wpdb->prepare (
 										"INSERT INTO $regular_board_posts 
 										(
-											post_id, post_parent, post_name, post_date, post_email, post_title, post_comment, post_type, post_url, post_board, post_moderator, post_last, post_sticky, post_locked, post_password, post_userid, post_public, post_report, post_reportcount
+											post_id, 
+											post_parent, 
+											post_name, 
+											post_date, 
+											post_email, 
+											post_title, 
+											post_comment, 
+											post_type, 
+											post_url, 
+											post_board, 
+											post_moderator, 
+											post_last, 
+											post_sticky, 
+											post_locked, 
+											post_password, 
+											post_userid, 
+											post_public, 
+											post_report, 
+											post_reportcount
 										)
 										VALUES ( 
-											%d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s, %d, %d, %s, %d, %d, %s, %d
+											%d, 
+											%d, 
+											%s, 
+											%s, 
+											%s, 
+											%s, 
+											%s, 
+											%s, 
+											%s, 
+											%s, 
+											%d, 
+											%s, 
+											%d, 
+											%d, 
+											%s, 
+											%d, 
+											%d, 
+											%s, 
+											%d
 										)",
-										'', $enteredPARENT, $profile_name, $current_timestamp, $enteredEMAIL, $enteredSUBJECT, $enteredCOMMENT, $TYPE, $URL, $the_board, $modCode, $current_timestamp, 0, 0, $enteredPASSWORD, $profileid, 1, '', 0
+										'', 
+										$post_parent, 
+										$profile_name, 
+										$current_timestamp, 
+										$post_email, 
+										$post_subject, 
+										$post_comment, 
+										$post_type, 
+										$post_url, 
+										$the_board, 
+										$modCode, 
+										$current_timestamp, 
+										0, 
+										0, 
+										$post_password, 
+										$profileid, 
+										1, 
+										'', 
+										0
 									)
 								);
-								$wpdb->query ( "UPDATE $regular_board_boards SET board_postcount = board_postcount + 1 WHERE board_shortname = '$the_board'" );
-								$checkUserExists = $wpdb->get_row ( $wpdb->prepare ( "SELECT user_id FROM $regular_board_users WHERE user_id = %d", $profileid ) );
+								$wpdb->query ( 
+									"UPDATE $regular_board_boards SET 
+									board_postcount = board_postcount + 1 
+									WHERE board_shortname = '$the_board'" 
+								);
 								echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $current_page . '?b=' . $the_board . '"></p>';
 							}
-							if ( $enteredPARENT && $LOCKED != 1 && strtolower ( $enteredEMAIL ) != 'sage' ) {
-								$wpdb->query ( "UPDATE $regular_board_posts SET post_last = '$current_timestamp' WHERE post_id = $enteredPARENT" );
+							
+							if ( $entered_parent && !$LOCKED && strtolower ( $enteredEMAIL ) != 'sage' ) {
+								$wpdb->query ( "UPDATE $regular_board_posts 
+									SET post_last = $current_timestamp 
+									WHERE post_id = $entered_parent" 
+								);
 							}
+							// Delete posts that somehow got through with no data
 							$wpdb->delete ( 
 								$regular_board_posts, 
 								array(
@@ -328,11 +430,18 @@ if ( count( $getuser ) == 0 ) {
 									'%s'
 								)
 							);
-						}else{
-							if ( count ( $getDuplicate ) > 0 ) {
-								$automute = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $regular_board_bans WHERE banned_ip = %d AND banned_message = %s", $user_ip, 'unoriginal' ) );
-								if ( count ( $automute ) == 0 ) {
-									$mutecount = 5;
+						} else {
+							if ( count ( $get_duplicate ) > 0 ) {
+								$auto_mute = $wpdb->get_row ( 
+												$wpdb->prepare ( 
+													"SELECT * FROM $regular_board_bans WHERE 
+													banned_ip = %d AND banned_message = %s", 
+													$user_ip, 
+													'unoriginal' 
+												) 
+											 );
+								if ( count ( $auto_mute ) == 0 ) {
+									$mute_count = 5;
 									$wpdb->query (
 										$wpdb->prepare (
 											"INSERT INTO $regular_board_bans 
@@ -346,13 +455,13 @@ if ( count( $getuser ) == 0 ) {
 										)
 									);
 								}
-								if ( count ( $automute ) == 1 ) {
-										foreach ( $automute as $mute ) {
+								if ( count ( $auto_mute ) == 1 ) {
+										foreach ( $auto_mute as $mute ) {
 											if ( $mute[banned_banned] == 5 ) { $banned_count = 4; }
 											if ( $mute[banned_banned] == 4 ) { $banned_count = 3; }
 											if ( $mute[banned_banned] == 3 ) { $banned_count = 2; }
 											if ( $mute[banned_banned] == 2 ) { $banned_count = 1; }
-											$mutecount = $banned_count - 1;
+											$mute_count = $banned_count - 1;
 											$wpdb->update (
 												$regular_board_bans,
 												array( 
@@ -367,8 +476,7 @@ if ( count( $getuser ) == 0 ) {
 											);
 										}
 								}
-								
-								echo '<p>' . $mutecount . ' more attempts at submitting unoriginal content before you are auto-muted for 10 minutes.</p>';
+								echo '<p>' . $mute_count . ' more attempts at submitting unoriginal content before you are auto-muted for 10 minutes.</p>';
 							}
 						}
 					}
@@ -381,6 +489,6 @@ if ( count( $getuser ) == 0 ) {
 			}
 		}
 	}
-} elseif ( isset ( $_POST['FORMSUBMIT'] ) && $timegateactive ) { 
+} elseif ( isset ( $_POST['FORMSUBMIT'] ) && $timegateactive === true ) { 
 	echo 'You can\'t do that yet.'; 
 }

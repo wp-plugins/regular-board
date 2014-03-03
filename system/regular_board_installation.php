@@ -14,14 +14,14 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
 
 function regular_board_installation(){
+	add_option ( 'regular_board_formatting', 1);
+	add_option ( 'regular_board_autourl', 1 );
 	add_option ( 'regular_board_ascii' );
 	add_option ( 'regular_board_announcements' );
 	add_option ( 'regular_board_hideannouncements' );
 	add_option ( 'regular_board_postingoptions', 1 );
 	add_option ( 'regular_board_css_url' );
 	add_option ( 'regular_board_search', 1 );
-	add_option ( 'regular_board_displayboards', 1 );
-	add_option ( 'regular_board_displaymenu', 1 );
 	add_option ( 'regular_board_ids', 1 );
 	add_option ( 'regular_board_focus', 'nothing' );
 	add_option ( 'regular_board_enableurl', 1 );
@@ -44,6 +44,11 @@ function regular_board_installation(){
 	add_option ( 'regular_board_robots', 0 );
 	add_option ( 'regular_board_lazyload', 0 );
 
+	// Old options that need to vanish.
+	delete_option ( 'regular_board_displayboards');
+	delete_option ( 'regular_board_displaymenu');
+	
+	
 	global $wpdb;
 	$regular_board_posts  = $wpdb->prefix.'regular_board_posts';
 	$regular_board_boards = $wpdb->prefix.'regular_board_boards';
@@ -97,6 +102,8 @@ function regular_board_installation(){
 	user_heaven TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
 	user_boards TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
 	user_follow TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
+	user_avatar TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
+	user_slogan TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
 	PRIMARY KEY  (user_id)
 	);";
 	$bans = "CREATE TABLE $regular_board_bans(

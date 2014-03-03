@@ -21,6 +21,8 @@ function regular_board_uninstallation() {
 	$regular_board_users  = $wpdb->prefix . 'regular_board_users';
 	$regular_board_bans   = $wpdb->prefix . 'regular_board_bans';
 	$regular_board_logs   = $wpdb->prefix . 'regular_board_logs';
+	delete_option ( 'regular_board_autourl' );
+	delete_option ( 'regular_board_formatting' );
 	delete_option ( 'regular_board_ascii' );
 	delete_option ( 'regular_board_announcements' );
 	delete_option ( 'regular_board_hideannouncements' );
