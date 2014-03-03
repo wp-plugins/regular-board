@@ -314,10 +314,16 @@ function regular_board_shortcode ( $content = null ) {
 			$where_by = "WHERE post_board = '$the_board' AND post_id = $this_thread AND post_parent = 0";
 			$countParentReplies = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_posts WHERE post_board = %s AND post_parent = %d", $the_board, $this_thread ) );
 		}
-		if( $this_area == 'history' || $this_user ) {
+		if ( $this_area == 'history' ) {
 			$use_this++;
-			$usprofile = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_users WHERE ( user_id = %d OR user_name = %s ) LIMIT 1", $profileid, $this_user ) );
-			$where_by = "WHERE ( post_userid = $profileid OR post_name = '$this_user' )";
+			$usprofile = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_users WHERE user_id = %d LIMIT 1", $profileid, $this_user ) );
+			$where_by = "WHERE post_userid = $profileid";
+			$order_by = "post_date DESC";		
+		}
+		if ( $this_user ) {
+			$use_this++;
+			$usprofile = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_users WHERE user_name = %s LIMIT 1", $profileid, $this_user ) );
+			$where_by = "WHERE post_name = '$this_user'";
 			$order_by = "post_date DESC";
 		}
 		if ( $use_this > 0 ) {
@@ -725,7 +731,7 @@ function regular_board_shortcode ( $content = null ) {
 				}
 				include ( plugin_dir_path(__FILE__) . '/regular_board_post_action.php' );
 			}
-			echo '</div></div>';
+			echo '</div>';
 		} elseif ( $this_area == 'gallery' || $this_area == 'all' || $this_area == 'replies' || $this_area == 'topics' || !$this_area ) {
 			foreach ( $getposts as $posts ) {
 				if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {

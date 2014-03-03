@@ -45,7 +45,7 @@ function regular_board_style(){
 		if ( get_option ( 'regular_board_css_url' ) ) {
 			$css_file   = get_option ( 'regular_board_css_url' );
 		} else { 
-			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_0000000013.css';
+			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_0000000015.css';
 		}
 		$regbostyle     = $css_file . '?' . $regular_board_version;
 		// Selectively load lazyload!

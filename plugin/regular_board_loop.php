@@ -59,7 +59,10 @@ if ( count ( $posts ) > 0 ) {
 			}
 			
 			// Strip www from all instances of post_url.
-			$posts->post_url = str_replace( array('//www.', 'https://www.' ), array( '//', 'https://' ), $posts->post_url );
+			$posts->post_url   = str_replace ( array ('//www.', 'https://www.' ), array( '//', 'https://' ), $posts->post_url );
+			
+			// Strip \s from titles
+			$posts->post_title = str_replace ( '\\', '', $posts->post_title );
 			
 			/**
 			 * If creating a child template, begin editing below this
@@ -189,7 +192,7 @@ if ( count ( $posts ) > 0 ) {
 					
 					// Meta information (poster name, post date, mod code, id, etc.)
 					echo ' submitted ' . regular_board_timesince( $posts->post_date ) . ' by ';
-					if ( !$posts->post_name ) {
+					if ( !$posts->post_name || $posts->post_name == 'null' ) {
 						echo 'anonymous'; 
 					}					
 					if ( $posts->post_name ) { 
@@ -219,13 +222,13 @@ if ( count ( $posts ) > 0 ) {
 					
 					// Post actions ( edit, delete, spam, lock, sticky, ban, move, report )
 					if ( $user_exists ) {
-						if ( $profilepassword == $posts->post_password || $is_moderator || $is_user_mod || $is_user_janitor ) { 
+						if ( $profile_name == $posts->post_name && $profilepassword == $posts->post_password || $is_moderator || $is_user_mod || $is_user_janitor ) { 
 							echo ' <a href="' . $current_page . '?a=editpost&amp;t=' . $posts->post_id . '">edit</a> '; 
 						}
 					}
 					echo '<span class="post_action"> &mdash; ';
 					if ( $user_exists ) {
-						if ( $profilepassword == $posts->post_password || $is_moderator || $is_user_mod || $is_user_janitor ) { 
+						if ( $profile_name == $posts->post_name && $profilepassword == $posts->post_password || $is_moderator || $is_user_mod || $is_user_janitor ) { 
 							if ( $posts->post_public == 3 ) {
 								echo '<a data="' . $posts->post_id . '" href="' . $current_page . '?a=undelete&amp;t=' . $posts->post_id . '">undelete</a>
 								<a data="' . $posts->post_id . '" href="' . $current_page . '?a=destroy&amp;t=' . $posts->post_id . '">permanently delete</a>';
@@ -301,7 +304,13 @@ if ( count ( $posts ) > 0 ) {
 					echo '<div class="media' . $posts->post_id . '"><a class="rb_yt" data="'.$posts->post_url.'" href="//youtube.com/watch?v=' . $posts->post_url . '"><i class="fa fa-play"></i><img class="regular_board_video_thumbnail_large" src="//img.youtube.com/vi/' . $posts->post_url . '/0.jpg"></a><div id="' . $posts->post_url . '"></div></div>'; 
 				} elseif ( $posts->post_type == 'image' && $posts->post_url ) { 
 					// ( 04 ) Image embedding
-					echo '<div class="media' . $posts->post_id . '"><a href="' . $posts->post_url . '"><img class="imageOP" alt="image" src="' . $posts->post_url . '"/></a></div>';
+					echo '<div class="media' . $posts->post_id . '"><a href="' . $posts->post_url . '"><img class="';
+						if ( $posts->post_comment ) {
+							echo 'imageOP'; 
+						} else {
+							echo 'imageFULL';
+						}
+					echo '" alt="image" src="' . $posts->post_url . '"/></a></div>';
 					
 				}
 

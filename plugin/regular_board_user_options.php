@@ -18,24 +18,29 @@ if ( isset ( $_POST['options'] ) ) {
 	if ( $_REQUEST['password']    ) { $password    = sanitize_text_field ( wp_hash ( $_REQUEST['password'] ) ); }
 	if ( $_REQUEST['newpassword'] ) { $newpassword = sanitize_text_field ( wp_hash ( $_REQUEST['newpassword'] ) ); }
 	if ( $_REQUEST['oldpassword'] ) { $oldpassword = sanitize_text_field ( wp_hash ( $_REQUEST['oldpassword'] ) ); }
-	if ( $_REQUEST['email'] )       { $email       = sanitize_text_field ( wp_hash ( $_REQUEST['email'] ) ); }
+	
+	if ( $_REQUEST['email'] )       { 
+		$email = sanitize_text_field ( wp_hash ( $_REQUEST['email'] ) ); 
+		$wpdb->query ( "UPDATE $regular_board_users SET user_email = '$email' WHERE user_id = $profileid" );
+	}
+	
 	$name                                          = sanitize_text_field ( $_REQUEST['USERNAME'] );
 	$heaven                                        = intval  ( $_REQUEST['heaven'] );
 	$boards                                        = sanitize_text_field( $_REQUEST['boards'] );
 	$follow                                        = sanitize_text_field( $_REQUEST['follow'] );
+	
 	if ( $name ) {
 		$checkname = $wpdb->get_results ( $wpdb->prepare ( "SELECT NAME FROM $regular_board_users WHERE user_name = %s AND user_id != %d", $name, $profileid ) );
 		if ( count ( $checkname ) == 0 ) {
 			$wpdb->query ( "UPDATE $regular_board_users SET user_name = '$name' WHERE user_id = $profileid" );
-			$wpdb->query ( "UPDATE $regular_board_posts SET post_name = '$name' WHERE post_userid = $profileid" );
+			$wpdb->query ( "UPDATE $regular_board_posts SET post_name = '$name' WHERE post_userid = $profileid AND post_name != 'null' " );
 		} else {
 			echo '<p><i class="fa fa-warning"></i> <strong>' . $name . '</strong> is already taken.  Please use a different one.</p>';
 		}
 	}
 	
-	$wpdb->query ( "UPDATE $regular_board_users SET user_email = '$email' WHERE user_id = $profileid" );
-	
 	$wpdb->query ( "UPDATE $regular_board_users SET user_heaven = $heaven WHERE user_id = $profileid" );
+	
 	if ( !$profilepassword && $password ) {
 		$wpdb->query( "UPDATE $regular_board_users SET user_password = '$password' WHERE user_id = $profileid" );
 		$wpdb->query( "UPDATE $regular_board_posts SET post_password = '$password' WHERE post_userid = $profileid" );

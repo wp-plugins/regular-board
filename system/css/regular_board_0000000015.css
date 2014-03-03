@@ -158,7 +158,17 @@
 	clear: both;
 	display: block;
 	margin: 5px auto;
+	width: 100%;
  }
+ .boardAll .imageFULL{
+	clear: both;
+	height: auto;
+	margin: 5px 5px 5px -1px;
+	position: relative;
+	padding: 5px;
+	display: table;
+	width: 100%;
+ } 
  .boardAll .imageOP{
 	height: auto;
 	max-width: 250px;

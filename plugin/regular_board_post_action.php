@@ -218,8 +218,7 @@ if ( count( $getuser ) == 0 ) {
 									$enteredEMAIL = wp_rand($roll[0],$roll[1]); 
 								} elseif ( $_REQUEST['EMAIL'] == strtolower ( 'heaven' ) ) {
 									$enteredEMAIL = 'heaven';
-									$profileid = '';
-									$profile_name = '';
+									$profile_name = 'null';
 								} elseif ( $_REQUEST['EMAIL'] == strtolower ( 'sage' ) ) {
 									$enteredEMAIL = 'sage';
 								} else {
@@ -230,16 +229,18 @@ if ( count( $getuser ) == 0 ) {
 							}
 							
 							if ( $profileheaven ) {
-									$modCode = 0;
-							} else {
-								if ( $is_moderator ) {
-									$modCode = 1;
-								} elseif ( $is_user_mod ) {
-									$modCode = 2;
-								} elseif ( $is_user ) {
-									$modCode = 0;
-								}
+								$enteredEMAIL = 'heaven';
+								$profile_name = 'null';
 							}
+							
+							if ( $is_moderator ) {
+								$modCode = 1;
+							} elseif ( $is_user_mod ) {
+								$modCode = 2;
+							} elseif ( $is_user ) {
+								$modCode = 0;
+							}
+							
 							
 							$edited = 0;
 							
