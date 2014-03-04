@@ -40,12 +40,12 @@ function regular_board_style(){
 	global $wp, $post, $regular_board_version;
 	$content = $post->post_content;
 	if( has_shortcode ( $content, 'regular_board' ) ) {
-		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board0000000018.js?' . $regular_board_version;
+		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board0000000022.js?' . $regular_board_version;
 		$masonry        = plugins_url() . '/regular-board/system/js/masonry.pkgd.min.js?' . $regular_board_version;
 		if ( get_option ( 'regular_board_css_url' ) ) {
 			$css_file   = get_option ( 'regular_board_css_url' );
 		} else { 
-			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_0000000019.css';
+			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_0000000022.css';
 		}
 		$regbostyle     = $css_file . '?' . $regular_board_version;
 		// Selectively load lazyload!
@@ -56,9 +56,15 @@ function regular_board_style(){
 			wp_register_script   ( 'regular_board-lazyload', protocol_relative_url_dangit ( $lazy_load ), array( 'jquery' ), '', null, false);
 			wp_enqueue_script    ( 'regular_board-lazyload');
 		}
-		wp_deregister_script ( 'regular_board-lazy_load_functions');
-		wp_register_script   ( 'regular_board-lazy_load_functions', protocol_relative_url_dangit ( $lazy_load_functions ), array( 'jquery' ), '', null, false);
-		wp_enqueue_script    ( 'regular_board-lazy_load_functions');
+		
+		$time_circles        = plugins_url() . '/regular-board/system/js/time_circles.js';
+		wp_deregister_script ( 'regular_board-time-circles' );
+		wp_register_script   ( 'regular_board-time-circles', protocol_relative_url_dangit ( $time_circles ), array( 'jquery' ), '', null, false );
+		wp_enqueue_script    ( 'regular_board-time-circles' );
+		
+		wp_deregister_script ( 'regular_board-lazy_load_functions' );
+		wp_register_script   ( 'regular_board-lazy_load_functions', protocol_relative_url_dangit ( $lazy_load_functions ), array( 'jquery' ), '', null, false );
+		wp_enqueue_script    ( 'regular_board-lazy_load_functions' );
 		wp_register_style    ( 'font-awesome', plugins_url() . '/regular-board/system/css/fontawesome/css/font-awesome.min.css' );
 		wp_enqueue_style     ( 'font-awesome' );
 		wp_register_style    ( 'regular_board', protocol_relative_url_dangit ( $regbostyle ) );

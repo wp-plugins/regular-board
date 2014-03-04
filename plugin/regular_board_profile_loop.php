@@ -20,7 +20,6 @@ if ( $this_user ) {
 }
 if ( count ( $usprofile ) > 0 ) {
 	foreach ( $usprofile as $theprofile ) {
-		if(count( $getposts ) > 0 ) {
 			echo '<div class="profile_deets">';
 			if ( $theprofile->user_avatar ) {
 				if ( $theprofile->user_avatar != 'NULL' ) {
@@ -41,6 +40,7 @@ if ( count ( $usprofile ) > 0 ) {
 			<i class="fa fa-clock-o"></i> first seen ' . regular_board_timesince ( $theprofile->user_date ) . ' </p>
 			<h3>Post history</h3>';
 			echo '</div>';
+		if(count( $getposts ) > 0 ) {
 			foreach ( $getposts as $posts ) {
 				if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
 					include ( ABSPATH . '/regular_board_child/regular_board_loop.php' );

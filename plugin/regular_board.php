@@ -241,14 +241,14 @@ function regular_board_shortcode ( $content = null ) {
 					$next_clean = date($boarddate, time() + $nextwipe);
 
 					if ( strpos( $next_wipe, '-' ) !== true && $display_wipe && $display_wipe == 1 ) { 
-						$wipe_countdown = '<i class="fa fa-clock-o"> ' . $next_clean . ' ( ' . $next_wipe . ' seconds ) </i>';
+						$wipe_countdown = '<span class="wipe" data-timer="' . $next_wipe . '"></span>';
 					}
 				}
 				if( $board_description ) {
-					$boardheader      = '<p class="boardheader"><a href="' . $current_page . '?b=' . $board_short . '">' . $board_name . '</a> &mdash; [ ' . $board_short . ' ] &mdash; ' . $board_description . ' &mdash; ' . $wipe_countdown . '</p>';
+					$boardheader      = '<p class="boardheader"><a href="' . $current_page . '?b=' . $board_short . '">' . $board_name . '</a> ( ' . $board_short . ' ) <br /> ' . $board_description . $wipe_countdown . '</p>';
 				}
 				if( !$board_description ) {
-					$boardheader      = '<p class="boardheader"><a href="' . $current_page . '?b=' . $board_short . '">' . $board_name . '</a> &mdash; [ ' . $board_short . ' ] &mdash; ' . $wipe_countdown;
+					$boardheader      = '<p class="boardheader"><a href="' . $current_page . '?b=' . $board_short . '">' . $board_name . '</a> ( ' . $board_short . ' ) ' . $wipe_countdown;
 				}
 				echo '<script type="text/javascript">document.title = \'' . $board_name . ' / ' . $board_short . '\';</script>';
 			}
@@ -526,7 +526,13 @@ function regular_board_shortcode ( $content = null ) {
 			echo '<a href="' . $current_page . '?a=stats">stats</a> / ';
 			if ( $user_exists ) {
 				echo ' <a href="' . $current_page . '?a=history">history</a> / ';
-				echo ' <a href="' . $current_page . '?a=options">options</a> ';
+				echo ' posting as <a href="' . $current_page . '?a=options">';
+					if ( $profile_name ) {
+						echo $profile_name;
+					} else {
+						echo 'anonymous'; 
+					}
+				echo '</a> ';
 			}
 			if ( $is_moderator && count($get_reports) > 0 ) {
 				echo '<a href="' . $current_page . '?a=reports">reports ( ' . count ( $get_reports ) . ' )</a> / ';

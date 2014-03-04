@@ -1,4 +1,12 @@
 	jQuery(document).ready(function($){
+		
+    $(".wipe").TimeCircles({ time: {
+        Days: { color: "#C0C8CF" },
+        Hours: { color: "#C0C8CF" },
+        Minutes: { color: "#C0C8CF" },
+        Seconds: { color: "#C0C8CF" }
+    }});
+		
 		var hash = window.location.hash.substr(1);
 		if(hash != false && hash != 'undefined'){
 			$('#thread'+hash+'').addClass('current');
