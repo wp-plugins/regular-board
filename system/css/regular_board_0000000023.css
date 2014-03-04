@@ -14,6 +14,7 @@
   * Form Elements
   * Tables
   * Containers
+  * Responsive
   */
  /**
   * Time Circles
@@ -527,7 +528,6 @@
 	display: block;
 	line-height: 15px;
 	margin: 10px auto;
-	min-width: 310px;
 	padding: 0 5px;
 	position: relative;
 	width: 100%;
@@ -575,10 +575,13 @@
 	width: 100%; 
 	z-index: 2;
  }
- .boardAll span.navi {
+ .boardAll .navi {
 	margin: 0;
 	position: relative;
 	z-index: 3;
+ }
+ .boardAll .navi a {
+	padding: 5px;
  }
  .boardAll .userbar {
 	clear: both; 
@@ -635,6 +638,24 @@
 	color: rgba(0,0,0,.8);
 	margin: 5px 0;
  }
- .boardAll .thread:hover{
-	
- }
+ /**
+  *
+  * Responsive
+  *
+  */
+@media only screen and (max-width: 588px) {
+	.boardAll .navi span {
+		background-color: rgba(0,0,0,.1);
+		display: block; 
+		margin: 5px;
+		padding: 5px;
+		text-align: center;
+	}
+	.boardAll i,
+	.boardAll .wipe { 
+		display: none;
+		height: 0;
+		visibility: hidden;
+		width: 0;
+	}
+}  

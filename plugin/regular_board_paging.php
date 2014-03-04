@@ -13,7 +13,11 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
  
 $i       = 0;
-$results = intval ( $_GET['n'] );
+if ( isset ( $_GET['n'] ) ) {
+	$results = intval ( $_GET['n'] );
+} else {
+	$results = 1;
+}
 $paging  = round ( $totalpages / $posts_per_page );
  
 $location = '';

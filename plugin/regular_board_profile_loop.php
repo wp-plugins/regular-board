@@ -12,7 +12,7 @@
 if ( !defined ( 'regular_board_plugin' ) ) {
 	die();
 }
-if ( $area == 'history' ) {
+if ( $this_area == 'history' ) {
 	$usprofile = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_users WHERE user_id = %d LIMIT 1", $profileid ) );
 }
 if ( $this_user ) {
@@ -48,6 +48,8 @@ if ( count ( $usprofile ) > 0 ) {
 					include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
 				}
 			}
+		} else {
+			echo '<center><em>nothing to see here.</em></center><br /><br />';
 		}
 	}
 }

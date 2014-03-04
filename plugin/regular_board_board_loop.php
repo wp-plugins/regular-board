@@ -50,16 +50,19 @@ foreach ( $getposts as $posts ) {
 
 	
 	// Thread replies 	
-	if ( count ( $gotReplies ) > 0 && $this_thread ) {
-		foreach ( $gotReplies as $posts ) {
-			if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
-				include ( ABSPATH . '/regular_board_child/regular_board_loop.php' );
-			} else {
-				include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
+	if ( $gotReplies ) {
+		if ( count ( $gotReplies ) > 0 && $this_thread ) {
+			foreach ( $gotReplies as $posts ) {
+				if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
+					include ( ABSPATH . '/regular_board_child/regular_board_loop.php' );
+				} else {
+					include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
+				}
 			}
+			echo '</div>';
 		}
-		echo '</div>';
 	}
+	
 	if ( $this_thread ) {
 		if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_post_form.php' ) ) {
 			include ( ABSPATH . '/regular_board_child/regular_board_post_form.php' );

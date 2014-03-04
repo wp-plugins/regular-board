@@ -79,12 +79,12 @@ if ( $posting == 0 || $archived == 1 ) {
 		} elseif ( $posting == 1 && $IPPASS ) {	
 			if($this_thread && $currentCountNomber >= $max_replies){
 			}else{
-				$LOCKED = 0;
+				$LOCKED    = 0;
 				if ( $this_thread ) { 
-					$checkLOCK = $wpdb->get_results ( $wpdb->prepare ( "SELECT ID FROM $regular_board_posts WHERE post_locked = %d AND post_id = %d AND post_public = %d LIMIT 1", 1, $this_thread, 1 ) );
-				}
-				if ( count ( $checkLOCK ) == 1 ) { 
-					$LOCKED = 1;
+					$checkLOCK = $wpdb->get_results ( $wpdb->prepare ( "SELECT post_id FROM $regular_board_posts WHERE post_locked = %d AND post_id = %d AND post_public = %d LIMIT 1", 1, $this_thread, 1 ) );
+					if ( count ( $checkLOCK ) == 1 ) { 
+						$LOCKED = 1;
+					}
 				}
 				if ( $LOCKED == 1 ) { 
 					echo '<p>Thread locked.</p>';

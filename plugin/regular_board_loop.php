@@ -112,6 +112,8 @@ if ( count ( $posts ) > 0 ) {
 						echo 'fa-youtube';
 					} elseif ( $posts->post_url && $posts->post_type == 'image' ) { 
 						echo 'fa-camera';
+					} elseif ( $posts->post_url && $posts->post_type == 'URL' ) {
+						echo 'fa-link';
 					} else {
 						echo 'fa-comment';
 					}
@@ -151,10 +153,10 @@ if ( count ( $posts ) > 0 ) {
 					
 					// Lock / sticky status.
 					if ( $posts->post_locked ) { 
-						echo ' <small>locked</small> '; 
+						echo ' <small><i class="fa fa-lock"> locked</i></small> '; 
 					}
 					if ( $posts->post_sticky ) { 
-						echo ' <small>sticky</small> '; 
+						echo ' <small><i class="fa fa-thumb-tack"> sticky</i></small> '; 
 					}
 					
 					echo '<br />';
@@ -187,13 +189,15 @@ if ( count ( $posts ) > 0 ) {
 					}
 					
 					// Meta information (poster name, post date, mod code, id, etc.)
-					echo ' submitted ' . regular_board_timesince( $posts->post_date ) . ' by ';
+					echo ' submitted ' . regular_board_timesince( $posts->post_date ) . ' by <i class="fa fa-user"> ';
 					if ( !$posts->post_name || $posts->post_name == 'null' ) {
 						echo 'anonymous'; 
 					}					
 					if ( $posts->post_name != 'null' ) { 
 						echo '<a href="' . $current_page . '?u=' . $posts->post_name . '">' . $posts->post_name . '</a>'; 
 					}
+					
+					echo '</i>';
 					
 					if ( $id_display ) {
 						echo '<em> <strong class="user_hash">id ##: ' . $posts->post_userid . '</strong> ';

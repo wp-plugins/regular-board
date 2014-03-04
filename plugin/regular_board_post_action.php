@@ -34,35 +34,38 @@ if ( $thisboard ) {
 		$timegateactive = true;
 	}
 }
-
-if ( $_REQUEST['password'] ) {
-	// Most likely editing a post - we don't neeed flood protection.
-	$timegateactive     = false;
+if ( isset ( $_REQUEST['password'] ) ) {
+	if ( $_REQUEST['password'] ) {
+		// Most likely editing a post - we don't neeed flood protection.
+		$timegateactive     = false;
+	}
 }
 
 
 // Are we making a reply or a new thread?
-if ( $_REQUEST['PARENT'] ) {
-	// If parent exists in the form, let's check and make sure it exists in the database
-	$post_parent        = $_REQUEST['PARENT'];
-	$check_parent       = $wpdb->get_results (
-							$wpdb->prepare ( 
-								"SELECT * FROM $regular_board_posts WHERE 
-								post_id = %d AND post_public != %d AND post_public = %d",
-								$post_parent,
-								2,
-								1
-							)
-						);
-	foreach ( $check_parent as $checked ) {
-		$check_time   = strtotime ( $checked->post_date );
-		$current_time = strtotime ( $current_timestamp );
-		$final_time   = $current_time - $check_time;
-		if ( $final_time > $archive_gate ) {
-			$archived = 1;
-		}
-		if ( $checked->post_locked ) {
-			$archived = 1;
+if ( isset ( $_REQUEST['PARENT'] ) ) {
+	if ( $_REQUEST['PARENT'] ) {
+		// If parent exists in the form, let's check and make sure it exists in the database
+		$post_parent        = $_REQUEST['PARENT'];
+		$check_parent       = $wpdb->get_results (
+								$wpdb->prepare ( 
+									"SELECT * FROM $regular_board_posts WHERE 
+									post_id = %d AND post_public != %d AND post_public = %d",
+									$post_parent,
+									2,
+									1
+								)
+							);
+		foreach ( $check_parent as $checked ) {
+			$check_time   = strtotime ( $checked->post_date );
+			$current_time = strtotime ( $current_timestamp );
+			$final_time   = $current_time - $check_time;
+			if ( $final_time > $archive_gate ) {
+				$archived = 1;
+			}
+			if ( $checked->post_locked ) {
+				$archived = 1;
+			}
 		}
 	}
 } elseif ( !$this_thread ) {
@@ -204,20 +207,20 @@ if ( count ( $getuser ) == 0 ) {
 									) {
 										$post_type = 'image';
 										$post_url  = $clean_url;
-									} else {
-										// link
-										$post_type = 'URL';
-										if ( false === strpos ( $clean_url, '://' ) ) {
-											$post_url = '//' . $clean_url;
-										} else {
-											$post_url = esc_url ( $clean_url );
-										}
 									}
 								} else {
-									// none of the above link types
-									$post_type = 'post';
-									$post_url  = '';
+									// link
+									$post_type = 'URL';
+									if ( false === strpos ( $clean_url, '://' ) ) {
+										$post_url = '//' . $clean_url;
+									} else {
+										$post_url = esc_url ( $clean_url );
+									}
 								}
+							} else {
+								// none of the above link types
+								$post_type = 'post';
+								$post_url  = '';
 							}
 						}
 						
@@ -289,55 +292,57 @@ if ( count ( $getuser ) == 0 ) {
 							}
 							
 							// Password was sent with form, we're editing something
-							if ( $_REQUEST['password'] ) {
-								$check_password = $_REQUEST['password'];
-								$check_id       = $_REQUEST['editthisthread'];
-								$check_pass     = $wpdb->get_results ( 
-													$wpdb->prepare (
-														"SELECT * FROM $regular_board_posts WHERE 
-														post_password = %s AND post_id = %d", 
-														$check_password, 
-														$check_id 
-													) 
-												  );
-								if ( count ( $check_pass ) > 0 ) {
-									foreach ( $check_pass as $pass ) {
-										$last = $pass->post_last;
-										$wpdb->update (
-											$regular_board_posts,
-											array ( 
-												'post_title'   => $post_title,
-												'post_comment' => $post_comment,
-												'post_url'     => $post_url,
-												'post_type'    => $post_type
-											),
-											array ( 
-												'post_id'      => $check_id
-											),
-											array ( 
-												'%s', 
-												'%s', 
-												'%s', 
-												'%s', 
-												'%d'
-											)
-										);
-										$edited        = 1;
-										$update_post   = $wpdb->get_row ( 
-															$wpdb->prepare ( 
-																"SELECT * FROM $regular_board_posts 
-																WHERE ( post_id = %d OR post_parent = %d ) AND post_public != %d AND post_public = %d 
-																ORDER BY post_id DESC", 
-																$check_id, 
-																$check_id, 
-																2, 
-																1 
-															) 
-														 );
+							if ( isset ( $_REQUEST['password'] ) ) {
+								if ( $_REQUEST['password'] ) {
+									$check_password = $_REQUEST['password'];
+									$check_id       = $_REQUEST['editthisthread'];
+									$check_pass     = $wpdb->get_results ( 
+														$wpdb->prepare (
+															"SELECT * FROM $regular_board_posts WHERE 
+															post_password = %s AND post_id = %d", 
+															$check_password, 
+															$check_id 
+														) 
+													  );
+									if ( count ( $check_pass ) > 0 ) {
+										foreach ( $check_pass as $pass ) {
+											$last = $pass->post_last;
+											$wpdb->update (
+												$regular_board_posts,
+												array ( 
+													'post_title'   => $post_title,
+													'post_comment' => $post_comment,
+													'post_url'     => $post_url,
+													'post_type'    => $post_type
+												),
+												array ( 
+													'post_id'      => $check_id
+												),
+												array ( 
+													'%s', 
+													'%s', 
+													'%s', 
+													'%s', 
+													'%d'
+												)
+											);
+											$edited        = 1;
+											$update_post   = $wpdb->get_row ( 
+																$wpdb->prepare ( 
+																	"SELECT * FROM $regular_board_posts 
+																	WHERE ( post_id = %d OR post_parent = %d ) AND post_public != %d AND post_public = %d 
+																	ORDER BY post_id DESC", 
+																	$check_id, 
+																	$check_id, 
+																	2, 
+																	1 
+																) 
+															 );
 										echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $current_page . '?b=' . $the_board . '"></p>';
+										}
+									} else {
+										$edited = 3;
 									}
-								} else {
-									$edited = 3;
 								}
 							} elseif ( $timegateactive !== true ) {
 								$wpdb->query (
@@ -395,7 +400,7 @@ if ( count ( $getuser ) == 0 ) {
 										$post_type, 
 										$post_url, 
 										$the_board, 
-										$modCode, 
+										$mod_code, 
 										$current_timestamp, 
 										0, 
 										0, 
@@ -414,10 +419,19 @@ if ( count ( $getuser ) == 0 ) {
 								echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $current_page . '?b=' . $the_board . '"></p>';
 							}
 							
-							if ( $entered_parent && !$LOCKED && strtolower ( $enteredEMAIL ) != 'sage' ) {
-								$wpdb->query ( "UPDATE $regular_board_posts 
-									SET post_last = $current_timestamp 
-									WHERE post_id = $entered_parent" 
+							if ( $post_parent && !$LOCKED && strtolower ( $enteredEMAIL ) != 'sage' ) {
+								$wpdb->update (
+									$regular_board_posts,
+									array ( 
+										'post_last'   => $current_timestamp
+									),
+									array ( 
+										'post_id'      => $post_parent
+									),
+									array ( 
+										'%s', 
+										'%d'
+									)
 								);
 							}
 							// Delete posts that somehow got through with no data
@@ -457,10 +471,10 @@ if ( count ( $getuser ) == 0 ) {
 								}
 								if ( count ( $auto_mute ) == 1 ) {
 										foreach ( $auto_mute as $mute ) {
-											if ( $mute[banned_banned] == 5 ) { $banned_count = 4; }
-											if ( $mute[banned_banned] == 4 ) { $banned_count = 3; }
-											if ( $mute[banned_banned] == 3 ) { $banned_count = 2; }
-											if ( $mute[banned_banned] == 2 ) { $banned_count = 1; }
+											if ( $mute['banned_banned'] == 5 ) { $banned_count = 4; }
+											if ( $mute['banned_banned'] == 4 ) { $banned_count = 3; }
+											if ( $mute['banned_banned'] == 3 ) { $banned_count = 2; }
+											if ( $mute['banned_banned'] == 2 ) { $banned_count = 1; }
 											$mute_count = $banned_count - 1;
 											$wpdb->update (
 												$regular_board_bans,

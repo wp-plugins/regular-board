@@ -40,12 +40,12 @@ function regular_board_style(){
 	global $wp, $post, $regular_board_version;
 	$content = $post->post_content;
 	if( has_shortcode ( $content, 'regular_board' ) ) {
-		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board0000000022.js?' . $regular_board_version;
+		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board0000000023.js?' . $regular_board_version;
 		$masonry        = plugins_url() . '/regular-board/system/js/masonry.pkgd.min.js?' . $regular_board_version;
 		if ( get_option ( 'regular_board_css_url' ) ) {
 			$css_file   = get_option ( 'regular_board_css_url' );
 		} else { 
-			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_0000000022.css';
+			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_0000000023.css';
 		}
 		$regbostyle     = $css_file . '?' . $regular_board_version;
 		// Selectively load lazyload!
@@ -55,6 +55,10 @@ function regular_board_style(){
 			wp_deregister_script ( 'regular_board-lazyload');
 			wp_register_script   ( 'regular_board-lazyload', protocol_relative_url_dangit ( $lazy_load ), array( 'jquery' ), '', null, false);
 			wp_enqueue_script    ( 'regular_board-lazyload');
+			wp_deregister_script ( 'regular_board-lazy_load_functions' );
+			wp_register_script   ( 'regular_board-lazy_load_functions', protocol_relative_url_dangit ( $lazy_load_functions ), array( 'jquery' ), '', null, false );
+			wp_enqueue_script    ( 'regular_board-lazy_load_functions' );
+			
 		}
 		
 		$time_circles        = plugins_url() . '/regular-board/system/js/time_circles.js';
@@ -62,9 +66,6 @@ function regular_board_style(){
 		wp_register_script   ( 'regular_board-time-circles', protocol_relative_url_dangit ( $time_circles ), array( 'jquery' ), '', null, false );
 		wp_enqueue_script    ( 'regular_board-time-circles' );
 		
-		wp_deregister_script ( 'regular_board-lazy_load_functions' );
-		wp_register_script   ( 'regular_board-lazy_load_functions', protocol_relative_url_dangit ( $lazy_load_functions ), array( 'jquery' ), '', null, false );
-		wp_enqueue_script    ( 'regular_board-lazy_load_functions' );
 		wp_register_style    ( 'font-awesome', plugins_url() . '/regular-board/system/css/fontawesome/css/font-awesome.min.css' );
 		wp_enqueue_style     ( 'font-awesome' );
 		wp_register_style    ( 'regular_board', protocol_relative_url_dangit ( $regbostyle ) );
@@ -199,39 +200,38 @@ function regular_board_get_domain ( $url ) {
 
 function regular_board_canonical(){
 	global $wp,$post;
-	$BOARD  = '';
-	$THREAD = '';
-	if ( $prettycanon != 1 && is_page() && $_GET['board'] || $prettycanon != 1 && is_single() && $_GET['board'] ) {
-		$THISPAGE = home_url('/');
-		if ( $_GET['board'] ) { 
-			$BOARD  = esc_sql ( strtolower ( $_GET['board'] ) );
+	$BOARD       = '';
+	$THREAD      = '';
+	$the_board   = '';
+	$this_thread = '';
+	$query  = sanitize_text_field ( $_SERVER['QUERY_STRING'] );
+	if ( $query ) {
+		if ( isset ( $_GET['b'] ) ) {
+			$the_board             = sanitize_text_field ( strtolower( $_GET['b'] ) );
 		}
-		if ( !$_GET['board'] ) { 
+		if ( isset ( $_GET['t'] ) ) {
+			$this_thread           = intval ( $_GET['t'] );
+		}
+	}	
+	if ( is_page() && $the_board || 
+	     is_single() && $the_board || 
+		 is_page() && $this_thread || 
+		 is_single() && $this_thread 
+		) {
+		$THISPAGE = home_url('/');
+		if ( $_GET['b'] ) { 
+			$BOARD  = esc_sql ( strtolower ( $_GET['b'] ) );
+		}
+		if ( !$_GET['b'] ) { 
 			$BOARD  = esc_sql ( strtolower ( $post->post_name ) );
 		}
-		if ( $BOARD ) { 
-			$THREAD = esc_sql ( intval ( $_GET['thread'] ) );
+		if ( $BOARD && $THREAD ) { 
+			$THREAD = esc_sql ( intval ( $_GET['t'] ) );
 		}
 		if ( $BOARD && $THREAD != 0 ) { 
 			$canonical = $THISPAGE.'?b='.$BOARD.'&amp;t='.$THREAD;
 		} elseif($BOARD && $THREAD == 0 ) { 
 			$canonical = $THISPAGE . '?b=' . $BOARD; 
-		}
-	} elseif ( $prettycanon == 1 && is_page() && $_GET['board'] || $prettycanon == 1 && is_single() && $_GET['board'] ) {
-		$THISPAGE = home_url('/');
-		if ( $_GET['board'] ) { 
-			$BOARD  = esc_sql ( strtolower($_GET['board'] ) );
-		}
-		if ( !$_GET['board'] ) { 
-			$BOARD  = esc_sql ( strtolower($post->post_name) );
-		}
-		if ( $BOARD ) { 
-			$THREAD = esc_sql(intval($_GET['thread']));
-		}
-		if ( $BOARD && $THREAD != 0 ) { 
-			$canonical = $THISPAGE . '?t=' . $THREAD; 
-		} elseif ( $BOARD && $THREAD == 0 ) { 
-			$canonical = $THISPAGE;
 		}
 	}		
 	elseif ( is_home() ) {

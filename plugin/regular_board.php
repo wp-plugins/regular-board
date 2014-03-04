@@ -51,6 +51,8 @@ function regular_board_shortcode ( $content = null ) {
 		}
 		$user_exists           = 0;
 		$require_logged        = 0;
+		$post_nom              = 0;
+		$checkLOCK             = '';
 		$query                 = '';
 		$profile_name          = '';
 		$profile_email         = '';
@@ -62,6 +64,22 @@ function regular_board_shortcode ( $content = null ) {
 		$board_mods            = '';
 		$board_jans            = '';
 		$board_posts           = '';
+		$the_board             = '';
+		$thisboard             = '';
+		$this_area             = '';
+		$this_user             = '';
+		$this_thread           = '';
+		$results               = '';
+		$usermod               = '';
+		$is_moderator          = '';		
+		$is_user_janitor       = '';
+		$lock                  = '';
+		$timegateactive        = '';
+		$correct               = '';
+		$getposts              = '';
+		$gotReplies            = '';
+		$banned_count          = '';
+		$entered_parent        = 0;
 		$blog_title            = get_bloginfo();
 		$formatting            = get_option ( 'regular_board_formatting' );
 		$auto_url              = get_option ( 'regular_board_autourl' );
@@ -96,10 +114,21 @@ function regular_board_shortcode ( $content = null ) {
 		$regular_board_bans    = $wpdb->prefix . 'regular_board_bans';
 		$regular_board_logs    = $wpdb->prefix . 'regular_board_logs';
 		$query                 = sanitize_text_field ( $_SERVER['QUERY_STRING'] );
-		$the_board             = sanitize_text_field ( strtolower( $_GET['b'] ) );
-		$this_area             = sanitize_text_field ( strtolower( $_GET['a'] ) );
-		$this_user             = sanitize_text_field ( strtolower( $_GET['u'] ) );
-		$this_thread           = intval ( $_GET['t'] );
+		if ( $query ) {
+			if ( isset ( $_GET['b'] ) ) {
+				$the_board             = sanitize_text_field ( strtolower( $_GET['b'] ) );
+			}
+			if ( isset ( $_GET['a'] ) ) {
+				$this_area             = sanitize_text_field ( strtolower( $_GET['a'] ) );
+			}
+			if ( isset ( $_GET['u'] ) ) {
+				$this_user             = sanitize_text_field ( strtolower( $_GET['u'] ) );
+			}
+			if ( isset ( $_GET['t'] ) ) {
+				$this_thread           = intval ( $_GET['t'] );
+			}
+		}
+		
 		$is_user_mod           = false;
 		$is_user               = true;
 		$posting               = 1;
@@ -238,7 +267,7 @@ function regular_board_shortcode ( $content = null ) {
 					$board_life = ( intval ( $board_date ) + intval ( $uptime ) );
 					$next_wipe = ( intval ( $uptime ) - ( intval ( $today_is ) - intval ( $board_date ) ) );
 					$wipe = number_format ( intval ( $today_is ) - intval ( $board_date ) ) / intval ( $uptime ) * 100;
-					$next_clean = date($boarddate, time() + $nextwipe);
+					$next_clean = date($boarddate, time() + $next_wipe);
 
 					if ( strpos( $next_wipe, '-' ) !== true && $display_wipe && $display_wipe == 1 ) { 
 						$wipe_countdown = '<span class="wipe" data-timer="' . $next_wipe . '"></span>';
@@ -330,13 +359,17 @@ function regular_board_shortcode ( $content = null ) {
 		}
 		if ( $use_this > 0 ) {
 			$totalpages = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_posts $where_by" );
-			$results    = intval ( $_GET['n'] );
-			if( $results ) {
-				$start = ( $results - 1 ) * $posts_per_page;
-			} else {
-				$start = 0;
+			if ( $totalpages > 0 ) {
+				if ( strpos ( strtolower ( $query ), 'n=' ) ) {
+					$results    = intval ( $_GET['n'] );
+				}
+				if( $results ) {
+					$start = ( $results - 1 ) * $posts_per_page;
+				} else {
+					$start = 0;
+				}
+				$getposts = $wpdb->get_results( "SELECT * FROM $regular_board_posts $where_by ORDER BY $order_by LIMIT $start,$posts_per_page" );
 			}
-			$getposts = $wpdb->get_results( "SELECT * FROM $regular_board_posts $where_by ORDER BY $order_by LIMIT $start,$posts_per_page" );
 		}
 		
 		/**
@@ -462,7 +495,7 @@ function regular_board_shortcode ( $content = null ) {
 				$args=array(
 				'showposts' => 3,
 				'category__in' => array ( $category->term_id ),
-				'caller_get_posts'=> 1
+				'ignore_sticky_posts'=> 1
 				);
 				$posts = get_posts ( $args );
 				if ( $posts ) {
@@ -478,7 +511,8 @@ function regular_board_shortcode ( $content = null ) {
 		}
 		
 		if ( count ( $getboards ) > 0 ) {
-			echo '<span class="navi">[';
+			echo '<div class="navi">';
+			echo '<span>';
 			foreach ( $getboards as $gotboards ) {
 					if( $gotboards->board_wipe && $gotboards->board_wipe != 'never' ) {
 						$board_date = strtotime($gotboards->board_date);
@@ -508,49 +542,48 @@ function regular_board_shortcode ( $content = null ) {
 						}
 						
 					}
-					echo ' <a href="' . $current_page . '?b=' . $gotboards->board_shortname . '">' . $gotboards->board_shortname . '</a> / ';
+					echo ' <a href="' . $current_page . '?b=' . $gotboards->board_shortname . '">' . $gotboards->board_shortname . '</a>';
 			}
-			echo ' <a href="' . $current_page . '?a=all">all</a> / ';
+			echo '</span>';
+			echo '<span>';
+			echo ' <a href="' . $current_page . '?a=all">all</a>';
 
 			if ( $user_exists && $profileboards ) {
-				echo ' <a href="' . $current_page . '?a=subscribed">subscribed</a> / ';
+				echo ' <a href="' . $current_page . '?a=subscribed">subscribed</a>';
 			}
 			if ( $user_exists && $profilefollow ) {
-				echo ' <a href="' . $current_page . '?a=following">following</a> / ';
+				echo ' <a href="' . $current_page . '?a=following">following</a>';
 			}
-			echo ' <a href="' . $current_page . '?a=topics">topics</a> / 
-			<a href="' . $current_page . '?a=replies">replies</a> / ';
-			if ( $enablerep || $enableurl || $imgurid ) {
-				echo '<a href="' . $current_page . '?a=gallery">gallery</a> / ';
+			echo ' <a href="' . $current_page . '?a=topics">topics</a>
+			<a href="' . $current_page . '?a=replies">replies</a>';
+			if ( $enable_rep || $enable_url || $imgurid ) {
+				echo '<a href="' . $current_page . '?a=gallery">gallery</a>';
 			}
-			echo '<a href="' . $current_page . '?a=stats">stats</a> / ';
+			echo '<a href="' . $current_page . '?a=stats">stats</a>';
 			if ( $user_exists ) {
-				echo ' <a href="' . $current_page . '?a=history">history</a> / ';
-				echo ' posting as <a href="' . $current_page . '?a=options">';
-					if ( $profile_name ) {
-						echo $profile_name;
-					} else {
-						echo 'anonymous'; 
-					}
-				echo '</a> ';
+				echo ' <a href="' . $current_page . '?a=history">history</a>';
+				echo ' <a href="' . $current_page . '?a=options">options</a>';
 			}
 			if ( $is_moderator && count($get_reports) > 0 ) {
-				echo '<a href="' . $current_page . '?a=reports">reports ( ' . count ( $get_reports ) . ' )</a> / ';
+				echo '<a href="' . $current_page . '?a=reports">reports ( ' . count ( $get_reports ) . ' )</a>';
 			}
 			if ( $is_moderator && count($get_deleted) > 0 ) {
-				echo '<a href="' . $current_page . '?a=deleted">deleted ( ' . count ( $get_deleted ) . ' )</a> / ';
-			}		
+				echo '<a href="' . $current_page . '?a=deleted">deleted ( ' . count ( $get_deleted ) . ' )</a>';
+			}
+			echo '</span>';
 			if ( $this_area != 'newtopic' && $user_exists ) {
+				echo '<span>';
 				if ( $the_board && $posting == 1 && $user_exists && !$this_area || $thisboard ) {
 					if ( $thisboard ) {
-						echo ' / <a class="newtopic" href="' . $current_page . '?a=newtopic">new</a> / ';
+						echo '<a class="newtopic" href="' . $current_page . '?a=newtopic">new</a>';
 					} else {
-						echo ' / <a class="newtopic" href="' . $current_page . '?b=' . $the_board . '&amp;a=newtopic">new</a> ';
+						echo '<a class="newtopic" href="' . $current_page . '?b=' . $the_board . '&amp;a=newtopic">new</a> ';
 					}
 					echo '<span class="hidden notopic">cancel</span>';
 				}
+				echo '</span>';
 			}
-			echo ']</span>';
+			echo '</div>';
 		}		
 		echo '<p class="newtopic"></p>';
 
@@ -605,15 +638,12 @@ function regular_board_shortcode ( $content = null ) {
 			include ( plugin_dir_path(__FILE__) . '/regular_board_posting_checkflood.php' );
 				if ( count ( $get_current_board ) > 0 ) {
 					if ( !$user_logged_in && $require_logged == 1 ) {
-						echo '<div class="thread"><p>You are not logged in.</p></div></div>';
+						echo '<div class="thread"><p>You are not logged in.</p></div>';
 					} elseif ( !$user_logged_in && $require_logged == 0 || $user_logged_in ) {
 						foreach ( $get_current_board as $gotCurrentBoard ) {
 							$boardName = $gotCurrentBoard->board_name;
 							$boardShort = $gotCurrentBoard->board_shortname;
-							$boardDescription = regular_board_format($boardDescription);
-							if ( $DNSBL ) {
-								$wpdb->query( $wpdb->prepare( "INSERT INTO $regular_board_bans ( banned_id, banned_date, banned_ip, banned_banned, banned_message, banned_length ) VALUES ( %d, %s, %s, %d, %s, %s )", '', $current_timestamp, $user_ip, 1, 'DNSBL', 0 ) );
-							} elseif ( count ( $getuser ) > 0 ) {
+							if ( count ( $getuser ) > 0 ) {
 								include ( plugin_dir_path(__FILE__) . '/regular_board_posting_userbanned.php' );
 							} else {
 								if ( $userisbanned == 0 ) {
@@ -732,12 +762,18 @@ function regular_board_shortcode ( $content = null ) {
 			}
 			echo '</div>';
 		} elseif ( $this_area == 'gallery' || $this_area == 'all' || $this_area == 'replies' || $this_area == 'topics' || !$this_area ) {
-			foreach ( $getposts as $posts ) {
-				if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
-					include ( ABSPATH . '/regular_board_child/regular_board_loop.php' );
-				} else {
-					include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
+			if ( $getposts ) {
+				if ( count ( $getposts ) > 0 ) {
+					foreach ( $getposts as $posts ) {
+						if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
+							include ( ABSPATH . '/regular_board_child/regular_board_loop.php' );
+						} else {
+							include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
+						}
+					}
 				}
+			} else {
+				echo '<center><em>Nothing to see here.</em></center>';
 			}
 		}
 	echo '</div>';
