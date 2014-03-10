@@ -40,12 +40,12 @@ function regular_board_style(){
 	global $wp, $post, $regular_board_version;
 	$content = $post->post_content;
 	if( has_shortcode ( $content, 'regular_board' ) ) {
-		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board0000000023.js?' . $regular_board_version;
+		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board0000000039.js?' . $regular_board_version;
 		$masonry        = plugins_url() . '/regular-board/system/js/masonry.pkgd.min.js?' . $regular_board_version;
 		if ( get_option ( 'regular_board_css_url' ) ) {
 			$css_file   = get_option ( 'regular_board_css_url' );
 		} else { 
-			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_0000000023.css';
+			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_0000000039.css';
 		}
 		$regbostyle     = $css_file . '?' . $regular_board_version;
 		// Selectively load lazyload!
@@ -68,6 +68,7 @@ function regular_board_style(){
 		
 		wp_register_style    ( 'font-awesome', plugins_url() . '/regular-board/system/css/fontawesome/css/font-awesome.min.css' );
 		wp_enqueue_style     ( 'font-awesome' );
+		
 		wp_register_style    ( 'regular_board', protocol_relative_url_dangit ( $regbostyle ) );
 		wp_enqueue_style     ( 'regular_board' );
 		wp_deregister_script ( 'regularboard' );
@@ -229,7 +230,7 @@ function regular_board_canonical(){
 			$THREAD = esc_sql ( intval ( $_GET['t'] ) );
 		}
 		if ( $BOARD && $THREAD != 0 ) { 
-			$canonical = $THISPAGE.'?b='.$BOARD.'&amp;t='.$THREAD;
+			$canonical = $THISPAGE.'?t='.$THREAD;
 		} elseif($BOARD && $THREAD == 0 ) { 
 			$canonical = $THISPAGE . '?b=' . $BOARD; 
 		}

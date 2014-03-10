@@ -12,6 +12,26 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
 
 if ( count ( $posts ) > 0 ) {
+
+	$posts->post_id          = absint ( $posts->post_id          );
+	$posts->post_parent      = absint ( $posts->post_parent      );
+	$posts->post_userid      = absint ( $posts->post_userid      );
+	$posts->post_moderator   = absint ( $posts->post_moderator   );
+	$posts->post_reportcount = absint ( $posts->post_reportcount );
+	$posts->post_name        = $posts->post_name;
+	$posts->post_date        = $posts->post_date;
+	$posts->post_email       = $posts->post_email;
+	$posts->post_title       = $posts->post_title;
+	$posts->post_comment     = $posts->post_comment;
+	$posts->post_type        = $posts->post_type;
+	$posts->post_board       = $posts->post_board;
+	$posts->post_last        = $posts->post_last;
+	$posts->post_sticky      = $posts->post_sticky;
+	$posts->post_locked      = $posts->post_locked;
+	$posts->post_password    = $posts->post_password;
+	$posts->post_public      = $posts->post_public;
+	$posts->post_report      = $posts->post_report;
+	$posts->post_url         = $posts->post_url;
 	
 	if ( $this_area != 'gallery' ) {
 		/**
@@ -105,21 +125,7 @@ if ( count ( $posts ) > 0 ) {
 			 * When in doubt, leave it alone.  
 			 */
 			 
-			echo '<div class="thread" id="thread' . $posts->post_id . '"><p><span class="thumbnail"><i class="fa ';
-					
-					// Thumbnail for media if youtube or image link.
-					if ( $posts->post_url && $posts->post_type == 'youtube' ) { 
-						echo 'fa-youtube';
-					} elseif ( $posts->post_url && $posts->post_type == 'image' ) { 
-						echo 'fa-camera';
-					} elseif ( $posts->post_url && $posts->post_type == 'URL' ) {
-						echo 'fa-link';
-					} else {
-						echo 'fa-comment';
-					}
-					
-					// Title (and link) for thread/reply (with link to media if URL/image/youtube)
-					echo '"></i></span><strong><a class="post_title" href="';
+			echo '<div class="thread" id="thread' . $posts->post_id . '"><p><strong><a class="post_title" href="';
 					
 					if ( $posts->post_url && $posts->post_type == 'URL' || $posts->post_url && $posts->post_type == 'image' ) { 
 						echo esc_url ( $posts->post_url ); 
@@ -128,10 +134,10 @@ if ( count ( $posts ) > 0 ) {
 						echo '//youtube.com/watch?v=' . $posts->post_url; 
 					}
 					if ( !$posts->post_url && $posts->post_parent == 0 ) { 
-						echo '?b=' . $posts->post_board . '&amp;t=' . $posts->post_id; 
+						echo '?t=' . $posts->post_id; 
 					}
 					if ( !$posts->post_url && $posts->post_parent != 0 ) { 
-						echo '?b=' . $posts->post_board . '&amp;t=' . $posts->post_parent . '#' . $posts->post_id; 
+						echo '?t=' . $posts->post_parent . '#' . $posts->post_id; 
 					}
 					if ( !$posts->post_title ) { 
 						echo '">no title'; 
@@ -143,37 +149,37 @@ if ( count ( $posts ) > 0 ) {
 					
 					
 					// Get the domain of the URL (if URL), return a youtube icon (if youtube), or return the board (if a post that isn't youtube or URL)
-					if ( $posts->post_url && $posts->post_type != 'youtube' ) { 
+					if ( $posts->post_url ) { 
 						echo '( <a href="' . regular_board_get_domain ( $posts->post_url ) . '">' . regular_board_get_domain ( $posts->post_url ) . '</a> )' ; 
 					}
-					if ( $posts->post_url && $posts->post_type == 'youtube' ) { 
-						echo '( <a href="//www.youtube.com/"><i class="fa fa-youtube-square"></i></a> ) ' ; 
+					if ( $posts->post_board ) {
+						echo '( <a href="' . $current_page . '?b=' . $posts->post_board . '">' . $posts->post_board . '</a> )';
 					}
-					echo '( <a href="' . $current_page . '?b=' . $posts->post_board . '">' . $posts->post_board . '</a> )'; 
 					
 					// Lock / sticky status.
 					if ( $posts->post_locked ) { 
-						echo ' <small><i class="fa fa-lock"> locked</i></small> '; 
+						echo ' <small>locked</small> '; 
 					}
 					if ( $posts->post_sticky ) { 
-						echo ' <small><i class="fa fa-thumb-tack"> sticky</i></small> '; 
+						echo ' <small>sticky</small> '; 
 					}
 					
 					echo '<br />';
 					
-					// Load button for non-thread views to load comments or media (if video or image).
 					if ( !$this_thread ) {
+						// Load button for non-thread views to load comments or media (if video or image).
 						if ( $posts->post_url && $posts->post_type == 'youtube' || $posts->post_url && $posts->post_type == 'image' || $posts->post_url && $posts->post_type == 'URL' && strpos ( $posts->post_url, '//imgur.com/a/' ) !== false || $posts->post_url && $posts->post_type == 'URL' && strpos ( $posts->post_url, '//vimeo.com/' ) !== false) { 
 							echo '<i id="' . $posts->post_id . '" ';
 							if ( $posts->post_type == 'youtube' || $posts->post_type == 'image' || $posts->post_url && $posts->post_type == 'URL' && strpos ( $posts->post_url, '//imgur.com/a/' ) !== false || $posts->post_url && $posts->post_type == 'URL' && strpos ( $posts->post_url, '//vimeo.com/' ) !== false) { 
 								echo ' grab="media" ';
 							}
-							echo 'class="fa fa-plus-square loadme" data="'.$current_page.'?b=' . $posts->post_board . '&amp;t=';
+							echo 'class="fa fa-plus-square loadme" data="'.$current_page.'?t=';
 								if ( $posts->post_parent == 0 ) { echo $posts->post_id; } 
 								if ( $posts->post_parent > 0 ) { echo $posts->post_parent; }
 							echo '&amp;a=media"></i><i id="' . $posts->post_id . '" class="fa fa-minus-square hideme hidden"></i>'; 
 						}
 					}
+
 					
 					// If moderator, display whether or not the post has been (1)reported (2)marked as spam (3)marked for deletion
 					if ( $is_moderator || $is_user_mod ) {
@@ -189,7 +195,7 @@ if ( count ( $posts ) > 0 ) {
 					}
 					
 					// Meta information (poster name, post date, mod code, id, etc.)
-					echo ' submitted ' . regular_board_timesince( $posts->post_date ) . ' by <i class="fa fa-user"> ';
+					echo ' submitted ' . regular_board_timesince( $posts->post_date ) . ' by ';
 					if ( !$posts->post_name || $posts->post_name == 'null' ) {
 						echo 'anonymous'; 
 					}					
@@ -200,7 +206,7 @@ if ( count ( $posts ) > 0 ) {
 					echo '</i>';
 					
 					if ( $id_display ) {
-						echo '<em> <strong class="user_hash">id ##: ' . $posts->post_userid . '</strong> ';
+						echo '<em> <strong class="user_hash">id ##: ' . $posts->post_userid . '</strong> </em>';
 					}
 					if ( $posts->post_moderator == 1 ) { 
 						echo '<small>' . $mod_code . '</small> '; 
@@ -208,41 +214,47 @@ if ( count ( $posts ) > 0 ) {
 					if ( $posts->post_moderator == 2 ) {
 						echo '<small>' . $user_mod_code . '</small> '; 
 					}
-					echo '<br /> <a href="' . $current_page . '?b=' . $posts->post_board . '&amp;';
-					if ( $posts->post_parent == 0 ) {
-						echo 't=' . $posts->post_id . '">';
-						if ( $thread_reply_count == 0 ) { echo 'no comments '; }
-						if ( $thread_reply_count == 1 ) { echo '1 comment '; }
-						if ( $thread_reply_count > 1 ) { echo $thread_reply_count . ' comments '; }
+					echo '<br /> ';
+					if ( !$this_thread ) {
+						echo '<a href="' . $current_page;
+						if ( $posts->post_parent == 0 ) {
+							echo '?t=' . $posts->post_id . '">';
+							if ( $thread_reply_count == 0 ) { echo 'no comments '; }
+							if ( $thread_reply_count == 1 ) { echo '1 comment '; }
+							if ( $thread_reply_count > 1 ) { echo $thread_reply_count . ' comments '; }
+						}
+						if ( $posts->post_parent != 0 ) {
+							echo '?t=' . $posts->post_parent . '#' . $posts->post_id . '">permalink';
+						}
+						echo '</a>';
+						echo ' &mdash; [' . $posts->post_id . '] <br /> ';
 					}
-					if ( $posts->post_parent != 0 ) {
-						echo 't=' . $posts->post_parent . '#' . $posts->post_id . '">permalink';
-					}
-					echo '</a></em> &mdash; [' . $posts->post_id . '] <br /> ';
 					
 					// Post actions ( edit, delete, spam, lock, sticky, ban, move, report )
 					if ( $profile_name == $posts->post_name && $profilepassword == $posts->post_password || $is_moderator || $is_user_mod || $is_user_janitor ) { 
 						echo ' <a href="' . $current_page . '?a=editpost&amp;t=' . $posts->post_id . '">edit</a> '; 
 					}
 					
-					if ( $tlast != 1 && $user_exists ) {
-						echo '<a class="hidden noreply'.$posts->post_id.'" data="' . $posts->post_id . '">cancel</a>
-						<a class="quickreply" ';
-						if ( $posts->post_parent != 0 ) {
-							echo ' childid="' . $posts->post_id . '" ';
+					if ( !$this_thread ) {
+						if ( $tlast != 1 && $user_exists ) {
+							echo '<a class="hidden noreply'.$posts->post_id.'" data="' . $posts->post_id . '">cancel</a>
+							<a class="quickreply" ';
+							if ( $posts->post_parent != 0 ) {
+								echo ' childid="' . $posts->post_id . '" ';
+							}
+							echo ' data="' . $posts->post_id . '" href="' . $current_page;
+							if ( $posts->post_parent == 0 ) {
+								echo '?t=' . $posts->post_id;
+							}
+							if ( $posts->post_parent != 0 ) {
+								echo '?t=' . $posts->post_parent;
+							}
+							echo '">quick reply</a> ';
 						}
-						echo ' data="' . $posts->post_id . '" href="' . $current_page;
-						if ( $posts->post_parent == 0 ) {
-							echo '?b=' . $posts->post_board . '&amp;t=' . $posts->post_id;
-						}
-						if ( $posts->post_parent != 0 ) {
-							echo '?b=' . $posts->post_board . '&amp;t=' . $posts->post_parent;
-						}
-						echo '">quick reply</a> ';
 					}
 					
 					
-					echo '<span class="post_action"> &mdash; ';
+					echo '<span class="post_action">';
 					if ( $user_exists ) {
 						if ( $profile_name == $posts->post_name && $profilepassword == $posts->post_password || $is_moderator || $is_user_mod || $is_user_janitor ) { 
 							if ( $posts->post_public == 3 ) {
@@ -289,7 +301,7 @@ if ( count ( $posts ) > 0 ) {
 	
 					// Source button (if post has an attached comment)
 					if ( $posts->post_comment ) { 
-						echo ' &mdash; [ <i id="' . $posts->post_id . '" class="srcme" data="' . $current_page . '?b=' . $posts->post_id . '&amp;t=';
+						echo ' &mdash; [ <i id="' . $posts->post_id . '" class="srcme" data="' . $current_page . '?t=';
 							if ( $posts->post_parent == 0 ) {
 								echo $posts->post_id; 
 							}
@@ -327,7 +339,7 @@ if ( count ( $posts ) > 0 ) {
 					echo '<div class="media' . $posts->post_id . '"><iframe src="//player.vimeo.com/video/' . substr ( $posts->post_url, 17 ) . '?title=0&amp;byline=0&amp;portrait=0&amp;color=d6cece" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>'; 
 				} elseif ( $posts->post_type == 'youtube' && $posts->post_url ) { 
 					// ( 03 ) Youtube embedding
-					echo '<div class="media' . $posts->post_id . '"><a class="rb_yt" data="'.$posts->post_url.'" href="//youtube.com/watch?v=' . $posts->post_url . '"><i class="fa fa-play"></i><img class="regular_board_video_thumbnail_large" src="//img.youtube.com/vi/' . $posts->post_url . '/0.jpg"></a><div id="' . $posts->post_url . '"></div></div>'; 
+					echo '<div class="media' . $posts->post_id . '"><a class="rb_yt" data="'.$posts->post_url.'" href="//youtube.com/watch?v=' . $posts->post_url . '"><img class="regular_board_video_thumbnail_large" src="//img.youtube.com/vi/' . $posts->post_url . '/0.jpg"></a><div id="' . $posts->post_url . '"></div></div>'; 
 				} elseif ( $posts->post_type == 'image' && $posts->post_url ) { 
 					// ( 04 ) Image embedding
 					echo '<div class="media' . $posts->post_id . '"><a href="' . $posts->post_url . '"><img class="';
@@ -397,7 +409,7 @@ if ( count ( $posts ) > 0 ) {
 									}
 								}
 							}
-							echo '</div><div class="imgs js-masonry" data-masonry-options=\'{ "columnWidth": 10, "itemSelector": "img" }\'>';
+							echo '</div><div class="imgs">';
 							$n    = 0;
 							foreach ( $urls as $url ) {
 								if ( filter_var( $url, FILTER_VALIDATE_URL ) ) {
@@ -411,7 +423,7 @@ if ( count ( $posts ) > 0 ) {
 										) {
 											$n++;
 											if ( $n <= $max_links ) {
-												echo '<a href="' . $url . '"><img src=" ' . $url . '" alt="Image" /></a>';
+												echo '<a href="' . $url . '"><img src=" ' . $url . '" alt="Image" class="imageOP" /></a>';
 											}
 										}
 									}
@@ -453,14 +465,18 @@ if ( count ( $posts ) > 0 ) {
 				) {
 					echo '<div class="gallery">';
 					echo '<span><a href="' . $posts->post_url . '"><img src=" ' . $posts->post_url . '" alt="Image" /></a></span>
-					<a href="' . $current_page . '?b=' . $posts->post_board . '&amp;t=';
+					<a href="' . $current_page . '?t=';
 					if ( $posts->post_parent == 0 ) { echo $posts->post_id; }
 					if ( $posts->post_parent != 0 ) { echo $posts->post_parent . '#' . $posts->post_id; }
 					if ( $posts->post_title == '' ) { $posts->post_title = 'No subject'; }
-					echo '">' . str_replace ( '\\', '', $posts->post_title ) . '</a> 
-					( <a href="' . $current_page . '?b=' . $posts->post_board . '">' . $posts->post_board . '</a> )';
+					echo '">' . str_replace ( '\\', '', $posts->post_title ) . '</a> ';
+					if ( $posts->post_board ) {
+						echo '( <a href="' . $current_page . '?b=' . $posts->post_board . '">' . $posts->post_board . '</a> )';
+					}
 					echo '</div>';
 				}
 			}
 	}
+} else {
+	echo '<div class="thread"><center><em>Nothing to see here.</em></center></div>';
 }

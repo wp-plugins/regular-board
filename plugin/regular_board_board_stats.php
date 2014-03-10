@@ -21,6 +21,7 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 
 $count_all  = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts" );
 foreach($getboards as $gotboards){
+	$created_on       = $gotboards->board_date;
 	$count_all_posts  = $wpdb->get_var( $wpdb->prepare ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_board = %s AND post_public = %d", $gotboards->board_shortname, 1 ) );
 	$count_mod_posts  = $wpdb->get_var( $wpdb->prepare ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_board = %s AND ( post_moderator = %d OR post_moderator = %d) AND post_public = %d", $gotboards->board_shortname, 1, 2, 1 ) );
 	$count_my_posts   = $wpdb->get_var( $wpdb->prepare ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_board = %s AND post_public = %d AND post_userid = %d", $gotboards->board_shortname, 1, $profileid ) );
@@ -52,12 +53,12 @@ foreach($getboards as $gotboards){
 	}
 	echo '<div class="stats"><h1><a href="' . $current_page . '?b=' . $gotboards->board_shortname . '">' . $gotboards->board_name . '</a> ( ' . $gotboards->board_shortname . ' )</h1>
 	<p>
-		<em><i class="fa fa-laptop"></i> Total posts: ' . $count_all_posts . '</em>
+		<em>Total posts: ' . $count_all_posts . '</em>
 		&mdash; 
-		<em><i class="fa fa-user"></i> My posts: ' . $count_my_posts . '</em>
+		<em>My posts: ' . $count_my_posts . '</em>
 	</p>
 
-	<h3><i class="fa fa-clock-o"></i> Posts made within the last...</h3>
+	<h3>Posts made within the last...</h3>
 	<p>
 		<code>10 minutes: ' . $min10_t . '</code> ::
 		<code>2 hours: ' . $hou02_t . '</code> ::
@@ -65,7 +66,7 @@ foreach($getboards as $gotboards){
 		<code>24 hours: ' . $hou24_t . '</code>
 	</p>
 
-	<h3><i class="fa fa-legal"></i> Moderator vs User Activity</h3>
+	<h3>Moderator vs User Activity</h3>
 	<p>
 		The <strong>moderators</strong> have made ' . $count_mod_posts . ' posts, while <strong>users</strong> 
 		have made ' . $count_user_posts . ' posts.  <br />

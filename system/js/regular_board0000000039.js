@@ -1,12 +1,14 @@
 	jQuery(document).ready(function($){
 		
-    $(".wipe").TimeCircles({ time: {
-        Days: { color: "#C0C8CF" },
-        Hours: { color: "#C0C8CF" },
-        Minutes: { color: "#C0C8CF" },
-        Seconds: { color: "#C0C8CF" }
-    }});
+		var load_data = $('#activity').attr('data');
+		$('#activity').load(load_data + ' div.thread');
 		
+		$(".wipe").TimeCircles({ time: {
+			Days: { color: "#C0C8CF" },
+			Hours: { color: "#C0C8CF" },
+			Minutes: { color: "#C0C8CF" },
+			Seconds: { color: "#C0C8CF" }
+		}});
 		var hash = window.location.hash.substr(1);
 		if(hash != false && hash != 'undefined'){
 			$('#thread'+hash+'').addClass('current');
@@ -15,10 +17,12 @@
 		if(hash != false && hash != 'undefined'){
 			$('#thread'+hash+'').addClass('current');
 		};
+		
 		$(document).on('click','.reload',function(){
 			var regbo_relurl = $(this).attr('data');
 			$('#omitted').load(regbo_relurl + ' #omitted .thread');
 		});
+
 		$(document).on('click','.rb_yt',function(e){
 			e.preventDefault();
 			var youtube_id = $(this).attr('data');

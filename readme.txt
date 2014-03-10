@@ -3,7 +3,7 @@ Contributors: boyevul
 Tags: anonymous, bbs, bulletin board system, forum
 Requires at least: 3.8
 Tested up to: 3.8
-Stable tag: 1.09
+Stable tag: 1.10
 
 == Description ==
 Regular Board is a text-based anonymous message board to which anyone may post without the need for account registration.  
@@ -46,6 +46,11 @@ and not be offset by the current theme's style.
 7. Done.
 
 == Changelog ==
+* 1.10 Minor bug fixes.
+* 1.10 Board-wide wipe counter added (no need to set individual board counters if you don't want to)
+* 1.10 User levels, total post count (overall, not only active)
+* 1.10 Event tracking for hidden form fields bans, automutes, and user bans.
+* 1.10 Banner linking.
 * 1.09 Minor errors cleaned up.
 * 1.08 timecircles replaces countdown to next wipe (per board)
 * 1.07 profile options added

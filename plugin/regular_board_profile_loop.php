@@ -36,11 +36,12 @@ if ( count ( $usprofile ) > 0 ) {
 					echo '<p><em>' . str_replace ( '\\', '', $theprofile->user_slogan ) . '</em></p>';
 				}
 			}
-			echo '<i class="fa fa-laptop"></i> active posts: ' . $totalpages . ' &mdash; 
-			<i class="fa fa-clock-o"></i> first seen ' . regular_board_timesince ( $theprofile->user_date ) . ' </p>
+			echo '<h2 class="powerlevel">level ' . $theprofile->user_level . '</h2>active posts: ' . $totalpages . ' &mdash; 
+			total posts: ' . $theprofile->user_posts . ' &mdash; 
+			 first seen ' . regular_board_timesince ( $theprofile->user_date ) . ' </p>
 			<h3>Post history</h3>';
 			echo '</div>';
-		if(count( $getposts ) > 0 ) {
+		if ( $totalpages ) {
 			foreach ( $getposts as $posts ) {
 				if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
 					include ( ABSPATH . '/regular_board_child/regular_board_loop.php' );

@@ -62,7 +62,7 @@ if ( isset ( $_POST['options'] ) ) {
 			$update_name_to = $update_name;
 		} else {
 			$update_name_to = $profile_name;
-			echo '<p><i class="fa fa-warning"></i> <strong>' . $update_name . '</strong> is already taken.  Please use a different one.</p>';
+			echo '<p><strong>' . $update_name . '</strong> is already taken.  Please use a different one.</p>';
 		}
 	}
 	if ( !$profilepassword && $password ) {
@@ -165,8 +165,8 @@ echo '<form method="post" name="useroptions" class="user-options" action="' . $c
 	}
 	echo '<section>
 		<label for="follow">Follow</label>
-		<input type="text" name="follow" id="follow" value="' . $profilefollow . '" placeholder="User IDs" />
-		<span>By putting a comma separated list of usernames or IDs, you are able to build a customized feed of content 
+		<input type="text" name="follow" id="follow" value="' . $profilefollow . '" placeholder="Usernames" />
+		<span>By putting a comma separated list of usernames, you are able to build a customized feed of content 
 		tailored to your personal tastes from the people you like.  Simply use the follow format: username,username,username... 
 		or userid,userid,userid... to customize your viewing preferences.</span>
 	</section>
@@ -190,6 +190,28 @@ echo '<form method="post" name="useroptions" class="user-options" action="' . $c
 		<label for="options">Save</label>
 		<input type="submit" name="options" id="options" value="Save these options" />
 	</section>
+</form>';
+
+if ( isset ( $_POST['restore'] ) ) {
+	if ( $_REQUEST['oldinternalid'] && $_REQUEST['userpassword'] ) {
+		$userpassword = sanitize_text_field ( wp_hash ( $_REQUEST['userpassword'] ) );
+		$userip       = sanitize_text_field ( $_REQUEST['oldinternalid'] );
+		$email        = sanitize_text_field ( wp_hash ( $_REQUEST['oldemail'] ) );
+		$check_this = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_users WHERE user_password = %s AND user_ip = %s", $userpassword, $userip ) );
+		if ( count ( $check_this ) > 0 ) {
+			$wpdb->query ( "UPDATE $regular_board_users SET user_ip = '$user_ip' WHERE user_ip = $userip AND user_password = '$userpassword' AND user_email = '$email'" );
+			echo '<p>User ID restored.</p>';
+		}
+	}
+}				
+echo '<form method="post" name="restoreid" class="user-options" action="' . $current_page . '?a=options">
+<p>Already had an account you wish to restore?  Enter your old credentials here:</p>';
+wp_nonce_field( 'restoreid' );
+echo '
+	<section><label for="oldinternalid">Previous internal ID</label><input type="text" id="oldinternalid" name="oldinternalid" placeholder="Your (old) internal ID" /></section>
+	<section><label for="userpassword">Previous password</label><input type="text" id="userpassword" name="userpassword" placeholder="Password" /></section>
+	<section><label for="oldemail">Associated e-mail</label><input type="text" id="oldemail" name="oldemail" placeholder="you@there.com" /></section>
+	<section><input type="submit" name="restore" id="restore" value="Restore your ID" /></section>
 </form>
 
 <script type="text/javascript">

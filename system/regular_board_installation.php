@@ -14,6 +14,11 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
 
 function regular_board_installation(){
+	add_option ( 'regular_board_boardbanner' );
+	add_option ( 'regular_board_bannedimage' );
+	add_option ( 'regular_board_wipeall', 'never' );
+	add_option ( 'regular_board_wipealldate' );
+	add_option ( 'regular_board_frontpage' );
 	add_option ( 'regular_board_formatting', 1);
 	add_option ( 'regular_board_autourl', 1 );
 	add_option ( 'regular_board_ascii' );

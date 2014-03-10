@@ -55,7 +55,7 @@ if ( $query ) {
 				if ( $meta->post_parent != 0 ) {
 					$this_thread  = intval ( $meta->post_parent ) . '#' . intval ( $_GET['t'] );
 				}
-				$canonical   = $current_page . '?b=' . $meta->post_board . '&amp;t=' . $this_thread;
+				$canonical   = $current_page . '?t=' . $this_thread;
 				$author      = $meta->post_moderator;
 				$title       = str_replace ( '\\', '', $meta->post_title );
 				if ( !$title ) {

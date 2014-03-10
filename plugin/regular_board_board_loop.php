@@ -24,7 +24,7 @@ foreach ( $getposts as $posts ) {
 		$gotReplies = $wpdb->get_results ( $wpdb->prepare ("SELECT * FROM $regular_board_posts WHERE post_parent = %d ORDER BY post_last ASC", $posts->post_id ) );
 	}
 	if ( $search_enabled && $search && $this_thread ) { 
-		echo '<p><em>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-search"></i> Searching this thread for ' . $search . '.  Returned ' . count ( $gotReplies ) . ' results.</em></p>';
+		echo '<p><em>&nbsp;&nbsp;&nbsp;&nbsp; Searching this thread for ' . $search . '.  Returned ' . count ( $gotReplies ) . ' results.</em></p>';
 	}
 	if ( $this_thread ) { 
 		if ( $posts->post_title ) {

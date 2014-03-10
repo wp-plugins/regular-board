@@ -49,7 +49,11 @@ foreach ( $getuser as $banneddetails ) {
 		$banLifted = 0;
 	}
 	
-	echo '<div class="thread"><p>You are currently banned.</p>';
+	echo '<div class="profile_deets">';
+	if ( $banned_image ) {
+		echo '<img src="' . $banned_image . '" alt="Banned" class="imageFULL" />';
+	}
+	echo '<h1>BANNED</h1>';
 	foreach ( $getuser as $gotUser ) {
 		$BANID   = intval ( $gotUser->banned_id );
 		$BANNED  = intval ( $gotUser->banned_banned );
@@ -59,16 +63,19 @@ foreach ( $getuser as $banneddetails ) {
 		if ( !$MESSAGE ) {
 			$MESSAGE = '<em>No reason given</em>';
 		}
-		echo '<p><i class="fa fa-user"> Your IP: ' . $ipaddress . '</i> &mdash; <i class="fa fa-clock-o"> Length: ' . $LENGTH . '</i></p>';
-		echo '<p>You have been banned from using these boards';
-		if ( $LENGTH === 'Permanent' ) {
-			echo ' permanently';
+		$filed_on = strtotime ( $FILED );
+		$today_is = strtotime ( $current_timestamp );
+		$unbanned = ( intval ( $bantime ) - ( intval ( $today_is ) - intval ( $filed_on ) ) );
+		
+		
+		if ( $bantime != 'Permanent' ) {
+			echo '<h3>Ban length: ' . $LENGTH . '</h3> <span class="wipe" data-timer="' . $unbanned . '"></span>';
+		} else {
+			echo '<h3>Ban length: PERMANENT</h3>';
 		}
-		if ( $LENGTH !== 'Permanent' ) {
-			echo ' for ' . $LENGTH;
-		}
-		echo '.  Your ban was filed on '.$FILED.'.  The reason given for your ban was:</p><p>' . $MESSAGE . '</p><p>If you wish to appeal this ban, please e-mail the moderators of this board with the following ID: '.$BANID.', with the subject line <em>Ban Appeal</em>, and someone will get back to you shortly.  If there is no moderation e-mail on file, there is nothing more for you to do here.</p><p>Have a nice day.</p>';
-		echo '</p>';
+
+		echo '<p>Reason: ' . $MESSAGE . '</p>
+		</div>';
 	}
 	if ( $LENGTH != 0 ) {
 		if ( $banLifted == 1 ) {

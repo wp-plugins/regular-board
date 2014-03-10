@@ -19,6 +19,78 @@ if ( !defined ( 'regular_board_plugin' ) ) {
  * Compares the hashed profile password of current user to the password for the post
  * moderators and janitors are allowed to bypass this check
  */
+
+if ( $this_area == 'ban' ) {
+	echo '<div id="post_action">';
+		if ( $is_moderator ) {
+		echo '<form method="post" name="form" action="' . $current_page . '?a=ban&t=' . $this_thread . '">';
+		wp_nonce_field('form');
+		echo '<label>Reason for ban</label><input type="text" name="reason" placeholder="Reason for ban">';
+		echo '</select><input type="submit" name="confirm" value="Reason" /></form>';
+
+		if ( isset ( $_POST['confirm'] ) ) {
+			$get_id      = $wpdb->get_var( "SELECT post_userid FROM $regular_board_posts WHERE post_id = $this_thread" );
+			$get_id      = intval ( $get_id );
+			$get_ip      = $wpdb->get_var( "SELECT user_ip FROM $regular_board_users WHERE user_id = $get_id" );
+			$get_ip      = sanitize_text_field ( $get_ip );
+			
+			$get_content = $wpdb->get_results( "SELECT post_url, post_comment FROM $regular_board_posts WHERE post_id = $this_thread LIMIT 1" );
+			foreach ( $get_content as $posts ) {
+				$banned_content = '[ ' . $posts->post_url . ' ] ' . ' [ ' . $posts->post_comment . ' ] ';
+			}
+			
+			if ( isset ( $_REQUEST['reason'] ) && $_REQUEST['reason'] ) {
+				$banned_message = sanitize_text_field ( $_REQUEST['reason'] );
+			} else {
+				$banned_message = 'No reason given.';
+			}
+			
+			$wpdb->query (
+				$wpdb->prepare (
+					"INSERT INTO $regular_board_bans
+					(
+						banned_id,
+						banned_date,
+						banned_ip,
+						banned_banned,
+						banned_message,
+						banned_length
+					) 
+					VALUES (
+						%d,
+						%s,
+						%s,
+						%d,
+						%s,
+						%s
+					)",
+					'',
+					$current_timestamp,
+					$get_ip,
+					1,
+					$banned_message,
+					$ban_length_minutes
+				)
+			);
+			$wpdb->query (
+				$wpdb->prepare (
+					"INSERT INTO $regular_board_logs 
+					( 
+						logs_id, logs_date, logs_ip, logs_thread, logs_parent, logs_board, logs_message, logs_content
+					) 
+					VALUES ( 
+						%d, %s, %s, %d, %d, %s, %s, %s
+					)",
+				'', $current_timestamp, $user_ip, 0, 0, '', $banned_message, $banned_content
+				)
+			);	
+		}
+	} else {
+		echo 'You can\'t access that.';
+	}
+	echo '</div>';
+	
+}
  
 if ( $this_area == 'delete' ) {
 	echo '<div id="post_action">';
@@ -58,6 +130,24 @@ if ( $this_area == 'destroy' ) {
 	$comparepassword = $wpdb->get_var( "SELECT post_password FROM $regular_board_posts WHERE post_id = $this_thread" );
 	if ( $comparepassword == $comparedpass || $is_moderator || $is_user_mod || $is_user_janitor ) {
 		
+		$grab_board = $wpdb->get_var ( "SELECT post_board FROM $regular_board_posts WHERE post_id = $this_thread" );
+		$grab_board = sanitize_text_field ( $grab_board );
+		if ( $grab_board ) {
+			$postcount  = $wpdb->get_var ( "SELECT board_postcount FROM $regular_board_boards WHERE board_shortname = '$grab_board'" );
+			$postcount  = $postcount - 1;
+			$wpdb->update (
+				$regular_board_boards,
+				array( 
+					'board_postcount' => $postcount
+				),
+				array( 
+					'board_shortname' => $grab_board
+				),
+				array( 
+					'%s'
+				)
+			);			
+		}
 		$wpdb->delete ( $regular_board_posts, array ( 'post_id' => $this_thread ), array ( '%s' ) );
 		$wpdb->delete ( $regular_board_posts, array ( 'post_parent' => $this_thread ), array ( '%s' ) );
 		echo '<p>Post deleted.</p>';
@@ -128,6 +218,47 @@ elseif ( $this_area == 'move' ) {
 			}
 		}
 		if ( isset ( $_POST['confirm'] ) ) {
+			$get_board           = $wpdb->get_var( "SELECT post_board FROM $regular_board_posts WHERE post_id = $this_thread" );
+			if ( $get_board ) {
+				
+				$new_board = sanitize_text_field ( $_REQUEST['move_to'] );
+				
+				$get_board_count = $wpdb->get_var( "SELECT board_postcount FROM $regular_board_boards WHERE board_shortname = '$get_board'" );
+				$get_new_count   = $wpdb->get_var( "SELECT board_postcount FROM $regular_board_boards WHERE board_shortname = '$new_board'" );
+				$get_new_count   = ( $get_new_count + 1 );
+
+				$wpdb->update (
+					$regular_board_boards,
+					array( 
+						'board_postcount' => $get_new_count
+					),
+					array( 
+						'board_shortname' => $new_board
+					),
+					array( 
+						'%d',
+						'%s'
+					)
+				);
+				
+				if ( $get_board_count > 0 ) {
+					$new_postcount = ( $get_board_count - 1 );
+					$wpdb->update (
+						$regular_board_boards,
+						array( 
+							'board_postcount' => $new_postcount
+						),
+						array( 
+							'board_shortname' => $get_board
+						),
+						array( 
+							'%d',
+							'%s'
+						)
+					);
+				}
+			}		
+		
 			$wpdb->update (
 				$regular_board_posts,
 				array( 

@@ -28,7 +28,7 @@ if ( count ( $checkPass ) > 0 ) {
 			$editComment = $EDITTHREAD->post_comment;
 		}
 		$editSubject = str_replace ( '\\', '', $EDITTHREAD->post_title );
-		echo '<div class="reply">
+		echo '<div id="reply" class="reply">
 			<h1>Editing mode</h1>
 			<form enctype="multipart/form-data" name="editform" method="post" action="' . $current_page . '?a=post">';
 			wp_nonce_field ( 'editform' );
@@ -39,26 +39,17 @@ if ( count ( $checkPass ) > 0 ) {
 			<input type="hidden" value="" name="LOGIN" />
 			<input type="hidden" value="" name="USERNAME" />
 			<input type="hidden" value="' . $this_thread . '" id="editthisthread" name="editthisthread" />
-			<div class="input-group margin-bottom-sm">
+			<section>
 				<label for="SUBJECT">Topic</label>
-					<span class="input-group-addon">
-						<i class="fa fa-quote-right fa-fw"></i>
-					</span>
 				<input type="text" id="SUBJECT" maxlength="' . $max_text . '" name="SUBJECT" placeholder="Subject" value="' . $editSubject . '" />
-			</div>
-			<div class="input-group margin-bottom-sm">
+			</section>
+			<section>
 				<label for="COMMENT">Comment</label>
-				<span class="input-group-addon">
-					<i class="fa fa-pencil fa-fw"></i>
-				</span>		
 				<textarea id="COMMENT" name="COMMENT">' . str_replace ( array ( '[', ']' ), array ( '&#91;', '&#93;' ), $editComment ) . '</textarea>
-			</div>';
-			if ( $enable_url && !$this_thread || $enable_rep && $this_thread ) { 
-				echo '<div class="input-group margin-bottom-sm">
+			</section>';
+			if ( $EDITTHREAD->post_url ) { 
+				echo '<section>
 							<label for="URL">URL</label>
-							<span class="input-group-addon">
-								<i class="fa fa-link fa-fw"></i>
-							</span>
 							<input type="text" id="URL" maxlength="' . $max_text . '" value="';
 				if ( $EDITTHREAD->post_type == 'youtube' ) {
 					echo '//youtube.com/watch?v=' . $EDITTHREAD->post_url; 
@@ -66,13 +57,13 @@ if ( count ( $checkPass ) > 0 ) {
 					echo $EDITTHREAD->post_url; 
 				} 
 				echo '" name="URL" placeholder=".jpg,gif,png/youtube/http" />
-			</div>';
+			</section>';
 			}
 			if ( $imgurid ) { 
-				echo '<div class="input-group margin-bottom-sm">
+				echo '<section>
 					<label for="img">Upload (overwrites URL)</label>
 					<input name="img" size="35" type="file"/>
-				</div>';
+				</section>';
 			}
 			echo '<input type="submit" value="Edit" name="FORMSUBMIT" id="FORMSUBMIT" />
 			</form>
