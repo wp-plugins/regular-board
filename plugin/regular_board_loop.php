@@ -149,8 +149,11 @@ if ( count ( $posts ) > 0 ) {
 					
 					
 					// Get the domain of the URL (if URL), return a youtube icon (if youtube), or return the board (if a post that isn't youtube or URL)
-					if ( $posts->post_url ) { 
+					if ( $posts->post_url && $posts->post_type != 'youtube') { 
 						echo '( <a href="' . regular_board_get_domain ( $posts->post_url ) . '">' . regular_board_get_domain ( $posts->post_url ) . '</a> )' ; 
+					}
+					if ( $posts->post_url && $posts->post_type == 'youtube') { 
+						echo '( <a href="http://youtube.com/">youtube.com</a> )' ; 
 					}
 					if ( $posts->post_board ) {
 						echo '( <a href="' . $current_page . '?b=' . $posts->post_board . '">' . $posts->post_board . '</a> )';
@@ -196,9 +199,9 @@ if ( count ( $posts ) > 0 ) {
 					
 					// Meta information (poster name, post date, mod code, id, etc.)
 					echo ' submitted ' . regular_board_timesince( $posts->post_date ) . ' by ';
-					if ( !$posts->post_name || $posts->post_name == 'null' ) {
+					if ( $posts->post_name == 'null' ) {
 						echo 'anonymous'; 
-					}					
+					}				
 					if ( $posts->post_name != 'null' ) { 
 						echo '<a href="' . $current_page . '?u=' . $posts->post_name . '">' . $posts->post_name . '</a>'; 
 					}

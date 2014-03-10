@@ -110,6 +110,8 @@ function regular_board_shortcode ( $content = null ) {
 				$uptime = intval ( $board_wipe_every ) * 2628000;
 			} elseif ( strpos ( strtolower ( $board_wipe_every ), 'year' ) ) {
 				$uptime = intval ( $board_wipe_every ) * 31536000;
+			} elseif ( strpos ( strtolower ( $board_wipe_every ), 'second' ) ) {
+				$uptime = intval ( $board_wipe_every ) * 1;
 			} else {
 				$uptime = intval ( $board_wipe_every ) * 60;
 			}
@@ -121,9 +123,9 @@ function regular_board_shortcode ( $content = null ) {
 			}
 			if($today_is > $board_life){
 				$wpdb->query ( "UPDATE $regular_board_boards SET board_postcount = 0 WHERE board_id > 0" );			
-				$wpdb->delete ( $regular_board_posts, array ( 'post_userid' => 1 ), array ( '%d' ) );
-				$wpdb->delete ( $regular_board_posts, array ( 'post_userid' => 2 ), array ( '%d' ) );
-				$wpdb->delete ( $regular_board_posts, array ( 'post_userid' => 3 ), array ( '%d' ) );
+				$wpdb->delete ( $regular_board_posts, array ( 'post_moderator' => 1 ), array ( '%d' ) );
+				$wpdb->delete ( $regular_board_posts, array ( 'post_moderator' => 2 ), array ( '%d' ) );
+				$wpdb->delete ( $regular_board_posts, array ( 'post_moderator' => 3 ), array ( '%d' ) );
 				update_option ( 'regular_board_wipealldate', str_replace ( '\\', '', $today_is ) );
 			}
 		}		
@@ -209,7 +211,7 @@ function regular_board_shortcode ( $content = null ) {
 				$profile_email       = sanitize_text_field ( $myinfo->user_email );
 				$profile_name        = sanitize_text_field ( $myinfo->user_name );
 				if ( !$profile_name ) {
-					$profile_name    = 'anonymous';
+					$profile_name    = 'null';
 				}
 				$profilepassword     = sanitize_text_field ( $myinfo->user_password );
 				$profilefollow       = sanitize_text_field ( $myinfo->user_follow );
@@ -631,6 +633,31 @@ function regular_board_shortcode ( $content = null ) {
 			echo ']</span>';
 			echo '</div>';
 
+			if ( $announcements ) {
+				echo '<hr />';
+				$blog_total = get_term_by('id',$announcements,'category');
+				$blog_total = $blog_total->count;
+				$cat_args=array(
+				'include' => intval ( $announcements )
+				);
+				$categories=get_categories($cat_args);
+				foreach($categories as $category) {
+					$show_posts     = 1;
+					$args=array(
+					'offset' => $current_offset,
+					'showposts' => $show_posts,
+					'category__in' => array ( $category->term_id ),
+					);
+					$posts = get_posts ( $args );
+					if ( $posts ) {
+						foreach($posts as $post) {
+							setup_postdata($post); 
+								echo '<div class="thread"><center><em>Latest site announcement</em>: <a href="' . $this_page . '?a=news&amp;post=' . $post->ID . '">' . $post->post_title . '</a>' . regular_board_timesince( $post->post_date ) . '</center></div>';
+						}
+					}
+				}
+			}
+			
 			echo '<div class="thread">';
 			if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_post_form.php' ) ) {
 				include ( ABSPATH . '/regular_board_child/regular_board_post_form.php' );
@@ -959,12 +986,16 @@ function regular_board_shortcode ( $content = null ) {
 			} else {
 				echo '<center><em>Nothing to see here.</em></center>';
 			}
-		} else if ( $this_area == 'news' ) {
+		} elseif ( $this_area == 'news' ) {
 			if ( $announcements ) {
 				echo '<h3><center>Announcements</center></h3>';
 				$blog_total = get_term_by('id',$announcements,'category');
 				$blog_total = $blog_total->count;
 
+				if ( isset ( $_GET['post'] ) ) {
+					$post_no = intval ( $_GET['post'] );
+				}
+				
 				$cat_args=array(
 				'include' => intval ( $announcements )
 				);
@@ -1001,38 +1032,49 @@ function regular_board_shortcode ( $content = null ) {
 						}
 						echo '<hr />';
 					}
-					$args=array(
-					'offset' => $current_offset,
-					'showposts' => $show_posts,
-					'category__in' => array ( $category->term_id ),
-					'ignore_sticky_posts'=> 1
-					);
+					
+					if ( $post_no ) {
+						$args=array(
+						'p'=> $post_no,
+						);					
+					} else {
+						$args=array(
+						'offset' => $current_offset,
+						'showposts' => $show_posts,
+						'category__in' => array ( $category->term_id ),
+						);
+					}
 					$posts = get_posts ( $args );
 					if ( $posts ) {
+						if ( $post_no ) {
+							echo '<div class="thread"><a href="' . $this_page . '?a=news">More site announcements</a></div>';
+						}
 						foreach($posts as $post) {
 							setup_postdata($post); 
 								echo '<div class="thread"><h5>';
-								the_title_attribute();
-								echo '</h5><hr />';
-								str_replace ( '<img class="', '<img class="imageOP', the_content() );
-								echo '<hr />';
-								the_date();
+								echo '<a href="' . $this_page . '?a=news&amp;post=' . $post->ID . '">' . $post->post_title . '</a>';
+								echo '</h5><hr />' . wpautop ( $post->post_content ) . '<hr />';
+								echo regular_board_timesince( $post->post_date );
 								echo ' &mdash; ';
 								the_author();
 								echo '</div>';
+								if ( !$post_no ) {
+									echo '<hr />';
+								}
 						}
 					} else {
 						echo '<div class="thread"><h5>Nothing to see here.</h5></div>';
 					}
-					if ( $total_pages ) {
-						echo '<hr />';
-						if ( isset ( $_GET['n'] ) ) {
-							$n = intval ( $_GET['n'] );
-							if ( $n < $total_pages ) {
-								echo '<a class="right" href="' . $this_page . '?a=news&amp;n=' . ( $n + 1 ) . '">Next page</a>';
-							}
-							if ( $n > 1 && $n <= $total_pages ) {
-								echo '<a class="left" href="' . $this_page . '?a=news&amp;n=' . ( $n - 1 ) . '">previous page</a>';
+					if ( !$post_no ) {
+						if ( $total_pages ) {
+							if ( isset ( $_GET['n'] ) ) {
+								$n = intval ( $_GET['n'] );
+								if ( $n < $total_pages ) {
+									echo '<a class="right" href="' . $this_page . '?a=news&amp;n=' . ( $n + 1 ) . '">Next page</a>';
+								}
+								if ( $n > 1 && $n <= $total_pages ) {
+									echo '<a class="left" href="' . $this_page . '?a=news&amp;n=' . ( $n - 1 ) . '">previous page</a>';
+								}
 							}
 						}
 					}
