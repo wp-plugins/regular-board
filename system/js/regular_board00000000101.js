@@ -1,26 +1,21 @@
 	jQuery(document).ready(function($){
-		
+		var hash = window.location.hash.substr(1);
+		if(hash != false && hash != 'undefined'){
+			$('#thread'+hash+'').addClass('current');
+		};
+		var hash = window.location.hash.substr(1);
+		if(hash != false && hash != 'undefined'){
+			$('#thread'+hash+'').addClass('current');
+		};	
 		var load_data = $('#activity').attr('data');
 		$('#activity').load(load_data + ' div.thread');
-		
-		$(".wipe").TimeCircles({ time: {
-			Days: { color: "#C0C8CF" },
-			Hours: { color: "#C0C8CF" },
-			Minutes: { color: "#C0C8CF" },
-			Seconds: { color: "#C0C8CF" }
-		}});
-		var hash = window.location.hash.substr(1);
-		if(hash != false && hash != 'undefined'){
-			$('#thread'+hash+'').addClass('current');
-		};
-		var hash = window.location.hash.substr(1);
-		if(hash != false && hash != 'undefined'){
-			$('#thread'+hash+'').addClass('current');
-		};
-		
+		$('.reply_to_this_comment').on('click', function() {
+			$("#post_comment_parent").val($(this).attr('data'));
+		});
 		$(document).on('click','.reload',function(){
 			var regbo_relurl = $(this).attr('data');
-			$('#omitted').load(regbo_relurl + ' #omitted .thread');
+			var regbo_relid  = $(this).attr('xdata');
+			$('.omitted' + regbo_relid + '').load(regbo_relurl + ' .omitted'+ regbo_relid + '');
 		});
 
 		$(document).on('click','.rb_yt',function(e){
@@ -28,14 +23,6 @@
 			var youtube_id = $(this).attr('data');
 			$(this).empty();
 			$('#'+youtube_id+'').html("<iframe src=\"//www.youtube.com/embed/"+youtube_id+"?autoplay=1&amp;loop=1&amp;playlist="+youtube_id+"&amp;controls=0&amp;showinfo=0&amp;autohide=1\" width=\"100%\" height=\"315\" frameborder=\"0\" allowfullscreen></iframe>");
-		});
-		$(document).on('click','a.newtopic',function(e){
-			e.preventDefault();
-			var newtopic_href = $(this).attr('href');
-			$(this).addClass('hidden');
-			$('span.notopic').removeClass('hidden');
-			$('p.newtopic').load(newtopic_href + ' div.reply');
-			$('div.reply').hide();
 		});
 		$(document).on('click','.quickreply',function(e){
 			e.preventDefault();
@@ -52,14 +39,6 @@
 			var this_id = $(this).attr('data');
 			$('#load'+this_id+'').load(post_action + ' div#post_action');
 		});
-		
-		$(document).on('click','span.notopic',function(e){
-			e.preventDefault();
-			$(this).addClass('hidden');
-			$('a.newtopic').removeClass('hidden');
-			$('p.newtopic').empty();
-			$('div.reply').show();
-		});		
 		$(document).on('click','.loadme',function(){
 			var regbo_id = $(this).attr('id');
 			var regbo_url = $(this).attr('data');

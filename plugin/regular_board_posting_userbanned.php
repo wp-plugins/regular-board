@@ -69,7 +69,7 @@ foreach ( $getuser as $banneddetails ) {
 		
 		
 		if ( $bantime != 'Permanent' ) {
-			echo '<h3>Ban length: ' . $LENGTH . '</h3> <span class="wipe" data-timer="' . $unbanned . '"></span>';
+			echo '<h3>Ban length: ' . $LENGTH . '</h3> ' . $unbanned . ' seconds until unbanned.<hr />';
 		} else {
 			echo '<h3>Ban length: PERMANENT</h3>';
 		}
@@ -79,7 +79,7 @@ foreach ( $getuser as $banneddetails ) {
 	}
 	if ( $LENGTH != 0 ) {
 		if ( $banLifted == 1 ) {
-			$wpdb->delete ( $regular_board_bans, array('banned_id' => $BANID, 'banned_banned' => 1), array ( '%d','%d' ) );
+			$wpdb->delete ( $regular_board_bans, array('banned_id' => $BANID, 'banned_banned' => 0), array ( '%d','%d' ) );
 		}
 	}
 }

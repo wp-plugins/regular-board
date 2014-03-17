@@ -14,6 +14,12 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
 
 function regular_board_installation(){
+	add_option ( 'regular_board_totaluserallowed' );
+	add_option ( 'regular_board_accountsper', 5 );
+	add_option ( 'regular_board_registration', 1 );
+	add_option ( 'regular_board_protected' );
+	add_option ( 'regular_board_wipeper' );
+	add_option ( 'regular_board_enableblog' );
 	add_option ( 'regular_board_boardbanner' );
 	add_option ( 'regular_board_bannedimage' );
 	add_option ( 'regular_board_wipeall', 'never' );
@@ -55,80 +61,99 @@ function regular_board_installation(){
 	
 	
 	global $wpdb;
-	$regular_board_posts  = $wpdb->prefix.'regular_board_posts';
-	$regular_board_boards = $wpdb->prefix.'regular_board_boards';
-	$regular_board_users  = $wpdb->prefix.'regular_board_users';
-	$regular_board_bans   = $wpdb->prefix.'regular_board_bans';
-	$regular_board_logs   = $wpdb->prefix.'regular_board_logs';
+	$regular_board_posts    = $wpdb->prefix . 'regular_board_posts';
+	$regular_board_boards   = $wpdb->prefix . 'regular_board_boards';
+	$regular_board_users    = $wpdb->prefix . 'regular_board_users';
+	$regular_board_bans     = $wpdb->prefix . 'regular_board_bans';
+	$regular_board_logs     = $wpdb->prefix . 'regular_board_logs';
+	$regular_board_friends  = $wpdb->prefix . 'regular_board_friends';
+	$regular_board_messages = $wpdb->prefix . 'regular_board_messages';
 	
+	$friends = "CREATE TABLE $regular_board_friends(
+		friends_id BIGINT(20) NOT NULL AUTO_INCREMENT ,
+		friends_connector text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		friends_connectee text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		friends_mutual BIGINT(20) NOT NULL ,
+		PRIMARY KEY  (friends_id)
+	);";
+	$messages = "CREATE TABLE $regular_board_messages(
+		messages_id BIGINT(20) NOT NULL AUTO_INCREMENT ,
+		messages_date text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		messages_subject text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		messages_content LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		messages_to text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		messages_from text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		messages_read BIGINT(20) NOT NULL ,
+		PRIMARY KEY  (messages_id)		
+	);";
 	$boards = "CREATE TABLE $regular_board_boards(
-	board_id BIGINT(20) NOT NULL AUTO_INCREMENT , 
-	board_date text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	board_name TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	board_shortname TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	board_description TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	board_mods TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	board_janitors TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	board_postcount BIGINT(20) NOT NULL ,
-	board_locked BIGINT(20) NOT NULL ,
-	board_logged BIGINT(20) NOT NULL ,
-	board_wipe TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	PRIMARY KEY  (board_id)
+		board_id BIGINT(20) NOT NULL AUTO_INCREMENT , 
+		board_date text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		board_name TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		board_shortname TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		board_description TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		board_mods TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		board_janitors TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		board_postcount BIGINT(20) NOT NULL ,
+		board_locked BIGINT(20) NOT NULL ,
+		board_logged BIGINT(20) NOT NULL ,
+		board_wipe TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		PRIMARY KEY  (board_id)
 	);";
 	$posts = "CREATE TABLE $regular_board_posts(
-	post_id BIGINT(20) NOT NULL AUTO_INCREMENT , 
-	post_parent BIGINT(20) NOT NULL ,
-	post_name TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	post_date TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	post_email TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	post_title TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	post_comment LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	post_type TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	post_url TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	post_board TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	post_moderator TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	post_last TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	post_sticky TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	post_locked TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	post_password TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	post_userid BIGINT(20) NOT NULL , 
-	post_public BIGINT(20) NOT NULL ,
-	post_report TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	post_reportcount BIGINT(20) NOT NULL ,
-	PRIMARY KEY  (post_id)
+		post_id BIGINT(20) NOT NULL AUTO_INCREMENT , 
+		post_parent BIGINT(20) NOT NULL ,
+		post_name TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		post_date TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		post_email TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		post_title TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		post_comment LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		post_type TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		post_url TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		post_board TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		post_moderator TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		post_last TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		post_sticky TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		post_locked TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		post_password TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		post_userid BIGINT(20) NOT NULL , 
+		post_public BIGINT(20) NOT NULL ,
+		post_report TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		post_reportcount BIGINT(20) NOT NULL ,
+		PRIMARY KEY  (post_id)
 	);";
 	$users = "CREATE TABLE $regular_board_users(
-	user_id BIGINT(20) NOT NULL AUTO_INCREMENT , 
-	user_date TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	user_ip TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-	user_name TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
-	user_email TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
-	user_password TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
-	user_heaven TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
-	user_boards TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
-	user_follow TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
-	user_avatar TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
-	user_slogan TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
-	PRIMARY KEY  (user_id)
+		user_id BIGINT(20) NOT NULL AUTO_INCREMENT , 
+		user_date TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		user_ip TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+		user_name TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
+		user_email TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
+		user_password TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
+		user_heaven TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
+		user_boards TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
+		user_follow TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
+		user_avatar TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
+		user_slogan TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
+		PRIMARY KEY  (user_id)
 	);";
 	$bans = "CREATE TABLE $regular_board_bans(
-	banned_id BIGINT(20) NOT NULL AUTO_INCREMENT , 
-	banned_date TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	banned_ip TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-	banned_banned INT(11) NOT NULL,
-	banned_message TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	banned_length TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	PRIMARY KEY  (banned_id)
+		banned_id BIGINT(20) NOT NULL AUTO_INCREMENT , 
+		banned_date TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		banned_ip TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+		banned_banned INT(11) NOT NULL,
+		banned_message TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		banned_length TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		PRIMARY KEY  (banned_id)
 	);";
 	$logs = "CREATE TABLE $regular_board_logs(
-	logs_id BIGINT(20) NOT NULL AUTO_INCREMENT , 
-	logs_date TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	logs_ip TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-	logs_thread BIGINT(20) NOT NULL  , 
-	logs_parent BIGINT(20) NOT NULL ,
-	logs_board TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	logs_message TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-	PRIMARY KEY  (logs_id)
+		logs_id BIGINT(20) NOT NULL AUTO_INCREMENT , 
+		logs_date TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		logs_ip TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+		logs_thread BIGINT(20) NOT NULL  , 
+		logs_parent BIGINT(20) NOT NULL ,
+		logs_board TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		logs_message TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		PRIMARY KEY  (logs_id)
 	);";
 	
 	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -137,7 +162,8 @@ function regular_board_installation(){
 	dbDelta ( $users );
 	dbDelta ( $bans );
 	dbDelta ( $logs );
-
+	dbDelta ( $friends );
+	dbDelta ( $messages );
 
 	$date = date ( 'Y-m-d H:i:s' );
 

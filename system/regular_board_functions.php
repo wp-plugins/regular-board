@@ -33,6 +33,14 @@ if ( get_option ( 'regular_board_announcements' ) && get_option ( 'regular_board
 	}
 }
 
+
+function regular_board_percent($num_amount, $num_total) {
+	$count1 = $num_amount / $num_total;
+	$count2 = $count1 * 100;
+	$count = number_format($count2, 0);
+	return $count;
+}
+
 /**
  * Enqueue scripts and styles if post content contains the shortcode
  */
@@ -40,12 +48,11 @@ function regular_board_style(){
 	global $wp, $post, $regular_board_version;
 	$content = $post->post_content;
 	if( has_shortcode ( $content, 'regular_board' ) ) {
-		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board0000000039.js?' . $regular_board_version;
-		$masonry        = plugins_url() . '/regular-board/system/js/masonry.pkgd.min.js?' . $regular_board_version;
+		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board00000000101.js?' . $regular_board_version;
 		if ( get_option ( 'regular_board_css_url' ) ) {
 			$css_file   = get_option ( 'regular_board_css_url' );
 		} else { 
-			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_0000000039.css';
+			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_00000000101.css';
 		}
 		$regbostyle     = $css_file . '?' . $regular_board_version;
 		// Selectively load lazyload!
@@ -60,23 +67,14 @@ function regular_board_style(){
 			wp_enqueue_script    ( 'regular_board-lazy_load_functions' );
 			
 		}
-		
-		$time_circles        = plugins_url() . '/regular-board/system/js/time_circles.js';
-		wp_deregister_script ( 'regular_board-time-circles' );
-		wp_register_script   ( 'regular_board-time-circles', protocol_relative_url_dangit ( $time_circles ), array( 'jquery' ), '', null, false );
-		wp_enqueue_script    ( 'regular_board-time-circles' );
-		
-		wp_register_style    ( 'font-awesome', plugins_url() . '/regular-board/system/css/fontawesome/css/font-awesome.min.css' );
+		$fontawesome         = plugins_url() . '/regular-board/system/css/fontawesome/css/font-awesome.min.css?' . $regular_board_version;
+		wp_register_style    ( 'font-awesome', protocol_relative_url_dangit ( $fontawesome ) );
 		wp_enqueue_style     ( 'font-awesome' );
-		
 		wp_register_style    ( 'regular_board', protocol_relative_url_dangit ( $regbostyle ) );
 		wp_enqueue_style     ( 'regular_board' );
 		wp_deregister_script ( 'regularboard' );
 		wp_register_script   ( 'regularboard', protocol_relative_url_dangit ( $regularboard ) , array( 'jquery' ), '', null, false );
 		wp_enqueue_script    ( 'regularboard' );
-		wp_deregister_script ( 'masonry' );
-		wp_register_script   ( 'masonry', protocol_relative_url_dangit ( $masonry ), array( 'jquery' ), '', null, false );
-		wp_enqueue_script    ( 'masonry' );
 	}
 }
 
@@ -145,8 +143,6 @@ function regular_board_timesince ( $date, $granularity=2 ) {
  * |,||                                    New line, new paragraph
  * `code`                                  code
  * This is a [spoiler]spoiler[/spoiler].   This is a spoiler.
- * [//i.imgur.com/*]                  Embed an image from imgur.
- * [//imgur.com/a/*]                  Embed an album from imgur.	 
  */
 function regular_board_format ( $data ) {
 	$input = array (
@@ -172,7 +168,7 @@ function regular_board_format ( $data ) {
 	'<strong><em>$1</em></strong>',
 	'<strong>$1</strong>',
 	'<em>$1</em>',
-	'<span class="strike">$1</span>',
+	'<u class="strike">$1</u>',
 	'<blockquote>$1</blockquote>',
 	'<hr />',
 	'<hr />',

@@ -27,7 +27,7 @@ if ( $query ) {
 	if( $this_thread ) {
 		$getres = $wpdb->get_results ( 
 					$wpdb->prepare ( 
-						"SELECT * FROM $regular_board_posts WHERE 
+						"SELECT $regular_board_posts_select FROM $regular_board_posts WHERE 
 						post_id = %d LIMIT 1", 
 						$this_thread 
 					) 

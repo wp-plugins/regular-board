@@ -16,11 +16,20 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 	
 function regular_board_uninstallation() {
 	global $wpdb;
-	$regular_board_posts  = $wpdb->prefix . 'regular_board_posts';
-	$regular_board_boards = $wpdb->prefix . 'regular_board_boards';
-	$regular_board_users  = $wpdb->prefix . 'regular_board_users';
-	$regular_board_bans   = $wpdb->prefix . 'regular_board_bans';
-	$regular_board_logs   = $wpdb->prefix . 'regular_board_logs';
+	
+	$regular_board_posts   = $wpdb->prefix . 'regular_board_posts';
+	$regular_board_boards  = $wpdb->prefix . 'regular_board_boards';
+	$regular_board_users   = $wpdb->prefix . 'regular_board_users';
+	$regular_board_bans    = $wpdb->prefix . 'regular_board_bans';
+	$regular_board_logs    = $wpdb->prefix . 'regular_board_logs';
+	$regular_board_friends = $wpdb->prefix . 'regular_board_friends';
+	$regular_board_message = $wpdb->prefix . 'regular_board_messages';
+	delete_option ( 'regular_board_totaluserallowed' );
+	delete_option ( 'regular_board_accountsper' );
+	delete_option ( 'regular_board_registration' );
+	delete_option ( 'regular_board_protected' );
+	delete_option ( 'regular_board_wipeper' );
+	delete_option ( 'regular_board_enableblog' );
 	delete_option ( 'regular_board_boardbanner' );
 	delete_option ( 'regular_board_bannedimage' );
 	delete_option ( 'regular_board_wipeall' );

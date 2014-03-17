@@ -57,6 +57,10 @@ if ( isset ( $_POST['options'] ) ) {
 	if ( $update_name ) {
 		$checkname = $wpdb->get_results ( $wpdb->prepare ( "SELECT NAME FROM $regular_board_users WHERE user_name = %s AND user_id != %d", $update_name, $profileid ) );
 		if ( count ( $checkname ) == 0 ) {
+			$wpdb->query ( "UPDATE $regular_board_friends SET friends_connector = '$update_name' WHERE friends_connector = '$profile_name'" );
+			$wpdb->query ( "UPDATE $regular_board_friends SET friends_connectee = '$update_name' WHERE friends_connectee = '$profile_name'" );
+			$wpdb->query ( "UPDATE $regular_board_messages SET messages_from = '$update_name' WHERE messages_from = '$profile_name'" );
+			$wpdb->query ( "UPDATE $regular_board_messages SET messages_to = '$update_name' WHERE messages_to = '$profile_name'" );			
 			$wpdb->query ( "UPDATE $regular_board_users SET user_name = '$update_name' WHERE user_id = $profileid" );
 			$wpdb->query ( "UPDATE $regular_board_posts SET post_name = '$update_name' WHERE post_userid = $profileid AND post_name != 'null' " );
 			$update_name_to = $update_name;
@@ -109,27 +113,19 @@ echo '<form method="post" name="useroptions" class="user-options" action="' . $c
 	wp_nonce_field( 'useroptions' );
 
 
-	echo '<h3>Account</h3>
+	echo '<p><strong>Account</strong></p>
 	<section>
 		<label>Internal ID</label>
 		<input type="text" value="' . $user_ip . '" />
 	</section>';
 	
-	if ( $profile_email ) {
-		echo '<p>E-mail has been set (What we have: ' . $profile_email . ' )  For your own security, we do not store emails as plain text.</p>';
-	} else {
-		echo '<section>
-			<label for="email">Email</label>
-			<input type="text" name="email" id="email" placeholder="you@there.com" value="' . $profile_email . '" />
-			<span>Your email address is <strong>not</strong> stored as plain text, and never shared.  Setting an 
-			email address will ensure that, should you need to, you will be able to regain control of this account 
-			if you ever get a new IP address.  Once set, it can not be changed.</span>
-		</section>';
-	}
-	
 	echo '<section>
 		<label for="USERNAME">Username</label>
-		<input type="text" name="USERNAME" id="USERNAME" placeholder="Your memorable name" value="' . $profile_name . '" />
+		<input type="text" name="USERNAME" id="USERNAME" placeholder="Your memorable name" value="';
+		if ( $profile_name != 'null' && $profile_name ) {
+			echo $profile_name;
+		}
+		echo '" />
 		<span>Usernames are unique, and unless you post anonymously, tied to each post that you make.  You can change 
 		it at any time.</span>
 	</section>';
@@ -192,28 +188,75 @@ echo '<form method="post" name="useroptions" class="user-options" action="' . $c
 	</section>
 </form>';
 
-if ( isset ( $_POST['restore'] ) ) {
-	if ( $_REQUEST['oldinternalid'] && $_REQUEST['userpassword'] ) {
-		$userpassword = sanitize_text_field ( wp_hash ( $_REQUEST['userpassword'] ) );
-		$userip       = sanitize_text_field ( $_REQUEST['oldinternalid'] );
-		$email        = sanitize_text_field ( wp_hash ( $_REQUEST['oldemail'] ) );
-		$check_this = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_users WHERE user_password = %s AND user_ip = %s", $userpassword, $userip ) );
-		if ( count ( $check_this ) > 0 ) {
-			$wpdb->query ( "UPDATE $regular_board_users SET user_ip = '$user_ip' WHERE user_ip = $userip AND user_password = '$userpassword' AND user_email = '$email'" );
-			echo '<p>User ID restored.</p>';
-		}
-	}
-}				
-echo '<form method="post" name="restoreid" class="user-options" action="' . $current_page . '?a=options">
-<p>Already had an account you wish to restore?  Enter your old credentials here:</p>';
-wp_nonce_field( 'restoreid' );
-echo '
-	<section><label for="oldinternalid">Previous internal ID</label><input type="text" id="oldinternalid" name="oldinternalid" placeholder="Your (old) internal ID" /></section>
-	<section><label for="userpassword">Previous password</label><input type="text" id="userpassword" name="userpassword" placeholder="Password" /></section>
-	<section><label for="oldemail">Associated e-mail</label><input type="text" id="oldemail" name="oldemail" placeholder="you@there.com" /></section>
-	<section><input type="submit" name="restore" id="restore" value="Restore your ID" /></section>
-</form>
+echo '<hr />';
 
+if ( isset ( $_POST['friendrequest'] ) && isset ( $_REQUEST['request_id'] ) ) {
+	if ( strtolower ( $_REQUEST['request_id'] ) != strtolower ( $profile_name ) ) {
+		$checked_user      = 0;
+		$check_user        = sanitize_text_field ( $_REQUEST['request_id'] );
+		$checked_user      = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_users WHERE user_name = '$check_user' " );
+		if ( $checked_user > 0 ) {
+			$check_request = 0;
+			$check_request = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_friends WHERE ( friends_connector = '$profile_name' AND friends_connectee = '$check_user' OR friends_connector = '$check_user' AND friends_connectee = '$profile_name')" );
+			if ( $check_request == 0 ) {
+				$wpdb->query ( 
+					$wpdb->prepare ( 
+						"INSERT INTO $regular_board_friends 
+						( 
+							friends_id, 
+							friends_connector, 
+							friends_connectee, 
+							friends_mutual
+						) VALUES ( 
+							%d,
+							%s,
+							%s,
+							%d
+						)", 
+						'', 
+						$profile_name,
+						$check_user,
+						0
+					) 
+				);
+			}
+		} else {
+			echo '<p><em>That user does not exist.</em></p>';
+		}
+	} else {
+		echo '<p><em>You can\'t be friends with yourself - sorry.</em></p>';
+	}
+}
+echo '
+<form method="post" name="friend_request" class="user-options" action="' . $current_page . '?a=options">
+<p><strong>Friend Connections</strong></p>';
+wp_nonce_field( 'friend_request' );
+echo '<section><label for="request_id">Enter a username</label><input type="text" id="request_id" name="request_id" placeholder="Enter username to initiate request" /></section>
+<section><input type="submit" name="friendrequest" id="friendrequest" value="Initiate connection" /></section>
+</form>';
+
+if ( count ( $my_waiting ) > 0 ) {
+	foreach ( $my_waiting as $waiting ) {
+		
+		$this_form = $waiting->friends_id;
+		
+		if ( isset ( $_POST['accept' . $this_form . ''] ) ) {
+			$wpdb->query ( "UPDATE $regular_board_friends SET friends_mutual = 1 WHERE friends_id = $this_form" );
+		}
+		if ( isset ( $_POST['decline' . $this_form . ''] ) ) {
+			$wpdb->delete ( $regular_board_friends, array ( 'friends_id' => $this_form ), array ( '%d' ) );
+		}
+		
+		echo '<form class="friend_request" method="post" action="' . $current_page . '?a=options">
+		<section>
+			<label>Request from ' . sanitize_text_field ( $waiting->friends_connector ) . '</label>
+			<input type="submit" name="decline' . $waiting->friends_id . '" value="Decline" />
+			<input type="submit" name="accept' . $waiting->friends_id . '" value="Accept" />
+		</section>
+		</form>';
+	}
+}
+echo '
 <script type="text/javascript">
 	document.title = \'Options\';
 </script>';

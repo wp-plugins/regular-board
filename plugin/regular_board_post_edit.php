@@ -14,11 +14,11 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
 
 if ( $is_moderator ) {
-	$checkPass = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_posts WHERE post_id = %d", $this_thread ) );
+	$checkPass = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_id = %d", $this_thread ) );
 } elseif ( $is_user_mod ) {
-	$checkPass = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_posts WHERE post_id = %d AND MODERATOR != %d", $this_thread, 1 ) );
+	$checkPass = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_id = %d AND MODERATOR != %d", $this_thread, 1 ) );
 } elseif ( $is_user ) {
-	$checkPass = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_posts WHERE post_password = %s AND post_id = %d", $profilepassword, $this_thread ) );
+	$checkPass = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_password = %s AND post_id = %d", $profilepassword, $this_thread ) );
 }
 if ( count ( $checkPass ) > 0 ) {
 	foreach($checkPass as $EDITTHREAD){
@@ -61,8 +61,8 @@ if ( count ( $checkPass ) > 0 ) {
 			}
 			if ( $imgurid ) { 
 				echo '<section>
-					<label for="img">Upload (overwrites URL)</label>
-					<input name="img" size="35" type="file"/>
+					<label for="img">Upload</label>
+					<input name="img" class="right" size="35" type="file"/>
 				</section>';
 			}
 			echo '<input type="submit" value="Edit" name="FORMSUBMIT" id="FORMSUBMIT" />

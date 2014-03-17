@@ -28,7 +28,7 @@ foreach($getboards as $gotboards){
 	$count_user_posts = $wpdb->get_var( $wpdb->prepare ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_board = %s AND post_moderator = %d AND post_public = %d", $gotboards->board_shortname, 0, 1 ) );
 	$count_spam       = $wpdb->get_var( $wpdb->prepare ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_public = %s", 2 ) );  
 	$count_deleted    = $wpdb->get_var( $wpdb->prepare ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_public = %s", 3 ) );  
-	$count_posts      = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_posts WHERE post_board = %s AND post_public = %d", $gotboards->board_shortname, 1 ) );
+	$count_posts      = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_board = %s AND post_public = %d", $gotboards->board_shortname, 1 ) );
 	$min10_t          = 0;
 	$hou02_t          = 0;
 	$hou12_t          = 0;

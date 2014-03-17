@@ -20,6 +20,7 @@ if ( $this_user ) {
 }
 if ( count ( $usprofile ) > 0 ) {
 	foreach ( $usprofile as $theprofile ) {
+			$the_profile_name = sanitize_text_field ( $theprofile->user_name );
 			echo '<div class="profile_deets">';
 			if ( $theprofile->user_avatar ) {
 				if ( $theprofile->user_avatar != 'NULL' ) {
@@ -38,8 +39,62 @@ if ( count ( $usprofile ) > 0 ) {
 			}
 			echo '<h2 class="powerlevel">level ' . $theprofile->user_level . '</h2>active posts: ' . $totalpages . ' &mdash; 
 			total posts: ' . $theprofile->user_posts . ' &mdash; 
-			 first seen ' . regular_board_timesince ( $theprofile->user_date ) . ' </p>
-			<h3>Post history</h3>';
+			 first seen ' . regular_board_timesince ( $theprofile->user_date ) . ' </p>';
+
+			if ( count ( $my_friends ) > 0 ) {
+				echo '<hr />Connections: ';
+				foreach ( $my_friends as $friends ) {
+					if ( $friends->friends_connector != $the_profile_name ) {
+						$friend_name = sanitize_text_field ( $friends->friends_connector );
+					}
+					if ( $friends->friends_connectee != $the_profile_name ) {
+						$friend_name = sanitize_text_field ( $friends->friends_connectee );
+					}
+					echo ' [ <a href="' . $this_page . '?u=' . $friend_name . '">' . $friend_name . '</a> ] ';
+				}
+				echo '<hr />';
+			}
+			
+			$check_friend = 0;
+			$check_friend = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_friends WHERE ( friends_connector = '$profile_name' AND friends_connectee = '$the_profile_name' OR friends_connector = '$the_profile_name' AND friends_connectee = '$profile_name')" );
+				if ( $user_exists) {
+				if ( $the_profile_name ) {
+					if ( $profile_name != $the_profile_name ) {
+						if ( $check_friend == 0 ) {
+							if ( strtolower ( $_REQUEST['request_id'] ) != strtolower ( $profile_name ) ) {
+								if ( isset ( $_POST['request_friendship'] ) ) {
+									$wpdb->query ( 
+										$wpdb->prepare ( 
+											"INSERT INTO $regular_board_friends 
+											( 
+												friends_id, 
+												friends_connector, 
+												friends_connectee, 
+												friends_mutual
+											) VALUES ( 
+												%d,
+												%s,
+												%s,
+												%d
+											)", 
+											'', 
+											$profile_name,
+											$the_profile_name,
+											0
+										) 
+									);
+								}
+							}
+							echo '
+							<form method="post" name="friend_request" class="friendship" action="' . $current_page . '?u=' . $the_profile_name . '">';
+							wp_nonce_field( 'friend_request' );
+							echo '<section><input type="submit" name="request_friendship" id="request_friendship" value="Connect with this user" /></section>
+							</form>';
+						}
+					}
+				}
+			}
+			echo '<h3>Post history</h3>';
 			echo '</div>';
 		if ( $totalpages ) {
 			foreach ( $getposts as $posts ) {
@@ -50,7 +105,7 @@ if ( count ( $usprofile ) > 0 ) {
 				}
 			}
 		} else {
-			echo '<center><em>nothing to see here.</em></center><br /><br />';
+			echo '<div class="thread"><center><em>nothing to see here.</em></center></div>';
 		}
 	}
 }

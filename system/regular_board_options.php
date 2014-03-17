@@ -264,7 +264,7 @@ if( current_user_can( 'manage_options' )) {
 			 */
 			if ( get_option ( 'regular_board_focus' ) == 'bans' ) {
 				
-				$getusers = $wpdb->get_results ( "SELECT * FROM $regular_board_bans WHERE banned_banned = 1" );
+				$getusers = $wpdb->get_results ( "SELECT * FROM $regular_board_bans" );
 				
 				if(isset($_POST['BAN']) && $_REQUEST['IP'] != ''){
 					$ip = sanitize_text_field ( wp_hash ( $_REQUEST['IP'] ) );
@@ -316,7 +316,7 @@ if( current_user_can( 'manage_options' )) {
 							}
 							echo '</label><input type="submit" value="Unban ' . $bans->banned_ip . '?" name="unban' . $bans->banned_id . '" /></section>';
 							if ( isset ( $_POST['unban' . $bans->banned_id] ) ) {
-								$wpdb->delete ( $regular_board_bans, array ( 'banned_id' => $bans->banned_id, 'banned_banned' => 1 ), array ( '%d', '%d' ) );
+								$wpdb->delete ( $regular_board_bans, array ( 'banned_id' => $bans->banned_id), array ( '%d' ) );
 								echo '<section><label>Unbanned.</label></section>';
 							}
 						}
@@ -397,6 +397,10 @@ if( current_user_can( 'manage_options' )) {
 							update_option ( 'regular_board_frontpage', str_replace ( '\\', '', $_REQUEST['frontpage'] ) );
 							update_option ( 'regular_board_bannedimage', str_replace ( '\\', '', $_REQUEST['bannedimage'] ) );
 							update_option ( 'regular_board_boardbanner', str_replace ( '\\', '', $_REQUEST['boardbanner'] ) );
+							update_option ( 'regular_board_enableblog', str_replace ( '\\', '', $_REQUEST['enableblog'] ) );
+							update_option ( 'regular_board_registration', str_replace ( '\\', '', $_REQUEST['registration'] ) );
+							update_option ( 'regular_board_accountsper', str_replace ( '\\', '', $_REQUEST['accountsper'] ) );
+							update_option ( 'regular_board_totaluserallowed', str_replace ( '\\', '', $_REQUEST['accountstotal'] ) );
 						}
 						
 						function regular_board_enableurl_option() {
@@ -443,10 +447,24 @@ if( current_user_can( 'manage_options' )) {
 							echo '<option value="0"'; if ( get_option ( 'regular_board_formatting' ) == 0 ) { echo ' selected="selected"'; } echo '>No</option>';
 							echo '<option value="1"'; if ( get_option ( 'regular_board_formatting' ) == 1 ) { echo ' selected="selected"'; } echo '>Yes</option>';
 						}
+						function regular_board_blog_option() {
+							echo '<option value="0"'; if ( get_option ( 'regular_board_enableblog' ) == 0 ) { echo ' selected="selected"'; } echo '>No</option>';
+							echo '<option value="1"'; if ( get_option ( 'regular_board_enableblog' ) == 1 ) { echo ' selected="selected"'; } echo '>Yes</option>';
+						}						
+						function regular_board_wipeper_option() {
+							echo '<option value="thread"'; if ( get_option ( 'regular_board_wipeper' ) == strtolower ( 'thread' ) ) { echo ' selected="selected"'; } echo '>Thread</option>';
+							echo '<option value="board"'; if ( get_option ( 'regular_board_wipeper' ) == strtolower ( 'board' ) ) { echo ' selected="selected"'; } echo '>Board</option>';
+						}
+						function regular_board_registration_option() {
+							echo '<option value="0"'; if ( get_option ( 'regular_board_registration' ) == 0 ) { echo ' selected="selected"'; } echo '>No</option>';
+							echo '<option value="1"'; if ( get_option ( 'regular_board_registration' ) == 1 ) { echo ' selected="selected"'; } echo '>Yes</option>';
+						}						
 						
 						if ( isset ( $_POST['wipesave'] ) ) {
 							$current_timestamp = date ( 'Y-m-d H:i:s' );
 							update_option ( 'regular_board_wipeall',  str_replace ( '\\', '', $_REQUEST['wipeall' ] ) );
+							update_option ( 'regular_board_wipeper', str_replace ( '\\', '', $_REQUEST['wipeper'] ) );
+							update_option ( 'regular_board_protected', str_replace ('\\', '', $_REQUEST['protected'] ) );
 							update_option ( 'regular_board_wipealldate', $current_timestamp );
 						}						
 						
@@ -459,6 +477,8 @@ if( current_user_can( 'manage_options' )) {
 						<div>
 							<form method="post">
 								<section><label>00:: Wipe boards on a regular basis?  Never for never, intervals for intervals (example: 1 day for every day)</label><input type="text" name="wipeall" value="' . get_option ( 'regular_board_wipeall' ) . '" /></section>
+								<section><label>01:: Per thread or board?</label><select name="wipeper" id="wipeper">'; regular_board_wipeper_option(); echo '</select></section>
+								<section><label>02:: Comma-separated list of boards that are protected from wipes</label><textarea name="protected" id="protected">' . get_option ( 'regular_board_protected' ) . '</textarea></section>
 								<section><input type="submit" name="wipesave" value="Save wipe settings" /></section>
 							</form>
 							<form method="post">
@@ -493,6 +513,10 @@ if( current_user_can( 'manage_options' )) {
 								<section><label>28:: ASCII for header (completely optional, and completely useless.)</label><textarea name="ascii" id="ascii">' . get_option ( 'regular_board_ascii' ) . '</textarea></section>
 								<section><label>29:: Image to show users who are banned.  Useless, really.</label><input type="text" name="bannedimage" id="bannedimage" value="' . get_option ( 'regular_board_bannedimage' ) . '" /></section>
 								<section><label>30:: Banner image for boards (300x100 / scales to 150x50 on mobile). (not as) useless, really.</label><input type="text" name="boardbanner" id="boardbanner" value="' . get_option ( 'regular_board_boardbanner' ) . '" /></section>
+								<section><label>31:: Enable blog post viewing from Regular Board:</label><select name="enableblog" id="enableblog">'; regular_board_blog_option(); echo '</select></section>
+								<section><label>32:: Allow new users to register?:</label><select name="registration" id="registration">'; regular_board_registration_option(); echo '</select></section>
+								<section><label>33:: How many accounts per unique IP address can a person have?</label><input type="text" name="accountsper" id="accountsper" value="' . get_option ( 'regular_board_accountsper' ) . '" /></section>
+								<section><label>34:: How many accounts (TOTAL) can be registered at one time?</label><input type="text" name="accountstotal" id="accountstotal" value="' . get_option ( 'regular_board_totaluserallowed' ) . '" /></section>
 								<section><input type="submit" name="save" value="Save options" /></section>
 							</form>
 						</div>
@@ -527,6 +551,7 @@ if( current_user_can( 'manage_options' )) {
 							<p><label for="ascii">28:: A completely useless way to add ascii art to your HTML (header).  Removes backslashes and quotation-marks.  Use a service like <a href="http://picascii.com/">picascii.com</a> to make something useful(ish).</label></p>
 							<p><label for="bannedimage">29:: An image to show to users when they are banned.  Completely optional, and completely useless.</label></p>
 							<p><label for="boardbanner">30:: An image for your boards.  Just as optional as the banned image, but maybe not quite as useless.</label></p>
+							<p><label for="enableblog">31:: Enable the user to browse blog posts from the Regular Board installation.</label></p>
 						</div>
 					
 						<div>

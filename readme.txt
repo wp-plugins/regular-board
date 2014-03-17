@@ -3,7 +3,7 @@ Contributors: boyevul
 Tags: anonymous, bbs, bulletin board system, forum
 Requires at least: 3.8
 Tested up to: 3.8
-Stable tag: 1.10.1
+Stable tag: 1.11
 
 == Description ==
 Regular Board is a text-based anonymous message board to which anyone may post without the need for account registration.  
@@ -46,6 +46,16 @@ and not be offset by the current theme's style.
 7. Done.
 
 == Changelog ==
+* 1.11.0 Threaded comments.
+* 1.11.0 Users who have never made a post before will need their first post approved by a board moderator.  After this, they are allowed to post freely.
+* 1.11.0 Post paging for anywhere that used post paging.
+* 1.11.0 If a board is locked or logged only, posting should be restricted to the appropriate people.
+* 1.11.0 Likewise, if a post's last reply was made by the poster, then quick reply will no longer post a new reply.
+* 1.11.0 Wipe mechanisms.
+* 1.11.0 Some minor CSS issues.
+* 1.11.0 The ability to delete messages you had sent, and the message's read status will no longer be counted as such unless the recipient has actually read the message.
+* 1.11.0 Board list (in the main options) will only return the fetched boards for the front page, which not only allows the board admin to restrict content on the front page to what they deem front page appropriate, but also actually puts this variable back into play as it was stripped out of circulation (for whatever reason) at some point in time and just forgotten about.
+* 1.11.0 Show source on a comment shows the correct source ( whatever formatting was used instead of the HTML output of the comment itself, which was confusing some users as to why they couldn't use HTML tags when the comment source clearly showed HTML tags). 
 * 1.10.1 Fix to wipe logic for full board wipe mechanism.
 * 1.10.0 Minor bug fixes.
 * 1.10.0 Board-wide wipe counter added (no need to set individual board counters if you don't want to)

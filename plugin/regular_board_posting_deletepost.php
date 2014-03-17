@@ -91,27 +91,66 @@ if ( $this_area == 'ban' ) {
 	echo '</div>';
 	
 }
+
+if ( $this_area == 'approve' ) {
+	if ( $is_moderator || $is_user_mod || $is_user_janitor ) {
+		echo '<div id="post_action">';
+			$post_status         = 0;
+			$post_status         = $wpdb->get_var ( "SELECT post_public FROM $regular_board_posts WHERE post_id = $this_thread AND post_public = 666" );
+			$post_userid         = $wpdb->get_var ( "SELECT post_userid FROM $regular_board_posts WHERE post_id = $this_thread AND post_public = 666" );
+			$user_posts          = $wpdb->get_var ( "SELECT user_postcount FROM $regular_board_users WHERE user_id = $post_userid" );
+			$user_level          = $wpdb->get_var ( "SELECT user_level FROM $regular_board_users WHERE user_id = $post_userid" );
+			$user_posts_plus_one = ( $user_posts + 1 );
+			if ( !$user_level ) {
+				$user_level_plus_one = 1;
+			} elseif ( $user_level == 1 ) {
+				$user_level_plus_one = $user_level;
+			}
+			if ( $post_status ) {
+				$wpdb->update (
+					$regular_board_posts,
+					array( 
+						'post_public' => 1,
+						'post_last'   => $current_timestamp,
+						'post_date'   => $current_timestamp
+					),
+					array( 
+						'post_id' => $this_thread
+					),
+					array( 
+						'%d',
+						'%s',
+						'%s',
+						'%d'
+					)
+				);
+				$wpdb->update (
+					$regular_board_users,
+					array( 
+						'user_posts' => $user_posts_plus_one,
+						'user_level' => $user_level_plus_one
+					),
+					array( 
+						'user_id' => $post_userid
+					),
+					array( 
+						'%d',
+						'%d',
+						'%d'
+					)
+				);
+				echo '<p>Post approved.</p>';
+			}
+		echo '</div>';
+	}
+}
  
 if ( $this_area == 'delete' ) {
 	echo '<div id="post_action">';
 	$comparedpass = $profilepassword;
 	$comparepassword = $wpdb->get_var( "SELECT post_password FROM $regular_board_posts WHERE post_id = $this_thread" );
 	if ( $comparepassword == $comparedpass || $is_moderator || $is_user_mod || $is_user_janitor ) {
-		
-		$wpdb->update (
-			$regular_board_posts,
-			array( 
-				'post_public' => 3
-			),
-			array( 
-				'post_id' => $this_thread
-			),
-			array( 
-				'%s'
-			)
-		);
-		echo '<p>Post set for deletion.</p>';
-		
+		echo '<p>Are you sure? <a data="' . $posts->post_id . '" href="' . $current_page . '?a=destroy&amp;t=' . $this_thread . '"> Yes </a> / <a href="' . $current_page . '?t=' . $this_thread . '"> No </a></p>';
 	} else {
 		echo '<p>You can\'t do that.</p>';
 	}
@@ -144,12 +183,35 @@ if ( $this_area == 'destroy' ) {
 					'board_shortname' => $grab_board
 				),
 				array( 
+					'%d',
 					'%s'
 				)
 			);			
 		}
-		$wpdb->delete ( $regular_board_posts, array ( 'post_id' => $this_thread ), array ( '%s' ) );
-		$wpdb->delete ( $regular_board_posts, array ( 'post_parent' => $this_thread ), array ( '%s' ) );
+		
+		$wpdb->update (
+			$regular_board_posts,
+			array( 
+				'post_name' => 'null',
+				'post_comment' => '[deleted]',
+				'post_userid' => 0,
+				'post_public' => 1,
+				'post_type'   => 'post',
+				'post_url'    => '',
+			),
+			array( 
+				'post_id' => $this_thread
+			),
+			array( 
+				'%s',
+				'%s',
+				'%d',
+				'%d',
+				'%s',
+				'%d'
+			)
+		);		
+		
 		echo '<p>Post deleted.</p>';
 		
 	} else {
@@ -179,7 +241,8 @@ if ( $this_area == 'undelete' ) {
 				'post_id' => $this_thread
 			),
 			array( 
-				'%s'
+				'%d',
+				'%d'
 			)
 		);
 		echo '<p>Post restored.</p>';
@@ -268,7 +331,8 @@ elseif ( $this_area == 'move' ) {
 					'post_id' => $this_thread
 				),
 				array( 
-					'%s'
+					'%s',
+					'%d'
 				)
 			);
 			$wpdb->update (
@@ -280,7 +344,8 @@ elseif ( $this_area == 'move' ) {
 					'post_parent' => $this_thread
 				),
 				array( 
-					'%s'
+					'%s',
+					'%d'
 				)
 			);
 			echo '<p>Post moved.</p>';
@@ -309,6 +374,7 @@ elseif ( $this_area == 'spam' ) {
 				'post_id' => $this_thread
 			),
 			array( 
+				'%d',
 				'%d'
 			)
 		);
@@ -336,6 +402,7 @@ elseif ( $this_area == 'unspam' ) {
 				'post_id' => $this_thread
 			),
 			array( 
+				'%d',
 				'%d'
 			)
 		);
@@ -363,6 +430,7 @@ elseif ( $this_area == 'lock' ) {
 					'post_id' => $this_thread
 				),
 				array( 
+					'%d',
 					'%d'
 				)
 			);
@@ -392,6 +460,7 @@ elseif ( $this_area == 'unlock' ) {
 					'post_id' => $this_thread
 				),
 				array( 
+					'%d',
 					'%d'
 				)
 			);
@@ -421,6 +490,7 @@ elseif ( $this_area == 'sticky' ) {
 					'post_id' => $this_thread
 				),
 				array( 
+					'%d',
 					'%d'
 				)
 			);
@@ -450,6 +520,7 @@ elseif ( $this_area == 'unsticky' ) {
 					'post_id' => $this_thread
 				),
 				array( 
+					'%d',
 					'%d'
 				)
 			);
@@ -475,9 +546,9 @@ elseif ( $this_area == 'report' ) {
 	</form>';
 	if ( isset ( $_POST['report'] ) && $_REQUEST['reason'] ) {
 		$REPORTMESSAGE = esc_sql( $_REQUEST['reason'] );
-		$reportthread = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_posts WHERE post_id = %d", $this_thread ) );
+		$reportthread = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_id = %d", $this_thread ) );
 		foreach ( $reportthread as $reported ) {
-			$grabexistingreport = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_posts WHERE post_id = %d", $this_thread ) );
+			$grabexistingreport = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_id = %d", $this_thread ) );
 			if ( count ( $grabexistingreport ) > 0 ) {
 				foreach ( $grabexistingreport as $existing ) {
 					$wpdb->update (
@@ -491,6 +562,7 @@ elseif ( $this_area == 'report' ) {
 						),
 						array( 
 							'%s',
+							'%d',
 							'%d'
 						)
 					);
@@ -510,7 +582,7 @@ elseif ( $this_area == 'report' ) {
 elseif ( $this_area == 'dismiss' ) {
 	if ( $is_moderator || $is_user_mod ) {
 		echo '<div id="post_action">';
-		$grabexistingreport = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_posts WHERE post_id = %d", $this_thread ) );
+		$grabexistingreport = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_id = %d", $this_thread ) );
 		if ( count ( $grabexistingreport ) > 0 ) {
 			foreach ( $grabexistingreport as $existing ) {
 				$wpdb->update (
@@ -524,6 +596,7 @@ elseif ( $this_area == 'dismiss' ) {
 					),
 					array( 
 						'%s',
+						'%d',
 						'%d'
 					)
 				);

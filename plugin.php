@@ -3,7 +3,7 @@
  * Plugin Name: Regular Board
  * Plugin URI: https://github.com/onebillion/regular_board
  * Description: Standalone (continuation) project for Regular Board, an anonymous text-based WordPress powered bbs.
- * Version: 1.10.1
+ * Version: 1.11
  * Author: boyevul
  * License: GNU General Public License v2
  * License URI: //www.gnu.org/licenses/gpl-2.0.html
@@ -33,7 +33,7 @@
  *
  */
 
-$regular_board_version = '1.08-stable';
+$regular_board_version = '1.11-stable';
 
 register_activation_hook ( __FILE__, 'regular_board_installation_option' );
 function regular_board_installation_option() {
@@ -43,9 +43,34 @@ function regular_board_installation_option() {
 	$regular_board_boards = $wpdb->prefix.'regular_board_boards';
 	$regular_board_users  = $wpdb->prefix.'regular_board_users';
 	$regular_board_bans   = $wpdb->prefix.'regular_board_bans';
-	$regular_board_logs   = $wpdb->prefix.'regular_board_logs';	
+	$regular_board_logs   = $wpdb->prefix.'regular_board_logs';
+	$regular_board_friends  = $wpdb->prefix . 'regular_board_friends';
+	$regular_board_messages = $wpdb->prefix . 'regular_board_messages';
+
 	// Upgrades - for when the plugin has already been installed and we need to 
 	// alter tables without forcing the user to completely uninstall everything.
+	
+	$friends = "CREATE TABLE $regular_board_friends(
+		friends_id BIGINT(20) NOT NULL AUTO_INCREMENT ,
+		friends_connector text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		friends_connectee text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		friends_mutual BIGINT(20) NOT NULL ,
+		PRIMARY KEY  (friends_id)
+	);";
+	$messages = "CREATE TABLE $regular_board_messages(
+		messages_id BIGINT(20) NOT NULL AUTO_INCREMENT ,
+		messages_date text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		messages_subject text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		messages_content LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		messages_to text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		messages_from text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+		messages_read BIGINT(20) NOT NULL ,
+		PRIMARY KEY  (messages_id)
+	);";
+	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+	dbDelta ( $friends );
+	dbDelta ( $messages );	
+	
 	$wpdb->query ( 
 		"ALTER TABLE $regular_board_users 
 		ADD user_avatar TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci AFTER user_follow"
@@ -65,13 +90,23 @@ function regular_board_installation_option() {
 	$wpdb->query ( 
 		"ALTER TABLE $regular_board_users 
 		ADD user_strikes BIGINT(20) NOT NULL AFTER user_level"
+	);
+	$wpdb->query ( 
+		"ALTER TABLE $regular_board_users 
+		ADD user_logged_in BIGINT(20) NOT NULL AFTER user_strikes"
+	);	
+	$wpdb->query ( 
+		"ALTER TABLE $regular_board_users 
+		ADD user_logged_in_from TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci AFTER user_logged_in"
 	);	
 	$wpdb->query ( 
 		"ALTER TABLE $regular_board_logs 
 		ADD logs_content TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci AFTER logs_message"
-	);	
-		
-	
+	);
+	$wpdb->query ( 
+		"ALTER TABLE $regular_board_posts 
+		ADD post_comment_parent BIGINT(20) NOT NULL AFTER post_comment"
+	);
 	add_option ( 'regular_board_installation', 0 );
 }
 
@@ -83,6 +118,7 @@ require_once   ( 'system/regular_board_functions.php' );
 require_once   ( 'system/regular_board_ip_functions.php' );
 add_action     ( 'admin_enqueue_scripts', 'regular_board_admin_css' );
 require_once   ( 'system/regular_board_options.php' );
+$regular_board_posts_select = 'post_id, post_parent, post_name, post_date, post_email, post_title, post_comment, post_comment_parent, post_type, post_url, post_board, post_moderator, post_last, post_sticky, post_locked, post_password, post_userid, post_public, post_report, post_reportcount';
 require_once   ( 'plugin/regular_board.php' );
 remove_action  ( 'wp_head', 'rel_canonical' );
 

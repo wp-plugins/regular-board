@@ -36,11 +36,7 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
 
 if ( $userisbanned ) {
-	echo '<div class="thread">';
-	if ( $userisbanned ) {
-		include ( plugin_dir_path(__FILE__) . '/regular_board_posting_userbanned.php' );
-	}
-	echo '</div>';
+
 } else {
 	$archived = 0;
 	if( $this_thread && $this_area != 'editpost' ) {
@@ -56,7 +52,7 @@ if ( $userisbanned ) {
 		}
 	}
 
-	if ( $posting == 0 || $archived == 1 ) {
+	if ( $posting == 0 || $archived == 1 || $this_thread && $view_this ) {
 		if ( $this_area == 'newtopic' ) {
 			echo '<p>This board is currently locked.</p>';
 		}
@@ -99,13 +95,13 @@ if ( $userisbanned ) {
 					if ( $LOCKED == 0){
 					$correct = 0;
 					if ( !$user_exists ) { } else {
-						if ( $this_area != 'editpost' && $the_board && $archived == 0 || $nothing_is_here || $this_thread ) {
-							if($correct == 0 && $this_area == 'newtopic' || $correct == 0 && $this_thread && count($getposts) > 0 || $nothing_is_here || $this_thread ){
+						if ( $the_board || $this_area != 'editpost' && $the_board && $archived == 0 || $nothing_is_here || $this_thread || $this_area == 'messages' ) {
+							if( $the_board || $correct == 0 && $this_area == 'newtopic' || $correct == 0 && $this_thread && count($getposts) > 0 || $nothing_is_here || $this_thread ||  $this_area == 'messages' ){
 								if ( $tlast != 1 ) {
-									echo '<div id="reply" class="reply">';
-									if ( $the_board && $this_area == 'newtopic' ) {
-										echo '<h3>Submit new topic to ' . $the_board . '</h3>';
+									if ( $this_area == 'messages' ) {
+										echo '<hr />';
 									}
+									echo '<div id="reply" class="reply">';
 									echo '<form enctype="multipart/form-data" name="regularboard" method="post" action="' . $current_page . '?a=post">';
 									wp_nonce_field('regularboard');
 									echo '<input type="hidden" value="' . $the_board . '" NAME="board" />';
@@ -116,67 +112,63 @@ if ( $userisbanned ) {
 									<input type="hidden" value="" name="PAGE" />
 									<input type="hidden" value="" name="LOGIN" />
 									<input type="hidden" value="" name="USERNAME" />';
+									
 									if ( !$profilepassword ) { 
-										$profilepassword = $rand;
+										if ( $this_area != 'messages' ) {
+											$profilepassword = $rand;
+										}
 									}
+									if ( $this_area == 'messages' ) {
+										if ( $_GET['message'] ) {
+											if ( $message_to && $message_from ) {
+												echo '<input type="hidden" value="' . $message_to . '" name="message_to" />
+												<input type="hidden" value="' . $message_from . '" name="message_from" />';
+											}
+										}
+									}
+									if ( $this_area == 'messages' && !$_GET['message'] ) {
+										echo '<input type="text" id="user_id" name="user_id" placeholder="Username" />';
+									}
+									if ( !$this_area == 'messages' ) {
+											echo '<input type="text" name="EMAIL" id="EMAIL"'; if ( $profileheaven ) { echo ' value="heaven"'; } echo ' placeholder="E-mail" />';
+									}
+									echo '<input type="text" id="SUBJECT" maxlength="' . $max_text . '" name="SUBJECT" placeholder="Topic" />';
 									
 									if ( !$this_thread ) {
-										echo '<section>
-										<label for="SUBJECT">topic</label>
-										<input type="text" id="SUBJECT" maxlength="' . $max_text . '" name="SUBJECT" placeholder="Topic (optional)" />
-										</section>';
-									}
-									
-									if ( !$the_board ) {
-										echo '<section>
-										<label for="board">post to</label>
-										<select name="board" id="board">
-										<option value="">(optional)</option>';
-										foreach ( $getboards as $gotboards ) {
-											echo '<option value="' . $gotboards->board_shortname . '">' . $gotboards->board_name . '</option>';
+										if ( $this_area != 'messages' ) {
+											echo '<select name="board" id="board">
+											<option value="">Select a tag</option>';
+											foreach ( $getboards as $gotboards ) {
+												echo '<option value="' . $gotboards->board_shortname . '">' . $gotboards->board_name . '</option>';
+											}
+											echo '</select>';
 										}
-										echo '</select>
-										</section>';
 									}
-									
-									echo '
-									<section>
-									<label for="COMMENT">comment</label>
-									<textarea id="COMMENT" name="COMMENT" placeholder="Comment"></textarea>
-									</section>
-									';
 									if ( $enable_url && !$this_thread || $enable_rep && $this_thread ) { 
-										echo '<section>
-										<label for="URL">url</label>
-										<input type="text" id="URL" maxlength="' . $max_text . '" value="" name="URL" placeholder=".jpg,gif,png/youtube/http (optional)" /></section>';
+										if ( $this_area != 'messages' ) {
+											echo '<input type="text" id="URL" maxlength="' . $max_text . '" value="" name="URL" placeholder="http://" /></section>';
+										}
 									}
+									if ( $this_thread ) {
+										echo '<input type="text" name="post_comment_parent" id="post_comment_parent" placeholder="Thread reply to" />';
+									}									
 									if ( $imgurid ) { 
-										echo '<section>
-										<label for="img">imgur</label>
-										<div><input id="img" name="img" size="35" type="file"/></div></section>';
-									}
-									if ( $posting_options ) {
-										echo '<section>
-										<label for="EMAIL">options</label><select id="EMAIL" name="EMAIL">
-										<option value="">...posting options</option>
-										<option value="heaven"';if($profileheaven == 1){echo ' selected="selected"';}echo '>Make this post anonymously</option>
-										<option value="roll">Make this post and roll the dice</option>';
-										if ( $this_thread ) { 
-											echo '<option value="sage">Make this post without bumping the thread</option>'; 
+										if ( $this_area != 'messages' ) {
+											echo '<input id="img" name="img" size="35" type="file"/>';
 										}
-										echo '	</select></section>';
 									}
-									echo '<section><input type="submit" data="' . $current_page . '?a=post" name="FORMSUBMIT" id="FORMSUBMIT" value="';
-										if ( $this_thread ) { 
-											echo 'Reply';
-										} else { 
-											echo 'Post';
-										}
-										echo '"/></section>
-										</form>
-										</div>';
+									echo '<textarea id="COMMENT" name="COMMENT" placeholder="(say something...)"></textarea>';									
+									echo '<input type="submit" data="' . $current_page . '?a=post" name="FORMSUBMIT" id="FORMSUBMIT" value="';
+									if ( $this_thread ) {
+										echo 'Reply';
+									} else { 
+										echo 'Post';
+									}
+									echo '"/>';									
+									echo '</form>
+									</div>';
 									} else {
-										echo '<div id="reply"><p>You were the last poster.  Edit your previous post or wait for a new post to comment further.</p></div>';
+										echo '<div id="reply"><p><small>You were the last poster.  Edit your previous post or wait for a new post to comment further.</small></p></div>';
 									}
 								}
 							}
