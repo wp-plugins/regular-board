@@ -48,11 +48,11 @@ function regular_board_style(){
 	global $wp, $post, $regular_board_version;
 	$content = $post->post_content;
 	if( has_shortcode ( $content, 'regular_board' ) ) {
-		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board00000000101.js?' . $regular_board_version;
+		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board00000000115.js?' . $regular_board_version;
 		if ( get_option ( 'regular_board_css_url' ) ) {
 			$css_file   = get_option ( 'regular_board_css_url' );
 		} else { 
-			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_00000000101.css';
+			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_00000000115.css';
 		}
 		$regbostyle     = $css_file . '?' . $regular_board_version;
 		// Selectively load lazyload!
@@ -158,8 +158,6 @@ function regular_board_format ( $data ) {
 	'/\|/is',
 	'/\`(.*?)\`/is',
 	'/\[spoiler](.*?)\[\/spoiler]/is',
-	'/\[/is',
-	'/\]/is',
 	'/\\\/is',
 	);
 	$output = array (
@@ -175,14 +173,20 @@ function regular_board_format ( $data ) {
 	'<br />',
 	'<code>$1</code>',
 	'<span class="spoiler">$1</span>',
-	'&#91;',
-	'&#93;',
-	'',
 	);
 	$rtrn = preg_replace ( $input, $output, $data );
 	return wpautop( $rtrn );
 }	
-	
+
+function regular_board_auto_tags($text){
+	if ( get_option ( 'regular_board_useboards' ) == 'tags' ) {
+		return preg_replace('!((#)[-a-zA-Zа-яА-Я()0-9@:%_+~?&;//=]+)!i', '<a href="?b=$1">$1</a>', $text);
+	}
+	if ( get_option ( 'regular_board_useboards' ) == 'boards' ) {
+		return preg_replace('!((#)[-a-zA-Zа-яА-Я()0-9@:%_+~?&;//=]+)!i', '<a href="?ht=$1">$1</a>', $text);
+	}
+}
+
 /** 
  * Get the domain of a URL
  */

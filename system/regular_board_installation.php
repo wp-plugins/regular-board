@@ -14,6 +14,7 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
 
 function regular_board_installation(){
+	add_option ( 'regular_board_useboards', 'boards' );
 	add_option ( 'regular_board_totaluserallowed' );
 	add_option ( 'regular_board_accountsper', 5 );
 	add_option ( 'regular_board_registration', 1 );
@@ -30,7 +31,6 @@ function regular_board_installation(){
 	add_option ( 'regular_board_ascii' );
 	add_option ( 'regular_board_announcements' );
 	add_option ( 'regular_board_hideannouncements' );
-	add_option ( 'regular_board_postingoptions', 1 );
 	add_option ( 'regular_board_css_url' );
 	add_option ( 'regular_board_search', 1 );
 	add_option ( 'regular_board_ids', 1 );

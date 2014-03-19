@@ -390,7 +390,6 @@ if( current_user_can( 'manage_options' )) {
 							update_option ( 'regular_board_displayboards', str_replace ( '\\', '', $_REQUEST['displayboards'] ) );
 							update_option ( 'regular_board_displaymenu', str_replace ( '\\', '', $_REQUEST['displaymenu'] ) );
 							update_option ( 'regular_board_search', str_replace ( '\\', '', $_REQUEST['search'] ) );
-							update_option ( 'regular_board_postingoptions', str_replace ( '\\', '', $_REQUEST['postingoptions'] ) );
 							update_option ( 'regular_board_lazyload', str_replace ( '\\', '', $_REQUEST['lazyload'] ) );
 							update_option ( 'regular_board_autourl', str_replace ( '\\', '', $_REQUEST['autourl'] ) );
 							update_option ( 'regular_board_formatting', str_replace ( '\\', '', $_REQUEST['formatting'] ) );
@@ -401,8 +400,12 @@ if( current_user_can( 'manage_options' )) {
 							update_option ( 'regular_board_registration', str_replace ( '\\', '', $_REQUEST['registration'] ) );
 							update_option ( 'regular_board_accountsper', str_replace ( '\\', '', $_REQUEST['accountsper'] ) );
 							update_option ( 'regular_board_totaluserallowed', str_replace ( '\\', '', $_REQUEST['accountstotal'] ) );
+							update_option ( 'regular_board_useboards', str_replace ( '\\', '', $_REQUEST['useboards'] ) );
 						}
-						
+						function regular_board_useboards_option() {
+							echo '<option value="tags"'; if ( get_option ( 'regular_board_useboards' ) == 'tags' ) { echo ' selected="selected"'; } echo '>tags</option>';
+							echo '<option value="boards"'; if ( get_option ( 'regular_board_useboards' ) == 'boards' ) { echo ' selected="selected"'; } echo '>boards</option>';
+						}						
 						function regular_board_enableurl_option() {
 							echo '<option value="0"'; if ( get_option ( 'regular_board_enableurl' ) == 0 ) { echo ' selected="selected"'; } echo '>No</option>';
 							echo '<option value="1"'; if ( get_option ( 'regular_board_enableurl' ) == 1 ) { echo ' selected="selected"'; } echo '>Yes</option>';
@@ -422,10 +425,6 @@ if( current_user_can( 'manage_options' )) {
 						function regular_board_search_option() {
 							echo '<option value="0"'; if ( get_option ( 'regular_board_search' ) == 0 ) { echo ' selected="selected"'; } echo '>No</option>';
 							echo '<option value="1"'; if ( get_option ( 'regular_board_search' ) == 1 ) { echo ' selected="selected"'; } echo '>Yes</option>';
-						}
-						function regular_board_postingoptions_option() {
-							echo '<option value="0"'; if ( get_option ( 'regular_board_postingoptions' ) == 0 ) { echo ' selected="selected"'; } echo '>No</option>';
-							echo '<option value="1"'; if ( get_option ( 'regular_board_postingoptions' ) == 1 ) { echo ' selected="selected"'; } echo '>Yes</option>';
 						}
 						function regular_board_robots_option() {
 							echo '<option value="0"'; if ( get_option ( 'regular_board_robots' ) == 0 ) { echo ' selected="selected"'; } echo '>No</option>';
@@ -504,19 +503,19 @@ if( current_user_can( 'manage_options' )) {
 								<section><label>19:: Use Regular Board formatting for comments:</label><select name="formatting" id="formatting">'; regular_board_formatting_option(); echo '</select></section>
 								<section><label>20:: Display search form:</label><select name="search" id="search">'; regular_board_search_option(); echo '</select></section>
 								<section><label>21:: URL to your <em>custom</em> stylesheet (<strong>optional</strong>):</label><input type="text" id="cssurl" name="cssurl" value="' . get_option ( 'regular_board_css_url' ) . '" /></section>
-								<section><label>22:: Enable posting options:</label><select name="postingoptions" id="postingoptions">'; regular_board_postingoptions_option(); echo '</select></section>
-								<section><label>23:: Maximum amount of links allowed:</label><input type="text" name="maxlinks" id="maxlinks" value="' . get_option ( 'regular_board_maxlinks' ) . '" /></section>
-								<section><label>24:: Enable no index, no follow:</label><select name="robots" id="robots">'; regular_board_robots_option(); echo '</select></section>
-								<section><label>25:: Enable Lazy Load:</label><select name="lazyload" id="lazyload">'; regular_board_lazyload_option(); echo '</select></section>
-								<section><label>26:: Category id for board announcements:</label><input type="text" id="announcements" name="announcements" value="' . get_option ( 'regular_board_announcements' ) . '" /></section>
-								<section><label>27:: Hide announcements from the front page of the blog:</label><select name="hideannouncements" id="hideannouncements">'; regular_board_hideannouncements_option(); echo '</select></section>
-								<section><label>28:: ASCII for header (completely optional, and completely useless.)</label><textarea name="ascii" id="ascii">' . get_option ( 'regular_board_ascii' ) . '</textarea></section>
-								<section><label>29:: Image to show users who are banned.  Useless, really.</label><input type="text" name="bannedimage" id="bannedimage" value="' . get_option ( 'regular_board_bannedimage' ) . '" /></section>
-								<section><label>30:: Banner image for boards (300x100 / scales to 150x50 on mobile). (not as) useless, really.</label><input type="text" name="boardbanner" id="boardbanner" value="' . get_option ( 'regular_board_boardbanner' ) . '" /></section>
-								<section><label>31:: Enable blog post viewing from Regular Board:</label><select name="enableblog" id="enableblog">'; regular_board_blog_option(); echo '</select></section>
-								<section><label>32:: Allow new users to register?:</label><select name="registration" id="registration">'; regular_board_registration_option(); echo '</select></section>
-								<section><label>33:: How many accounts per unique IP address can a person have?</label><input type="text" name="accountsper" id="accountsper" value="' . get_option ( 'regular_board_accountsper' ) . '" /></section>
-								<section><label>34:: How many accounts (TOTAL) can be registered at one time?</label><input type="text" name="accountstotal" id="accountstotal" value="' . get_option ( 'regular_board_totaluserallowed' ) . '" /></section>
+								<section><label>22:: Maximum amount of links allowed:</label><input type="text" name="maxlinks" id="maxlinks" value="' . get_option ( 'regular_board_maxlinks' ) . '" /></section>
+								<section><label>23:: Enable no index, no follow:</label><select name="robots" id="robots">'; regular_board_robots_option(); echo '</select></section>
+								<section><label>24:: Enable Lazy Load:</label><select name="lazyload" id="lazyload">'; regular_board_lazyload_option(); echo '</select></section>
+								<section><label>25:: Category id for board announcements:</label><input type="text" id="announcements" name="announcements" value="' . get_option ( 'regular_board_announcements' ) . '" /></section>
+								<section><label>26:: Hide announcements from the front page of the blog:</label><select name="hideannouncements" id="hideannouncements">'; regular_board_hideannouncements_option(); echo '</select></section>
+								<section><label>27:: ASCII for header (completely optional, and completely useless.)</label><textarea name="ascii" id="ascii">' . get_option ( 'regular_board_ascii' ) . '</textarea></section>
+								<section><label>28:: Image to show users who are banned.  Useless, really.</label><input type="text" name="bannedimage" id="bannedimage" value="' . get_option ( 'regular_board_bannedimage' ) . '" /></section>
+								<section><label>29:: Banner image for boards (300x100 / scales to 150x50 on mobile). (not as) useless, really.</label><input type="text" name="boardbanner" id="boardbanner" value="' . get_option ( 'regular_board_boardbanner' ) . '" /></section>
+								<section><label>30:: Enable blog post viewing from Regular Board:</label><select name="enableblog" id="enableblog">'; regular_board_blog_option(); echo '</select></section>
+								<section><label>31:: Allow new users to register?:</label><select name="registration" id="registration">'; regular_board_registration_option(); echo '</select></section>
+								<section><label>32:: How many accounts per unique IP address can a person have?</label><input type="text" name="accountsper" id="accountsper" value="' . get_option ( 'regular_board_accountsper' ) . '" /></section>
+								<section><label>33:: How many accounts (TOTAL) can be registered at one time?</label><input type="text" name="accountstotal" id="accountstotal" value="' . get_option ( 'regular_board_totaluserallowed' ) . '" /></section>
+								<section><label>34:: Use boards or #tags?</label><select name="useboards" id="useboards">'; regular_board_useboards_option(); echo '</select></section>
 								<section><input type="submit" name="save" value="Save options" /></section>
 							</form>
 						</div>
@@ -542,16 +541,15 @@ if( current_user_can( 'manage_options' )) {
 							<p><label for="autourl">18:: Automatically turn links and images in comment into links and an image gallery for the comment.</label></p>
 							<p><label for="search">20:: Enable or disable the search function.</label></p>
 							<p><label for="cssurl">21:: If you wish to use your own stylesheet (and not the default), enter the URL to it in this box.  (Blank for default)</label></p>
-							<p><label for="postingoptions">22:: Enable extra posting options on the post form, like posting anonymously or rolling.</label></p>
-							<p><label for="maxlinks">23:: When users post links, they are automatically converted.  This number will determine just how many of those links (and/or images) are returned for display.</label></p>
-							<p><label for="robots">24:: Whether or not to add \'no index, no follow\' for robots on any page with the Regular Board shortcode.</label></p>
-							<p><label for="lazyload">25:: Whether or not to enable Lazy Load for images on the boards, decreasing load time.</label></p>
-							<p><label for="announcements">26:: The category id for which category you will use to post board announcements.</label></p>
-							<p><label for="hideannouncements">27:: Whether or not you wish to hide the announcements category posts from showing up on the front page of the blog.</label></p>
-							<p><label for="ascii">28:: A completely useless way to add ascii art to your HTML (header).  Removes backslashes and quotation-marks.  Use a service like <a href="http://picascii.com/">picascii.com</a> to make something useful(ish).</label></p>
-							<p><label for="bannedimage">29:: An image to show to users when they are banned.  Completely optional, and completely useless.</label></p>
-							<p><label for="boardbanner">30:: An image for your boards.  Just as optional as the banned image, but maybe not quite as useless.</label></p>
-							<p><label for="enableblog">31:: Enable the user to browse blog posts from the Regular Board installation.</label></p>
+							<p><label for="maxlinks">22:: When users post links, they are automatically converted.  This number will determine just how many of those links (and/or images) are returned for display.</label></p>
+							<p><label for="robots">23:: Whether or not to add \'no index, no follow\' for robots on any page with the Regular Board shortcode.</label></p>
+							<p><label for="lazyload">24:: Whether or not to enable Lazy Load for images on the boards, decreasing load time.</label></p>
+							<p><label for="announcements">25:: The category id for which category you will use to post board announcements.</label></p>
+							<p><label for="hideannouncements">26:: Whether or not you wish to hide the announcements category posts from showing up on the front page of the blog.</label></p>
+							<p><label for="ascii">27:: A completely useless way to add ascii art to your HTML (header).  Removes backslashes and quotation-marks.  Use a service like <a href="http://picascii.com/">picascii.com</a> to make something useful(ish).</label></p>
+							<p><label for="bannedimage">28:: An image to show to users when they are banned.  Completely optional, and completely useless.</label></p>
+							<p><label for="boardbanner">29:: An image for your boards.  Just as optional as the banned image, but maybe not quite as useless.</label></p>
+							<p><label for="enableblog">30:: Enable the user to browse blog posts from the Regular Board installation.</label></p>
 						</div>
 					
 						<div>

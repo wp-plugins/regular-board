@@ -39,31 +39,19 @@ if ( count ( $checkPass ) > 0 ) {
 			<input type="hidden" value="" name="LOGIN" />
 			<input type="hidden" value="" name="USERNAME" />
 			<input type="hidden" value="' . $this_thread . '" id="editthisthread" name="editthisthread" />
-			<section>
-				<label for="SUBJECT">Topic</label>
-				<input type="text" id="SUBJECT" maxlength="' . $max_text . '" name="SUBJECT" placeholder="Subject" value="' . $editSubject . '" />
-			</section>
-			<section>
-				<label for="COMMENT">Comment</label>
-				<textarea id="COMMENT" name="COMMENT">' . str_replace ( array ( '[', ']' ), array ( '&#91;', '&#93;' ), $editComment ) . '</textarea>
-			</section>';
+			<label for="SUBJECT">subject</label><input type="text" id="SUBJECT" maxlength="' . $max_text . '" name="SUBJECT" placeholder="Subject" value="' . $editSubject . '" />
+			<label for="COMMENT">comment</label><textarea id="COMMENT" name="COMMENT">' . str_replace ( array ( '[', ']' ), array ( '&#91;', '&#93;' ), $editComment ) . '</textarea>';
 			if ( $EDITTHREAD->post_url ) { 
-				echo '<section>
-							<label for="URL">URL</label>
-							<input type="text" id="URL" maxlength="' . $max_text . '" value="';
+				echo '<label for="URL">url</label><input type="text" id="URL" maxlength="' . $max_text . '" value="';
 				if ( $EDITTHREAD->post_type == 'youtube' ) {
 					echo '//youtube.com/watch?v=' . $EDITTHREAD->post_url; 
 				} else { 
 					echo $EDITTHREAD->post_url; 
 				} 
-				echo '" name="URL" placeholder=".jpg,gif,png/youtube/http" />
-			</section>';
+				echo '" name="URL" placeholder=".jpg,gif,png/youtube/http" />';
 			}
 			if ( $imgurid ) { 
-				echo '<section>
-					<label for="img">Upload</label>
-					<input name="img" class="right" size="35" type="file"/>
-				</section>';
+				echo '<label for="img">upload</label><input name="img" class="right" size="35" type="file"/>';
 			}
 			echo '<input type="submit" value="Edit" name="FORMSUBMIT" id="FORMSUBMIT" />
 			</form>

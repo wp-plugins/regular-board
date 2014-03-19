@@ -24,8 +24,22 @@ if ( count ( $posts ) > 0 ) {
 	$posts->post_email          = $posts->post_email;
 	$posts->post_title          = $posts->post_title;
 	$posts->post_comment        = $posts->post_comment;
+	
+	if ( $protocol == 'tags' ) {
+		$posts->post_comment        = str_replace ( '?b=#', '?b=', regular_board_auto_tags ( $posts->post_comment ) );
+	}
+	if ( $protocol == 'boards' ) {
+		$posts->post_comment        = str_replace ( '?ht=#', '?ht=', regular_board_auto_tags ( $posts->post_comment ) );
+	}
+	
 	$posts->post_type           = $posts->post_type;
-	$posts->post_board          = $posts->post_board;
+	if ( $protocol == 'boards' ) {
+		$posts->post_board          = $posts->post_board;
+		$board                      = $posts->post_board;
+		if ( !$posts->post_parent ) {
+			$the_board              = $posts->post_board;
+		}		
+	}
 	$posts->post_last           = $posts->post_last;
 	$posts->post_sticky         = intval ( $posts->post_sticky );
 	$posts->post_locked         = intval ( $posts->post_locked );
@@ -37,12 +51,10 @@ if ( count ( $posts ) > 0 ) {
 	if ( !$posts->post_board ) { 
 		$this_is_protected      = '';
 	}
-	if ( !$posts->post_parent ) {
-		$the_board              = $posts->post_board;
-	}
-	$board                      = $posts->post_board;
 	
-	$post_count = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_board = '$posts->post_board'" );
+	if ( $protocol == 'boards' ) {
+		$post_count = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_board = '$posts->post_board'" );
+	}
 	
 	if ( $posts->post_parent ) {
 		$threaded   = $wpdb->get_results ( $wpdb->prepare ("SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_parent = %d AND post_comment_parent = %d ORDER BY post_last ASC", $posts->post_parent, $posts->post_id  ) );
@@ -51,6 +63,21 @@ if ( count ( $posts ) > 0 ) {
 	if ( in_array ( $posts->post_board, $protectedboards, true ) ) {
 		$this_is_protected = 1;
 	}
+
+	if ( $posts->post_comment == '[deleted]' && $posts->post_title == '[deleted]' && $posts->post_name == 'null' ) {
+		$wpdb->delete ( $regular_board_posts, array ( 'post_id' => $posts->post_id ), array ( '%d' ) );
+		$wpdb->delete ( $regular_board_posts, array ( 'post_parent' => $posts->post_id ), array ( '%d' ) );
+		if ( $protocol == 'boards' ) {
+			if ( $post_count > 0 ) {
+				$count = ( $post_count - 1 );
+			}
+			if ( $post_count == 0 ) {
+				$count = 0;
+			}
+			$wpdb->query ( "UPDATE $regular_board_boards SET board_postcount = $count WHERE board_shortname = '$posts->post_board'" );
+		}
+	}	
+	
 	if ( $posts->post_parent == 0 && !$this_is_protected ) {
 		if ( $board_wipe_every && $board_wipe_every != strtolower ( 'never' ) && $board_wipe_per == strtolower ( 'thread' ) ) {
 			$today_is   = strtotime ( $current_timestamp );
@@ -83,13 +110,15 @@ if ( count ( $posts ) > 0 ) {
 			if($today_is > $board_life){
 				$wpdb->delete ( $regular_board_posts, array ( 'post_id' => $posts->post_id ), array ( '%d' ) );
 				$wpdb->delete ( $regular_board_posts, array ( 'post_parent' => $posts->post_id ), array ( '%d' ) );
-				if ( $post_count > 0 ) {
-					$count = ( $post_count - 1 );
+				if ( $protocol == 'boards' ) {
+					if ( $post_count > 0 ) {
+						$count = ( $post_count - 1 );
+					}
+					if ( $post_count == 0 ) {
+						$count = 0;
+					}
+					$wpdb->query ( "UPDATE $regular_board_boards SET board_postcount = $count WHERE board_shortname = '$posts->post_board'" );
 				}
-				if ( $post_count == 0 ) {
-					$count = 0;
-				}
-				$wpdb->query ( "UPDATE $regular_board_boards SET board_postcount = $count WHERE board_shortname = '$posts->post_board'" );
 			}
 		}
 	}	
@@ -402,7 +431,7 @@ if ( count ( $posts ) > 0 ) {
 										echo ' <a data="' . $posts->post_id . '" href="' . $current_page . '?a=spam&amp;t=' . $posts->post_id . '">spam</a> ';
 									}
 									if ( !$posts->post_parent ) {
-										if ( count ( $getboards ) > 1 ) {
+										if ( count ( $getboards ) > 1 && $protocol == 'boards' ) {
 											echo ' <a data="' . $posts->post_id . '" href="' . $current_page . '?a=move&amp;t=' . $posts->post_id . '">move</a>';
 										}
 										if ( $posts->post_locked == 1 ) {
@@ -465,7 +494,7 @@ if ( count ( $posts ) > 0 ) {
 					echo '<div class="clear media' . $posts->post_id . '"><iframe src="//player.vimeo.com/video/' . substr ( $posts->post_url, 17 ) . '?title=0&amp;byline=0&amp;portrait=0&amp;color=d6cece" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>'; 
 				} elseif ( $posts->post_type == 'youtube' && $posts->post_url ) { 
 					// ( 03 ) Youtube embedding
-					echo '<div class="clear media' . $posts->post_id . '"><a class="rb_yt" data="'.$posts->post_url.'" href="//youtube.com/watch?v=' . $posts->post_url . '"><img class="regular_board_video_thumbnail_large" src="//img.youtube.com/vi/' . $posts->post_url . '/0.jpg"></a><div id="' . $posts->post_url . '"></div></div>'; 
+					echo '<div class="clear media' . $posts->post_id . '"><hr /><a class="rb_yt" data="'.$posts->post_url.'" href="//youtube.com/watch?v=' . $posts->post_url . '"><small><i class="fa fa-play"> click to play video</i></small><img class="regular_board_video_thumbnail_large" src="//img.youtube.com/vi/' . $posts->post_url . '/0.jpg"></a><div id="' . $posts->post_url . '"></div><hr /></div>'; 
 				} elseif ( $posts->post_type == 'image' && $posts->post_url ) { 
 					// ( 04 ) Image embedding
 					echo '<div class="clear media' . $posts->post_id . '"><a href="' . $posts->post_url . '"><img class="';
@@ -604,6 +633,13 @@ if ( count ( $posts ) > 0 ) {
 						$reply_details->post_title       = $reply_details->post_title;
 						$reply_details->post_comment     = str_replace ( array ( '\\n', '\\r', '\\'), array( '<br /><br />','<br /><br />','' ), $reply_details->post_comment );
 						$reply_details->post_comment     = regular_board_format ( substr ( $reply_details->post_comment, 0, 100 ) );
+						if ( $protocol == 'tags' ) {
+							$reply_details->post_comment        = str_replace ( '?b=#', '?b=', regular_board_auto_tags ( $reply_details->post_comment ) );
+						}
+						if ( $protocol == 'boards' ) {
+							$reply_details->post_comment        = str_replace ( '?ht=#', '?ht=', regular_board_auto_tags ( $reply_details->post_comment ) );
+						}						
+						
 						$reply_details->post_type        = $reply_details->post_type;
 						$reply_details->post_board       = $reply_details->post_board;
 						$reply_details->post_last        = $reply_details->post_last;

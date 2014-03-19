@@ -192,6 +192,7 @@ if ( $this_area == 'destroy' ) {
 		$wpdb->update (
 			$regular_board_posts,
 			array( 
+				'post_subject' => '[deleted]',
 				'post_name' => 'null',
 				'post_comment' => '[deleted]',
 				'post_userid' => 0,
@@ -203,6 +204,7 @@ if ( $this_area == 'destroy' ) {
 				'post_id' => $this_thread
 			),
 			array( 
+				'%s',
 				'%s',
 				'%s',
 				'%d',
@@ -260,7 +262,7 @@ if ( $this_area == 'undelete' ) {
  * posts to other boards.
  */
  
-elseif ( $this_area == 'move' ) {
+elseif ( $this_area == 'move' && $protocol == 'boards' ) {
 	echo '<div id="post_action">';
 	if ( $is_moderator || $is_user_mod ) {
 		

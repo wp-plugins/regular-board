@@ -366,21 +366,14 @@ if ( $userisbanned ) {
 								
 								if ( $duplicate_count == 0 ) {
 									// If posting options are enabled
-									if ( $posting_options ) {
-										if ( $_REQUEST['EMAIL'] == 'roll' ) {
-											$roll       = explode ( ',', $roll );
-											$post_email = wp_rand ( $roll[0], $roll[1] );
-										} elseif ( $_REQUEST['EMAIL'] == strtolower ( 'heaven' ) ) {
-											$post_email   = 'heaven';
-											$profile_name = 'null';
-										} elseif ( $_REQUEST['EMAIL'] == strtolower ( 'sage' ) ) {
-											$post_email   = 'sage';
-										} else {
-											$post_email   = '';
-										}
+									if ( $_REQUEST['EMAIL'] == 'roll' ) {
+										$roll       = explode ( ',', $roll );
+										$post_email = wp_rand ( $roll[0], $roll[1] );
 									} elseif ( $_REQUEST['EMAIL'] == strtolower ( 'heaven' ) ) {
-										$post_email       = 'heaven';
-										$profile_name     = 'null';
+										$post_email   = 'heaven';
+										$profile_name = 'null';
+									} elseif ( $_REQUEST['EMAIL'] == strtolower ( 'sage' ) ) {
+										$post_email   = 'sage';
 									} else {
 										$post_email       = '';
 									}

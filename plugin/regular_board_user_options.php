@@ -147,17 +147,19 @@ echo '<form method="post" name="useroptions" class="user-options" action="' . $c
 			<input type="text" name="newpassword" id="newpassword" placeholder="Enter new password" />
 		</section>';
 	}
-	if ( !$thisboard ) { 
-		echo '<section>
-			<label for="boards">Boards</label>';
-		foreach ( $getboards as $board ) {
-			$board->board_shortname . ' &mdash; ';
+	if ( $protocol == 'boards' ) {
+		if ( !$thisboard ) { 
+			echo '<section>
+				<label for="boards">Boards</label>';
+			foreach ( $getboards as $board ) {
+				$board->board_shortname . ' &mdash; ';
+			}
+			echo '<input type="text" name="boards" id="boards" value="' . $boards . '" placeholder="Boards" />
+			<span>By putting a comma separated list of boards, you are able to build a customized feed of content 
+			tailored to your personal tastes from the boards available.  Simply use the follow format: board,board,board... 
+			to customize your viewing preferences.</span>
+			</section>';
 		}
-		echo '<input type="text" name="boards" id="boards" value="' . $boards . '" placeholder="Boards" />
-		<span>By putting a comma separated list of boards, you are able to build a customized feed of content 
-		tailored to your personal tastes from the boards available.  Simply use the follow format: board,board,board... 
-		to customize your viewing preferences.</span>
-		</section>';
 	}
 	echo '<section>
 		<label for="follow">Follow</label>

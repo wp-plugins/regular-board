@@ -22,15 +22,15 @@ if ( count ( $usprofile ) > 0 ) {
 	foreach ( $usprofile as $theprofile ) {
 			$the_profile_name = sanitize_text_field ( $theprofile->user_name );
 			echo '<div class="profile_deets">';
-			if ( $theprofile->user_avatar ) {
-				if ( $theprofile->user_avatar != 'NULL' ) {
-					echo '<img src="' . $theprofile->user_avatar . '" class="imageFULL" />';
-				}
-			}
 			if ( $theprofile->user_name ) {
 				echo '<h1>' . $theprofile->user_name . '</h1> ';
 			} else {
 				echo '<h1> Anonymous </h1>';
+			}
+			if ( $theprofile->user_avatar ) {
+				if ( $theprofile->user_avatar != 'NULL' ) {
+					echo '<img src="' . $theprofile->user_avatar . '" class="imageFULL" />';
+				}
 			}
 			if ( $theprofile->user_slogan ) {
 				if ( $theprofile->user_slogan != 'NULL' ) {

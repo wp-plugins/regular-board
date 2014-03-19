@@ -24,6 +24,7 @@ function regular_board_uninstallation() {
 	$regular_board_logs    = $wpdb->prefix . 'regular_board_logs';
 	$regular_board_friends = $wpdb->prefix . 'regular_board_friends';
 	$regular_board_message = $wpdb->prefix . 'regular_board_messages';
+	delete_option ( 'regular_board_useboards' );
 	delete_option ( 'regular_board_totaluserallowed' );
 	delete_option ( 'regular_board_accountsper' );
 	delete_option ( 'regular_board_registration' );
@@ -43,7 +44,6 @@ function regular_board_uninstallation() {
 	delete_option ( 'regular_board_lazyload' );
 	delete_option ( 'regular_board_robots' );
 	delete_option ( 'regular_board_maxlinks' );
-	delete_option ( 'regular_board_postingoptions' );
 	delete_option ( 'regular_board_css_url' );
 	delete_option ( 'regular_board_search' );
 	delete_option ( 'regular_board_displayboards' );

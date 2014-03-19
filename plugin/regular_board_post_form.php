@@ -104,7 +104,11 @@ if ( $userisbanned ) {
 									echo '<div id="reply" class="reply">';
 									echo '<form enctype="multipart/form-data" name="regularboard" method="post" action="' . $current_page . '?a=post">';
 									wp_nonce_field('regularboard');
-									echo '<input type="hidden" value="' . $the_board . '" NAME="board" />';
+									
+									if ( $protocol == 'boards' ) {
+										echo '<input type="hidden" value="' . $the_board . '" NAME="board" />';
+									}
+									
 									if ( $this_thread ) { 
 										echo '<input type="hidden" name="PARENT" value="' . $this_thread . '" />';
 									}
@@ -127,37 +131,47 @@ if ( $userisbanned ) {
 										}
 									}
 									if ( $this_area == 'messages' && !$_GET['message'] ) {
-										echo '<input type="text" id="user_id" name="user_id" placeholder="Username" />';
+										echo '<label for="user_id">send to</label><input type="text" id="user_id" name="user_id" />';
 									}
-									if ( !$this_area == 'messages' ) {
-											echo '<input type="text" name="EMAIL" id="EMAIL"'; if ( $profileheaven ) { echo ' value="heaven"'; } echo ' placeholder="E-mail" />';
-									}
-									echo '<input type="text" id="SUBJECT" maxlength="' . $max_text . '" name="SUBJECT" placeholder="Topic" />';
 									
-									if ( !$this_thread ) {
-										if ( $this_area != 'messages' ) {
-											echo '<select name="board" id="board">
-											<option value="">Select a tag</option>';
-											foreach ( $getboards as $gotboards ) {
-												echo '<option value="' . $gotboards->board_shortname . '">' . $gotboards->board_name . '</option>';
-											}
-											echo '</select>';
+									if ( $protocol == 'boards' ) {
+										if ( !$this_area == 'messages' ) {
+												echo '<label for="EMAIL">email</label><input type="text" name="EMAIL" id="EMAIL"'; if ( $profileheaven ) { echo ' value="heaven"'; } echo ' />';
 										}
 									}
+
+									echo '<label for="SUBJECT">subject</label><input type="text" id="SUBJECT" maxlength="' . $max_text . '" name="SUBJECT" />';
+									
+									if ( $protocol == 'boards' ) {
+										if ( !$this_thread ) {
+											if ( $this_area != 'messages' ) {
+												echo '<label>select a board</label>
+												<select name="board" id="board">
+												<option value="">none selected</option>';
+												foreach ( $getboards as $gotboards ) {
+													echo '<option value="' . $gotboards->board_shortname . '">' . $gotboards->board_name . '</option>';
+												}
+												echo '</select>';
+											}
+										}
+									}
+									
 									if ( $enable_url && !$this_thread || $enable_rep && $this_thread ) { 
 										if ( $this_area != 'messages' ) {
-											echo '<input type="text" id="URL" maxlength="' . $max_text . '" value="" name="URL" placeholder="http://" /></section>';
+											echo '<label for="URL">URL</label>
+											<input type="text" id="URL" maxlength="' . $max_text . '" value="" name="URL" /></section>';
 										}
 									}
 									if ( $this_thread ) {
-										echo '<input type="text" name="post_comment_parent" id="post_comment_parent" placeholder="Thread reply to" />';
+										echo '<label for="post_comment_parent">reply to</label><input type="text" name="post_comment_parent" id="post_comment_parent" />';
 									}									
 									if ( $imgurid ) { 
 										if ( $this_area != 'messages' ) {
-											echo '<input id="img" name="img" size="35" type="file"/>';
+											echo '<label for="img">upload</label>
+											<input id="img" name="img" size="35" type="file"/>';
 										}
 									}
-									echo '<textarea id="COMMENT" name="COMMENT" placeholder="(say something...)"></textarea>';									
+									echo '<label for="COMMENT">comment</label><textarea id="COMMENT" name="COMMENT"></textarea>';									
 									echo '<input type="submit" data="' . $current_page . '?a=post" name="FORMSUBMIT" id="FORMSUBMIT" value="';
 									if ( $this_thread ) {
 										echo 'Reply';
