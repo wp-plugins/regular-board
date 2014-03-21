@@ -24,14 +24,12 @@ if ( count ( $posts ) > 0 ) {
 	$posts->post_email          = $posts->post_email;
 	$posts->post_title          = $posts->post_title;
 	$posts->post_comment        = $posts->post_comment;
-	
 	if ( $protocol == 'tags' ) {
 		$posts->post_comment        = str_replace ( '?b=#', '?b=', regular_board_auto_tags ( $posts->post_comment ) );
 	}
 	if ( $protocol == 'boards' ) {
 		$posts->post_comment        = str_replace ( '?ht=#', '?ht=', regular_board_auto_tags ( $posts->post_comment ) );
 	}
-	
 	$posts->post_type           = $posts->post_type;
 	if ( $protocol == 'boards' ) {
 		$posts->post_board          = $posts->post_board;
@@ -51,7 +49,6 @@ if ( count ( $posts ) > 0 ) {
 	if ( !$posts->post_board ) { 
 		$this_is_protected      = '';
 	}
-	
 	if ( $protocol == 'boards' ) {
 		$post_count = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_board = '$posts->post_board'" );
 	}
@@ -59,11 +56,9 @@ if ( count ( $posts ) > 0 ) {
 	if ( $posts->post_parent ) {
 		$threaded   = $wpdb->get_results ( $wpdb->prepare ("SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_parent = %d AND post_comment_parent = %d ORDER BY post_last ASC", $posts->post_parent, $posts->post_id  ) );
 	}
-	
 	if ( in_array ( $posts->post_board, $protectedboards, true ) ) {
 		$this_is_protected = 1;
 	}
-
 	if ( $posts->post_comment == '[deleted]' && $posts->post_title == '[deleted]' && $posts->post_name == 'null' ) {
 		$wpdb->delete ( $regular_board_posts, array ( 'post_id' => $posts->post_id ), array ( '%d' ) );
 		$wpdb->delete ( $regular_board_posts, array ( 'post_parent' => $posts->post_id ), array ( '%d' ) );
@@ -349,7 +344,14 @@ if ( count ( $posts ) > 0 ) {
 					if ( $posts->post_moderator == 2 ) {
 						echo '<small>' . $user_mod_code . '</small> '; 
 					}
-					echo '<br /> ';
+					if ( count ( $threaded ) > 0 ) {
+						echo '<br /> ';
+						echo ' replies: ';
+						foreach ( $threaded as $threads ) {
+							echo ' <a href="' . $this_page . '?t=' . $threads->post_parent . '#' . $threads->post_id . '">' . $threads->post_id . '</a> ';
+						}
+					}
+					echo '<br />';
 					if ( !$this_thread ) {
 						echo '<a href="' . $current_page;
 						if ( $posts->post_parent == 0 ) {

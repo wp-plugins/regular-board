@@ -271,7 +271,7 @@ if ( $userisbanned ) {
 								 */
 								
 								// If URLs are enabled, prepare the entered URL
-								if ( isset ( $_REQUEST['PARENT'] ) && $enable_rep || !isset ( $_REQUEST['PARENT'] ) && $enable_url ) {
+								if ( isset ( $_REQUEST['PARENT'] ) && $enable_rep || !isset ( $_REQUEST['PARENT'] ) && $enable_url || $imgurid ) {
 									if ( !$URL ) {
 										$clean_url = $_REQUEST['URL'];
 									} elseif ( $URL ) {
@@ -454,6 +454,10 @@ if ( $userisbanned ) {
 										} else {
 											$post_public = 1;
 											$first_post  = 0;
+										}
+										
+										if ( $post_parent == $post_comment_parent ) {
+											$post_comment_parent = 0;
 										}
 										
 										$wpdb->query (

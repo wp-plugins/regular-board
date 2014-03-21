@@ -109,7 +109,7 @@ if ( isset ( $_POST['options'] ) ) {
 	
 }
 
-echo '<form method="post" name="useroptions" class="user-options" action="' . $current_page . '?a=options">';
+echo '<div id="reply" class="reply"><form method="post" name="useroptions" action="' . $current_page . '?a=options">';
 	wp_nonce_field( 'useroptions' );
 
 
@@ -148,17 +148,19 @@ echo '<form method="post" name="useroptions" class="user-options" action="' . $c
 		</section>';
 	}
 	if ( $protocol == 'boards' ) {
-		if ( !$thisboard ) { 
-			echo '<section>
-				<label for="boards">Boards</label>';
-			foreach ( $getboards as $board ) {
-				$board->board_shortname . ' &mdash; ';
+		if ( count ( $getboards ) > 0 ) {
+			if ( !$thisboard ) { 
+				echo '<section>
+					<label for="boards">Boards</label>';
+				foreach ( $getboards as $board ) {
+					$board->board_shortname . ' &mdash; ';
+				}
+				echo '<input type="text" name="boards" id="boards" value="' . $boards . '" placeholder="Boards" />
+				<span>By putting a comma separated list of boards, you are able to build a customized feed of content 
+				tailored to your personal tastes from the boards available.  Simply use the follow format: board,board,board... 
+				to customize your viewing preferences.</span>
+				</section>';
 			}
-			echo '<input type="text" name="boards" id="boards" value="' . $boards . '" placeholder="Boards" />
-			<span>By putting a comma separated list of boards, you are able to build a customized feed of content 
-			tailored to your personal tastes from the boards available.  Simply use the follow format: board,board,board... 
-			to customize your viewing preferences.</span>
-			</section>';
 		}
 	}
 	echo '<section>
@@ -230,7 +232,7 @@ if ( isset ( $_POST['friendrequest'] ) && isset ( $_REQUEST['request_id'] ) ) {
 	}
 }
 echo '
-<form method="post" name="friend_request" class="user-options" action="' . $current_page . '?a=options">
+<form method="post" name="friend_request" action="' . $current_page . '?a=options">
 <p><strong>Friend Connections</strong></p>';
 wp_nonce_field( 'friend_request' );
 echo '<section><label for="request_id">Enter a username</label><input type="text" id="request_id" name="request_id" placeholder="Enter username to initiate request" /></section>
@@ -255,7 +257,7 @@ if ( count ( $my_waiting ) > 0 ) {
 			<input type="submit" name="decline' . $waiting->friends_id . '" value="Decline" />
 			<input type="submit" name="accept' . $waiting->friends_id . '" value="Accept" />
 		</section>
-		</form>';
+		</form></div>';
 	}
 }
 echo '

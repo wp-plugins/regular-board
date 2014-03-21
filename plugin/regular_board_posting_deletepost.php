@@ -192,7 +192,7 @@ if ( $this_area == 'destroy' ) {
 		$wpdb->update (
 			$regular_board_posts,
 			array( 
-				'post_subject' => '[deleted]',
+				'post_title' => '[deleted]',
 				'post_name' => 'null',
 				'post_comment' => '[deleted]',
 				'post_userid' => 0,

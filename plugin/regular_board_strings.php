@@ -19,12 +19,15 @@ $regular_board_bans            = $wpdb->prefix . 'regular_board_bans';
 $regular_board_logs            = $wpdb->prefix . 'regular_board_logs';
 $regular_board_messages        = $wpdb->prefix . 'regular_board_messages';
 $regular_board_friends         = $wpdb->prefix . 'regular_board_friends';
+
 $user_logged_in                = 0;
 if ( is_user_logged_in() ) {
 	$user_logged_in            = 1;
 }
+
 $regular_board_messages_select = 'messages_id, messages_date, messages_subject, messages_content, messages_to, messages_from, messages_read';
 $regular_board_friends_select  = 'friends_id, friends_connector, friends_connectee, friends_mutual';
+
 $user_exists                   = 0;
 $require_logged                = 0;
 $post_nom                      = 0;
@@ -104,55 +107,55 @@ $user_flood                    = get_option ( 'regular_board_userflood' );
 $imgurid                       = get_option ( 'regular_board_imgurid' );			
 $flood_gate                    = get_option ( 'regular_board_floodgate' );
 $archive_gate                  = get_option ( 'regular_board_archivegate' );
-$posts_per_page                 = get_option ( 'regular_board_postsper' );
-$roll                           = get_option ( 'regular_board_roll' );
-$id_display                     = get_option ( 'regular_board_ids' );
-$mod_code                       = '<strong>' . get_option ( 'regular_board_modcode', '##MOD' ) . '</strong>';
-$user_mod_code                  = '<strong>' . get_option ( 'regular_board_usermodcode', '##JRMOD' ) . '</strong>';
-$current_page                   = protocol_relative_url_dangit( get_permalink() );
-$the_ip                         = $ipaddress;
-$user_ip                        = sanitize_text_field ( wp_hash ( $the_ip ) );
-$check_ammount                  = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_users WHERE user_ip = '$user_ip'" );
-$count_users_total              = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_users" );
-$count_logged_total             = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_users WHERE user_logged_in = 1" );
-$posts_users_total              = $wpdb->get_var ( "SELECT SUM(user_posts) FROM $regular_board_users" );
-$posts_active_total             = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_posts" );
-$user_total_allowed             = get_option ( 'regular_board_totaluserallowed' );
+$posts_per_page                = get_option ( 'regular_board_postsper' );
+$roll                          = get_option ( 'regular_board_roll' );
+$id_display                    = get_option ( 'regular_board_ids' );
+$mod_code                      = '<strong>' . get_option ( 'regular_board_modcode', '##MOD' ) . '</strong>';
+$user_mod_code                 = '<strong>' . get_option ( 'regular_board_usermodcode', '##JRMOD' ) . '</strong>';
+$current_page                  = protocol_relative_url_dangit( get_permalink() );
+$the_ip                        = $ipaddress;
+$user_ip                       = sanitize_text_field ( wp_hash ( $the_ip ) );
+$check_ammount                 = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_users WHERE user_ip = '$user_ip'" );
+$count_users_total             = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_users" );
+$count_logged_total            = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_users WHERE user_logged_in = 1" );
+$posts_users_total             = $wpdb->get_var ( "SELECT SUM(user_posts) FROM $regular_board_users" );
+$posts_active_total            = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_posts" );
+$user_total_allowed            = get_option ( 'regular_board_totaluserallowed' );
 if ( $user_total_allowed ) {
 	if ( $user_total_allowed <= $count_users_total ) {
-		$registration_open      = 0;
+		$registration_open     = 0;
 	} else {
-		$registration_open      = 1;
+		$registration_open     = 1;
 	}
 }
-$check_this_ip                  = sanitize_text_field ( $the_ip );
-$query                          = sanitize_text_field ( $_SERVER['QUERY_STRING'] );
+$check_this_ip                 = sanitize_text_field ( $the_ip );
+$query                         = sanitize_text_field ( $_SERVER['QUERY_STRING'] );
 if ( $query ) {
 	if ( isset ( $_GET['b'] ) ) {
 		if ( $protocol == 'boards' ) {
-			$the_board              = sanitize_text_field ( strtolower( $_GET['b'] ) );
+			$the_board         = sanitize_text_field ( strtolower( $_GET['b'] ) );
 		} 
 		if ( $protocol == 'tags' ) {
-			$the_board              = sanitize_text_field ( $_GET['b'] );
+			$the_board         = sanitize_text_field ( $_GET['b'] );
 		}
 	}
 	if ( isset ( $_GET['ht'] ) ) {
-		$the_tag                = sanitize_text_field ( $_GET['ht'] );
+		$the_tag               = sanitize_text_field ( $_GET['ht'] );
 	}
 	if ( isset ( $_GET['a'] ) ) {
-		$this_area              = sanitize_text_field ( strtolower( $_GET['a'] ) );
+		$this_area             = sanitize_text_field ( strtolower( $_GET['a'] ) );
 	}
 	if ( isset ( $_GET['u'] ) ) {
-		$this_user              = sanitize_text_field ( strtolower( $_GET['u'] ) );
+		$this_user             = sanitize_text_field ( strtolower( $_GET['u'] ) );
 	}
 	if ( isset ( $_GET['t'] ) ) {
-		$this_thread            = intval ( $_GET['t'] );
+		$this_thread           = intval ( $_GET['t'] );
 	}
 }
 if ( !$this_area && !$the_board && !$this_user && !$this_thread && !$the_tag ) {
-	$nothing_is_here            = 1;
+	$nothing_is_here           = 1;
 }
-$is_user_mod                    = false;
-$is_user                        = true;
-$posting                        = 1;
-$userisbanned                   = 0;
+$is_user_mod                   = false;
+$is_user                       = true;
+$posting                       = 1;
+$userisbanned                  = 0;

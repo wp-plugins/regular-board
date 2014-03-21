@@ -53,9 +53,6 @@ if ( $userisbanned ) {
 	}
 
 	if ( $posting == 0 || $archived == 1 || $this_thread && $view_this ) {
-		if ( $this_area == 'newtopic' ) {
-			echo '<p>This board is currently locked.</p>';
-		}
 		if ( $archived == 1 ) {
 			echo '<p>This thread has been archived.  It can no longer be replied to.</p>';
 		}
@@ -96,7 +93,7 @@ if ( $userisbanned ) {
 					$correct = 0;
 					if ( !$user_exists ) { } else {
 						if ( $the_board || $this_area != 'editpost' && $the_board && $archived == 0 || $nothing_is_here || $this_thread || $this_area == 'messages' ) {
-							if( $the_board || $correct == 0 && $this_area == 'newtopic' || $correct == 0 && $this_thread && count($getposts) > 0 || $nothing_is_here || $this_thread ||  $this_area == 'messages' ){
+							if( $the_board || $correct == 0 && $this_thread && count($getposts) > 0 || $nothing_is_here || $this_thread ||  $this_area == 'messages' ){
 								if ( $tlast != 1 ) {
 									if ( $this_area == 'messages' ) {
 										echo '<hr />';
@@ -143,15 +140,17 @@ if ( $userisbanned ) {
 									echo '<label for="SUBJECT">subject</label><input type="text" id="SUBJECT" maxlength="' . $max_text . '" name="SUBJECT" />';
 									
 									if ( $protocol == 'boards' ) {
-										if ( !$this_thread ) {
-											if ( $this_area != 'messages' ) {
-												echo '<label>select a board</label>
-												<select name="board" id="board">
-												<option value="">none selected</option>';
-												foreach ( $getboards as $gotboards ) {
-													echo '<option value="' . $gotboards->board_shortname . '">' . $gotboards->board_name . '</option>';
+										if ( count ( $getboards ) > 0 ) {
+											if ( !$this_thread ) {
+												if ( $this_area != 'messages' ) {
+													echo '<label>select a board</label>
+													<select name="board" id="board">
+													<option value="">none selected</option>';
+													foreach ( $getboards as $gotboards ) {
+														echo '<option value="' . $gotboards->board_shortname . '">' . $gotboards->board_name . '</option>';
+													}
+													echo '</select>';
 												}
-												echo '</select>';
 											}
 										}
 									}

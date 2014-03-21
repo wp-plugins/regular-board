@@ -11,7 +11,7 @@
 if ( !defined ( 'regular_board_plugin' ) ) {
 	die();
 }
-
+echo '<div class="thread">';
 foreach ( $getuser as $banneddetails ) {
 	$LENGTH = $banneddetails->banned_length;
 	$FILED = $banneddetails->banned_date;
@@ -83,3 +83,4 @@ foreach ( $getuser as $banneddetails ) {
 		}
 	}
 }
+echo '</div>';

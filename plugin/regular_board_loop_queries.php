@@ -12,19 +12,7 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 	die();
 }
 
-/**
- * Queries for:
- * (1) Board
- * (2) Search
- * (3) Topics
- * (4) Replies
- * (5) All
- * (6) Subscribed
- * (7) Following
- * (8) Thread
- * (9) History/profile
- */
- 
+$total_posts = $wpdb->get_var ( "SELECT SUM(board_postcount) FROM $regular_board_boards" );
 $getuser     = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_bans WHERE banned_ip = %s AND banned_banned = %d LIMIT 1", $user_ip, 0  ) );
 if ( count ( $getuser ) > 0 ) {
 	$userisbanned = 1;

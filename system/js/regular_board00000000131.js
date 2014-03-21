@@ -22,7 +22,7 @@
 			e.preventDefault();
 			var youtube_id = $(this).attr('data');
 			$(this).empty();
-			$('#'+youtube_id+'').html("<iframe src=\"//www.youtube.com/embed/"+youtube_id+"?autoplay=1&amp;loop=1&amp;playlist="+youtube_id+"&amp;controls=0&amp;showinfo=0&amp;autohide=1\" width=\"100%\" height=\"315\" frameborder=\"0\" allowfullscreen></iframe>");
+			$('#'+youtube_id+'').html("<iframe src=\"//www.youtube.com/embed/"+youtube_id+"?autoplay=1&amp;playlist="+youtube_id+"&amp;controls=1&amp;showinfo=0&amp;autohide=1\" width=\"100%\" height=\"315\" frameborder=\"0\" allowfullscreen></iframe>");
 		});
 		$(document).on('click','.quickreply',function(e){
 			e.preventDefault();

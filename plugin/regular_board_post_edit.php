@@ -42,13 +42,15 @@ if ( count ( $checkPass ) > 0 ) {
 			<label for="SUBJECT">subject</label><input type="text" id="SUBJECT" maxlength="' . $max_text . '" name="SUBJECT" placeholder="Subject" value="' . $editSubject . '" />
 			<label for="COMMENT">comment</label><textarea id="COMMENT" name="COMMENT">' . str_replace ( array ( '[', ']' ), array ( '&#91;', '&#93;' ), $editComment ) . '</textarea>';
 			if ( $EDITTHREAD->post_url ) { 
-				echo '<label for="URL">url</label><input type="text" id="URL" maxlength="' . $max_text . '" value="';
-				if ( $EDITTHREAD->post_type == 'youtube' ) {
-					echo '//youtube.com/watch?v=' . $EDITTHREAD->post_url; 
-				} else { 
-					echo $EDITTHREAD->post_url; 
-				} 
-				echo '" name="URL" placeholder=".jpg,gif,png/youtube/http" />';
+			if ( regular_board_get_domain ( $EDITTHREAD->post_url ) != 'imgur.com' ) {
+					echo '<label for="URL">url</label><input type="text" id="URL" maxlength="' . $max_text . '" value="';
+					if ( $EDITTHREAD->post_type == 'youtube' ) {
+						echo '//youtube.com/watch?v=' . $EDITTHREAD->post_url; 
+					} else { 
+						echo $EDITTHREAD->post_url; 
+					} 
+					echo '" name="URL" placeholder=".jpg,gif,png/youtube/http" />';
+				}
 			}
 			if ( $imgurid ) { 
 				echo '<label for="img">upload</label><input name="img" class="right" size="35" type="file"/>';
