@@ -21,6 +21,23 @@
   *
   * Typographical specifications
   */
+ .boardAll #settings-link,
+ .boardAll #logout-link {
+	float: right;
+ }
+ .boardAll .profile-section i {
+	color: rgba(0,0,0,.4);
+	cursor: default;
+	float: right; 
+	font-size: 72px;
+ }
+  .boardAll .small-left { 
+	background-color: transparent !important;
+	font-size: 10px;
+	line-height: 15px;
+	float: left;
+	width: 350px !important;
+ } 
  .boardAll .smallstats {
 	background-color: #eef4ff;
 	color: rgba(0,0,0,.8);
@@ -72,7 +89,8 @@
  }
  
  .boardAll .left-half .tag_cloud {
-	margin: 5px;
+	width: 100%;
+	margin: 5px auto;
  }
  .boardAll .left-half .tag_cloud:after {
 	clear: both; 
@@ -256,6 +274,13 @@
   *
   * Images and iframes
   */
+ 
+ .thumb {
+	padding: 5px;
+	border-radius: 3px;
+	width: 73px;
+ }
+ 
  .boardAll .banner {
 	border: 1px solid rgba(0,0,0,.1);
 	display: block;
@@ -312,7 +337,7 @@
 	position: relative;
 	padding: 5px;
 	display: table;
-	width: 100%;
+	max-width: 100%;
  } 
  .boardAll .imageOP{
 	height: auto;
@@ -368,6 +393,21 @@
   *
   * All elements that are related to forms
   */
+ .boardAll .profile-section {
+	border-bottom: 1px solid rgba(0,0,0,.1);
+	display: block;
+	margin: 5px 0;
+	overflow: hidden;
+	padding: 15px 0;
+	width: 100%;
+ }
+ .boardAll .profile-section:hover {
+	background-color: rgba(255,255,255,1);
+ }
+ .boardAll .profile-section input,
+ .boardAll .profile-section select {
+	margin: 5px 0;
+ }
  .boardAll .friend_request {
 	display: block; 
 	float: left; 
@@ -472,6 +512,13 @@
 	font-size: 10px;
 	width: 100%;
  }
+ .boardAll p.information {
+	color: rgba(0,0,0,.3);	
+	cursor: default;
+	font-size: 25px;
+	line-height: 27px;
+	padding: 5px;
+ }
  .boardAll form p {
 	background-color: #eef4ff;
 	color: rgba(0,0,0,.8);
@@ -499,7 +546,7 @@
 	margin: 0 auto;
 	position: relative;
 	visibility: visible;
-	width: 95%;
+	width: 100%;
  }
  .imgur {
 	clear: both;
@@ -515,11 +562,13 @@
 	box-shadow: none;
 	clear: both;
 	display: block;
+	color: rgba(0,0,0,.5);
+	font-size: 25px;
 	height: 35px;
 	margin: 5px auto;
 	padding: 0;
 	text-align: center;
-	width: 100%;
+	width: 100% !important;
 	visibility: visible;
  }
  .boardAll #reply {
@@ -548,7 +597,7 @@
 	width: auto;
  }
  .boardAll #reply form textarea {
-	height: 100px;
+	height: 200px;
  }
  .boardAll #reply form select {
 	margin: 0 0 5px 0 !important;
@@ -558,17 +607,17 @@
  .boardAll #reply form input[type="text"],
  .boardAll #reply form input[type="password"],
  .boardAll #reply form input[type="file"]{
-	color: rgba(0,0,0,.9);
+	color: rgba(0,0,0,.5);
 	background-color: rgba(0,0,0,.1);
 	box-shadow: none;
-	border: 1px solid rgba(0,0,0,.1) !important;
 	border: none;
-	border-radius: 0;
+	border-radius: 2px;
 	clear: none;
 	cursor: default;
 	display: block;
 	float: left;
-	margin: 0 0 5px -5px;
+	font-size: 25px;
+	margin: 5px auto;
 	padding: 8px 5px;
 	text-align: left;
 	visibility: visible;
@@ -641,10 +690,10 @@
 	display: block;
 	line-height: 15px;
 	margin: 10px auto;
-	padding: 0 5px;
+	overflow-x: hidden;
 	position: relative;
 	text-shadow: none!important;
-	width: 800px;
+	width: 100%;
  }
  .boardAll .thread_container:after,
  .boardAll .lastthree span:after,
@@ -657,8 +706,8 @@
  }
  
  .boardAll .thread_container {
-	width: 95%;
-	margin: 5px auto;
+	width: 100%;
+	margin: 5px;
  }
  
  
@@ -695,17 +744,22 @@
  }
  
  .boardAll .left-half {
-	overflow: hidden;
-	float: right;
-	margin: 5px 0;
-	padding: 0;
-	width: 250px;
+	border-left: 1px solid #bed2ed;
+	border-bottom: 1px solid #bed2ed;
+	background-color: #f5f9ff;
+	position: relative;
+	float:right;
+	padding: 5px 25px 5px 5px;
+	width: 300px;
+	z-index: 2;
  }
  .boardAll .right-half {
+	border-left: 1px solid #f6f6f6;
+	border-bottom: 1px solid #f6f6f6;
 	float: left;
-	margin: 0 5px 5px -10px;
-	padding: 5px;
-	width: 500px;
+	margin: 0 -35px 5px 10px;
+	padding: 5px 10px 5px 20px;
+	width: calc(100% - 380px);
  }
  
  .boardAll .spacer {
@@ -797,14 +851,16 @@
 	z-index: 2;
  }
  .boardAll .navi {
+	background-color: #fcfdff;
+	border-bottom: 1px solid #bed2ed;
 	clear: both;
 	display: block;
-	font-size: 15px;
-	margin: 0 auto 0 -5px;
-	padding: 5px;
+	font-size: 10px;
+	margin: 0 auto 0 0;
+	padding: 15px 5px;
 	position: relative;
-	text-align: center;
-	width: 100%;
+	text-align: left;
+	width: 98%;
 	z-index: 3;
  }
  .boardAll .navi:after {
@@ -813,18 +869,27 @@
 	display: table;
  }
  .boardAll .navi a {
-	display: inline-block;
+	display: table;
+	float: left;
 	padding: 5px;
 	text-decoration: none!important;
-	margin: 0 10px -5px 0;
+	margin: -20px 5px -5px 0;
 	border-bottom: 5px solid #fff!important;
-	width: 100px;
+	height: 45px;
+	text-align: center;
  }
- .boardAll .navi a:hover {
-	border-bottom: 5px solid #ff9696!important;
+ .boardAll .navi a i {
+	clear: both;
+	color: rgba(0,0,0,.1);
+	display: block;
+	font-size: 25px;
+	margin: 5px 0;
  }
  .boardAll a.active {
 	border-bottom: 5px solid red!important;
+ }
+ .boardAll a.active i {
+	color: red;
  }
  .boardAll .navi a span {
 	margin: 0 0 0 5px;
@@ -840,6 +905,7 @@
 	color: rgba(0,0,0,.9);
 	display: block;
 	margin: 2px 0 2px -1px;
+	overflow: hidden;
 	padding: 5px;
 	text-align: left;
 	width: 100%;
@@ -853,8 +919,8 @@
  .boardAll .thread .thread {
 	margin: 5px;
  }
- .boardAll #omitted .thread:hover,
- .boardAll .thread .thread:hover {
+ .boardAll .thread:hover {
+	background-color: #f6f6f6!important;
  }
   
  .boardAll .hidden {
@@ -905,80 +971,7 @@
   *
   */
 @media only screen and (max-width: 880px) {
-	 .boardAll {
-		font-size: 12px;
-		line-height: 15px;
-		width: 505px;
-	 }
-	 .boardAll #reply form {
-		border: 1px solid rgba(0,0,0,.1);
-		margin: 10px 0 10px 15px;
-		padding: 15px;
-	 }
-	 .boardAll .left-half {
-		border-bottom: 1px solid rgba(0,0,0,.3);
-		padding-bottom: 10px;
-		width: 100%;
-	 }
-	 .boardAll .right-half {
-	 	margin: 0 0 5px -5px;
-		width: 100%;
-	 }
-	 .boardAll .spacer {
-		display: block;
-		height: auto;
-	 }	 
-	.boardAll .wipe { 
-		display: none;
-		height: 0;
-		visibility: hidden;
-		width: 0;
-	}
-	.boardAll .banner{
-		height: 50px;
-		padding: 0;
-		width: 150px;
-	}	
 	.boardAll .navi a span {
 		display: none;
 	}
-	.boardAll .navi a {	
-		width: 60px;
-	}
-	.boardAll .container_half,
-	.boardAll .user-options label,
-	.boardAll .user-options input,
-	.boardAll .user-options select{
-		border: none;
-		border-radius: 0;
-		clear: both!important; 
-		width: 100%!important;
-		text-align: left!important;
-	}	
-	.boardAll #reply {
-		margin: 0 0 -2px 0px;
-		width: 101%;
-	}	
-	.boardAll .thread {
-		border-bottom: 1px solid rgba(0,0,0,.1);
-	}
-
 }  
-@media only screen and (max-width: 580px) {
-	.boardAll .left-half span,
-	.boardAll {
-		clear: both !important;
-		display: block !important;
-		margin: 0 auto;
-		position: relative;
-		width: 100% !important;
-	}
-	.tag_cloud {
-		display: block;
-		height: 35px;
-		overflow: hidden;
-	}
-	.tag_cloud:hover {
-		height: auto;
-	}
-}

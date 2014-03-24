@@ -64,6 +64,7 @@ $correct                       = '';
 $getposts                      = '';
 $gotReplies                    = '';
 $banned_count                  = '';
+$board_rules                   = '';
 $entered_parent                = 0;
 if ( get_option ( 'regular_board_protected' ) ) {
 	$protectedboards           = explode   ( ',', get_option ( 'regular_board_protected' ) );
@@ -130,14 +131,10 @@ if ( $user_total_allowed ) {
 }
 $check_this_ip                 = sanitize_text_field ( $the_ip );
 $query                         = sanitize_text_field ( $_SERVER['QUERY_STRING'] );
+$selfpost                      = '';
 if ( $query ) {
 	if ( isset ( $_GET['b'] ) ) {
-		if ( $protocol == 'boards' ) {
-			$the_board         = sanitize_text_field ( strtolower( $_GET['b'] ) );
-		} 
-		if ( $protocol == 'tags' ) {
-			$the_board         = sanitize_text_field ( $_GET['b'] );
-		}
+		$the_board         = sanitize_text_field ( $_GET['b'] );
 	}
 	if ( isset ( $_GET['ht'] ) ) {
 		$the_tag               = sanitize_text_field ( $_GET['ht'] );
@@ -150,6 +147,9 @@ if ( $query ) {
 	}
 	if ( isset ( $_GET['t'] ) ) {
 		$this_thread           = intval ( $_GET['t'] );
+	}
+	if ( isset ( $_GET['self'] ) ) {
+		$selfpost              = 1;
 	}
 }
 if ( !$this_area && !$the_board && !$this_user && !$this_thread && !$the_tag ) {

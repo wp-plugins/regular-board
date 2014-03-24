@@ -18,28 +18,35 @@ if ( $this_area == 'history' ) {
 if ( $this_user ) {
 	$usprofile = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_users WHERE user_name = %s LIMIT 1", $this_user ) );
 }
+
+$the_profile_name    = '';
+$the_profile_avatar  = '';
+$the_profile_slogan  = '';
+$the_profile_details = '';
+$connect_with        = '';
 if ( count ( $usprofile ) > 0 ) {
 	foreach ( $usprofile as $theprofile ) {
-			$the_profile_name = sanitize_text_field ( $theprofile->user_name );
-			echo '<div class="profile_deets">';
+			
 			if ( $theprofile->user_name ) {
-				echo '<h1>' . $theprofile->user_name . '</h1> ';
-			} else {
-				echo '<h1> Anonymous </h1>';
+				$the_profile_name = sanitize_text_field ( $theprofile->user_name );
 			}
 			if ( $theprofile->user_avatar ) {
 				if ( $theprofile->user_avatar != 'NULL' ) {
-					echo '<img src="' . $theprofile->user_avatar . '" class="imageFULL" />';
+					$the_profile_avatar = '<img src="' . $theprofile->user_avatar . '" class="imageFULL" />';
 				}
 			}
 			if ( $theprofile->user_slogan ) {
 				if ( $theprofile->user_slogan != 'NULL' ) {
-					echo '<p><em>' . str_replace ( '\\', '', $theprofile->user_slogan ) . '</em></p>';
+					$the_profile_slogan = '<p><em>' . str_replace ( '\\', '', $theprofile->user_slogan ) . '</em></p>';
 				}
 			}
-			echo '<h2 class="powerlevel">level ' . $theprofile->user_level . '</h2>active posts: ' . $totalpages . ' &mdash; 
-			total posts: ' . $theprofile->user_posts . ' &mdash; 
-			 first seen ' . regular_board_timesince ( $theprofile->user_date ) . ' </p>';
+			$the_profile_details = '<p>level ' . $theprofile->user_level . '<br />active posts: ' . $totalpages . ' /
+			total posts: ' . $theprofile->user_posts . ' <br />
+			 member for ' . str_replace ( 'ago', '', regular_board_timesince ( $theprofile->user_date ) ) . ' </p>';
+			
+			
+			echo '<div class="profile_deets">';
+
 
 			if ( count ( $my_friends ) > 0 ) {
 				echo '<hr />Connections: ';
@@ -85,16 +92,17 @@ if ( count ( $usprofile ) > 0 ) {
 									);
 								}
 							}
-							echo '
-							<form method="post" name="friend_request" class="friendship" action="' . $current_page . '?u=' . $the_profile_name . '">';
-							wp_nonce_field( 'friend_request' );
-							echo '<section><input type="submit" name="request_friendship" id="request_friendship" value="Connect with this user" /></section>
-							</form>';
+							if ( $the_profile_name ) {
+								$connect_with = '
+								<form method="post" name="friend_request" class="friendship" action="' . $current_page . '?u=' . $the_profile_name . '">'
+								. wp_nonce_field( 'friend_request' ) . 
+								'<section><input type="submit" name="request_friendship" id="request_friendship" value="Connect with this user" /></section>
+								</form>';
+							}
 						}
 					}
 				}
 			}
-			echo '<h3>Post history</h3>';
 			echo '</div>';
 		if ( $totalpages ) {
 			foreach ( $getposts as $posts ) {

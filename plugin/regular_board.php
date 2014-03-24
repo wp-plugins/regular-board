@@ -69,20 +69,13 @@ function regular_board_shortcode ( $content = null ) {
 			}
 		}
 		
-		echo '<hr />';
 		
-		include ( plugin_dir_path(__FILE__) . '/regular_board_template_sidebar.php' );
+		
+		
 		
 		echo '<div class="right-half">';
 		
 		if ( $nothing_is_here ) {
-			if ( !$search ) {
-				if ( get_option ( 'regular_board_frontpage' ) ) {
-					echo '<div class="thread_container"><span class="frontinfo">Welcome</span>' . wpautop ( get_option ( 'regular_board_frontpage' ) ) . '</div>';
-				echo '<hr />';
-				}
-
-			}
 			if ( $getposts ) {
 				echo '<div class="thread_container">
 					<span class="frontinfo">';
@@ -113,7 +106,96 @@ function regular_board_shortcode ( $content = null ) {
 
 		
 		include ( plugin_dir_path(__FILE__) . '/regular_board_posting_deletepost.php' );
-		if ( $this_area == 'deleted' ) {
+		
+		if ( $this_area == 'create' ) {
+			if ( $user_exists && $profile_level > 2 ) {
+				echo '<h1>Create a new board</h1>';
+				$board_name         = '';
+				$board_shortname    = '';
+				$board_description  = '';
+				$board_moderators   = '';
+				$board_janitors     = '';
+				$board_locked       = '';
+				$board_logged       = '';
+				$board_wipe         = '';
+				$board_rules        = '';
+				if ( isset ( $_POST['save_newboard'] ) && $_REQUEST['board_shortname'] ) {
+					$board_name          = sanitize_text_field ( preg_replace('/[^a-zA-Z0-9]/', '', $_REQUEST['board_name'] ) );
+					$board_shortname     = sanitize_text_field ( preg_replace('/[^a-zA-Z0-9]/', '', $_REQUEST['board_shortname'] ) );
+					$board_rules         = sanitize_text_field ( $_REQUEST['board_rules'] );
+					$board_description   = sanitize_text_field ( $_REQUEST['board_description'] );
+					$regular_board_board = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_boards WHERE board_shortname = '$board_shortname'" );
+					if ( $regular_board_board == 0 ) {
+						$wpdb->query ( 
+							$wpdb->prepare(
+								"INSERT INTO $regular_board_boards 
+									( 
+										board_id,  
+										board_date,  
+										board_name,  
+										board_shortname,  
+										board_description,  
+										board_rules,
+										board_mods,  
+										board_janitors,  
+										board_postcount, 
+										board_locked, 
+										board_logged, 
+										board_wipe 
+									) VALUES ( 
+										%d, 
+										%s, 
+										%s, 
+										%s, 
+										%s, 
+										%s, 
+										%s, 
+										%s,
+										%d, 
+										%d, 
+										%d, 
+										%s 
+									) ", 
+									'', 
+									$date, 
+									$board_name, 
+									$board_shortname, 
+									$board_description, 
+									$board_rules,
+									$profileid, 
+									'', 
+									0, 
+									0, 
+									0, 
+									''
+								) 
+							);
+						echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $this_page . '?b=' . $board_shortname . '"></p>';
+					} else {
+						echo '<p class="information">board already exists.</p>';
+					}
+				}
+				echo '<div id="reply" class="reply">
+					<form method="post" name="createboard" action="' . $current_page . '?a=create">
+					' . wp_nonce_field( 'createboard' ) . '
+						<section class="profile-section"><label class="small-left"><u>board name</u><hr />the extended name for this board</label><input name="board_name" type="text" value="' . $board_name . '"/></section>
+						<section class="profile-section"><label class="small-left"><u>board shortname</u><hr />the name used in the url</label><input name="board_shortname" type="text" value="' . $board_shortname . '"/></section>
+						<section class="profile-section"><label class="small-left"><u>board description</u><hr />a little something about this board</label><input name="board_description" type="text" value="' . $board_description . '"/></section>
+						<section class="profile-section"><label class="small-left"><u>board rules</u><hr />rules to go in the sidebar<br />use comment formatting<textarea name="board_rules"></textarea></section>
+						<section><input type="submit" name="save_newboard" value="'; if ( $board_name ) { echo 'Edit'; } else { echo 'Create'; } echo ' this board" /></section>
+					</form>
+				</div>';
+			} else {
+				echo '<p class="information">You need to have an account of least level 2 or above to create 
+				your own boards.</p>';
+			}
+		} elseif ( $this_area == 'submit' ) {
+			if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_post_form.php' ) ) {
+				include ( ABSPATH . '/regular_board_child/regular_board_post_form.php' );
+			} else {
+				include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
+			}
+		} elseif ( $this_area == 'deleted' ) {
 			if ( $is_moderator || $is_user_mod ) {
 				foreach ( $get_deleted as $posts ) {
 					if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
@@ -179,9 +261,7 @@ function regular_board_shortcode ( $content = null ) {
 							} elseif ( $this_thread ) { 
 								$website_url = $current_page . 't=' . $this_thread; 
 							}
-							if ( $board_name ) {
-								echo '<div class="thread"><strong>/' . $board_short . '/ ' . $board_name . '</strong> &mdash; ' . $board_description . '</div>';
-							}
+
 							if ( $totalpages > 0 ) {
 								include ( plugin_dir_path(__FILE__) . '/regular_board_board_loop.php' );
 							} else {
@@ -207,7 +287,7 @@ function regular_board_shortcode ( $content = null ) {
 			}
 		}
 		
-		elseif ( $this_area == 'post' ) { include ( plugin_dir_path(__FILE__) . '/regular_board_area_post.php' ); }
+		if ( $this_area == 'post' ) { include ( plugin_dir_path(__FILE__) . '/regular_board_area_post.php' ); }
 		elseif ( $this_area == 'gallery' || $this_area == 'replies' || $this_area == 'topics' || $this_area == 'subscribed' || $this_area == 'following' ) {
 			echo '<div class="thread_container">';
 			echo '<h1>' . $this_area . '</h1>';
@@ -233,6 +313,8 @@ function regular_board_shortcode ( $content = null ) {
 		elseif ( $this_area == 'stuff'                    ) { include ( plugin_dir_path(__FILE__) . '/regular_board_area_stuff.php' ); }
 		elseif ( $this_area == 'messages' && $user_exists ) { include ( plugin_dir_path(__FILE__) . '/regular_board_messages.php'   ); } 
 		elseif ( $this_area == 'logout' && $user_exists   ) { include ( plugin_dir_path(__FILE__) . '/regular_board_logout.php'     ); }
-	echo '</div></div></div>';
+	echo '</div>';
+	include ( plugin_dir_path(__FILE__) . '/regular_board_template_sidebar.php' );
+	echo '</div></div>';
 	}
 }

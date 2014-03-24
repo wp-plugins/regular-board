@@ -45,6 +45,7 @@ if ( count ( $get_current_board ) > 0 && $protocol == 'boards' ) {
 		$board_name        = $current_board_information->board_name;
 		$board_short       = $current_board_information->board_shortname;
 		$board_description = $current_board_information->board_description;
+		$board_rules       = $current_board_information->board_rules;
 		$board_mods        = $current_board_information->board_mods;
 		$board_jans        = $current_board_information->board_janitors;
 		$board_posts       = intval ( $current_board_information->board_postcount );

@@ -1,266 +1,272 @@
 <?php 
-
 /**
  * User Options Page Content
  *
- * (1) Allow the current user to set certain options for their browsing,
- * (1) such as a password and a display name, as well as set subscribed 
- * (1) boards and followed ID(s).
+ * (1) Handle all user-account options configuring
  *
  * @package regular_board
  */
- 
 if ( !defined ( 'regular_board_plugin' ) ) {
 	die();
 }
-
 if ( isset ( $_POST['options'] ) ) {
-	if ( $_REQUEST['password']    ) { $password    = sanitize_text_field ( wp_hash ( $_REQUEST['password'] ) ); }
-	if ( $_REQUEST['newpassword'] ) { $newpassword = sanitize_text_field ( wp_hash ( $_REQUEST['newpassword'] ) ); }
-	if ( $_REQUEST['oldpassword'] ) { $oldpassword = sanitize_text_field ( wp_hash ( $_REQUEST['oldpassword'] ) ); }
-	if ( $_REQUEST['avatar'] )      { 
-		$ch   = curl_init();
-		$opts = array (
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_URL            => $_REQUEST['avatar'],
-			CURLOPT_NOBODY         => true,
-			CURLOPT_TIMEOUT        => 10
-		);
-		curl_setopt_array ( $ch, $opts );
-		curl_exec ( $ch );
-		$status = curl_getinfo ( $ch, CURLINFO_HTTP_CODE );
-		curl_close ( $ch );
-		$path_info = pathinfo ( $_REQUEST['avatar'] );
-		if ( $status == '200' && getimagesize ( $_REQUEST['avatar'] ) !== false ) {
-			if ( 
-				$path_info['extension'] == 'jpg'  || 
-				$path_info['extension'] == 'gif'  || 
-				$path_info['extension'] == 'jpeg' || 
-				$path_info['extension'] == 'png'
-			) {
-				$update_avatar = sanitize_text_field ( $_REQUEST['avatar'] );
-			}
-		}
-	} else { 
-		$update_avatar = '';
+	include ( plugin_dir_path(__FILE__) . '/regular_board_user_options_form_action.php' );
+	echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $this_page . '?a=options"></p>';
+} ?>
+<?php 
+/** Begin User Options Form
+ ** This form will allow the user to set certain aspects of their account.
+ */ ?>
+<div id="reply" class="reply">
+	<form method="post" name="useroptions" action="<?php echo $current_page; ?>?a=options">
+	<?php echo wp_nonce_field( 'useroptions' ); ?>
+	<?php 
+	/** Begin User Options Form Elements
+	 ** Allows the user to set certain options for their account.
+	 ** (1) User Avatar
+	 ** (2) User Username
+	 ** (3) User Password
+	 ** (4) User Board Subscription
+	 ** (5) User Following
+	 ** (6) User Slogan
+	 ** (7) User Always Anonymous
+	 */
+	/** (1) Begin User avatar
+	 ** Allow the user to set an avatar image to display on their public profile.
+	 ** ( maybe set up a thumbnailing ability to grab the image and create a smaller 
+	 ** ( version of it server-side for faster loading for larger images? )
+	 */
+	if ( $profile_email ) {
+	?>
+	<section class="profile-section">
+		<label class="small-left" for="avatar">
+			<u>user photo</u>
+			<hr />
+			set an image for your user profile.<br />
+			<strong>must</strong> be a valid image.<br />
+			( .jpg, .png, .gif )
+		</label>
+		<?php if ( $profileavatar ) { ?>
+			<img class="thumb right" src="<?php echo $profileavatar; ?>" alt="profile image" />
+		<?php } else { ?>
+			<i class="fa fa-picture-o"></i>
+		<?php }?>
+		<input type="text" name="avatar" id="avatar" value="<?php echo $profileavatar; ?>" />
+	</section>
+	<?php 
 	}
-	if ( $_REQUEST['email'] ) {
-		$update_email = sanitize_text_field ( wp_hash ( $_REQUEST['email'] ) );
-	} else {
-		$update_email = $profile_email;
-	}
-	$update_name                                   = sanitize_text_field ( $_REQUEST['USERNAME'] );
-	$update_heaven                                 = intval  ( $_REQUEST['heaven'] );
-	$update_boards                                 = sanitize_text_field( $_REQUEST['boards'] );
-	$update_follow                                 = sanitize_text_field( $_REQUEST['follow'] );
-	$update_slogan                                 = sanitize_text_field( substr ( $_REQUEST['slogan'], 0, $max_text ) );
-	if ( $update_name ) {
-		$checkname = $wpdb->get_results ( $wpdb->prepare ( "SELECT NAME FROM $regular_board_users WHERE user_name = %s AND user_id != %d", $update_name, $profileid ) );
-		if ( count ( $checkname ) == 0 ) {
-			$wpdb->query ( "UPDATE $regular_board_friends SET friends_connector = '$update_name' WHERE friends_connector = '$profile_name'" );
-			$wpdb->query ( "UPDATE $regular_board_friends SET friends_connectee = '$update_name' WHERE friends_connectee = '$profile_name'" );
-			$wpdb->query ( "UPDATE $regular_board_messages SET messages_from = '$update_name' WHERE messages_from = '$profile_name'" );
-			$wpdb->query ( "UPDATE $regular_board_messages SET messages_to = '$update_name' WHERE messages_to = '$profile_name'" );			
-			$wpdb->query ( "UPDATE $regular_board_users SET user_name = '$update_name' WHERE user_id = $profileid" );
-			$wpdb->query ( "UPDATE $regular_board_posts SET post_name = '$update_name' WHERE post_userid = $profileid AND post_name != 'null' " );
-			$update_name_to = $update_name;
-		} else {
-			$update_name_to = $profile_name;
-			echo '<p><strong>' . $update_name . '</strong> is already taken.  Please use a different one.</p>';
-		}
-	}
-	if ( !$profilepassword && $password ) {
-		$update_password = $password;
-		$wpdb->query( "UPDATE $regular_board_posts SET post_password = '$password' WHERE post_userid = $profileid" );
-	} elseif ( $profilepassword  && $newpassword && $oldpassword ) {
-		$update_password = $password;
-		$wpdb->query( "UPDATE $regular_board_posts SET post_password = '$newpassword' WHERE post_userid = $profileid" );
-	} else {
-		$update_password = $profilepassword;
-	}
-
-	$wpdb->update (
-		$regular_board_users,
-		array ( 
-			'user_email'    => $update_email,
-			'user_avatar'   => $update_avatar,
-			'user_name'     => $update_name_to,
-			'user_heaven'   => $update_heaven,
-			'user_boards'   => $update_boards,
-			'user_follow'   => $update_follow,
-			'user_slogan'   => $update_slogan,
-			'user_password' => $update_password
-		),
-		array ( 
-			'user_id'    => $profileid
-		),
-		array ( 
-			'%s',
-			'%s',
-			'%s',
-			'%d',
-			'%s',
-			'%s',
-			'%s',
-			'%s',
-			'%d'
-		)
-	);
-	
-}
-
-echo '<div id="reply" class="reply"><form method="post" name="useroptions" action="' . $current_page . '?a=options">';
-	wp_nonce_field( 'useroptions' );
-
-
-	echo '<p><strong>Account</strong></p>
-	<section>
-		<label>Internal ID</label>
-		<input type="text" value="' . $user_ip . '" />
-	</section>';
-	
-	echo '<section>
-		<label for="USERNAME">Username</label>
-		<input type="text" name="USERNAME" id="USERNAME" placeholder="Your memorable name" value="';
-		if ( $profile_name != 'null' && $profile_name ) {
-			echo $profile_name;
-		}
-		echo '" />
-		<span>Usernames are unique, and unless you post anonymously, tied to each post that you make.  You can change 
-		it at any time.</span>
-	</section>';
-	
-	if ( !$profilepassword ) {
-		echo '<section>
-			<label for="password">Password</label>
-			<input type="text" name="password" id="password" placeholder="' . $random_password . '" />
-			<span>Setting a password will allow you to edit and delete posts that you have made.</span>
-		</section>';
-	}
-	if ( $profilepassword ) {
-		echo '<section>
-			<label for="oldpassword">Current password</label>
-			<input type="text" name="oldpassword" id="oldpassword" placeholder="Enter current password" />
+	/** End User Avatar
+	 */
+	/** Begin User Username
+	 ** To allow the user to log back in, the user must have a username and password
+	 ** If the user neglected to sign up with the traditional method (using the quick
+	 ** button, then they will need to be able to set their username at some point should 
+	 ** they want to continue using their existing account.
+	 */
+	if ( !$profile_email ) { ?>
+		<section class="profile-section">
+			<label class="small-left" for="email">
+				<u>username</u>
+				<hr />
+				set a username with which to log back in with.<br />
+				<strong>don't forget to set a password as well.</strong><br />
+				you will only need to do this once.
+			</label>
+			<i class="fa fa-lock"></i>
+			<input type="text" name="email" id="email" />
 		</section>
-		<section>
-			<label for="newpassword">New password</label>
+	<?php }
+	/** End User Username
+	 */
+	/** Begin User Password
+	 ** Allow the user to set a password.  If the user has already set a password, 
+	 ** require that they enter their previous password as well as a new password 
+	 ** to update the password that is already set.
+	 */
+	/** If no password has been set before
+	 */
+	if ( !$profilepassword ) { ?>
+		<section class="profile-section">
+			<label class="small-left" for="password">
+				<u>password</u>
+				<hr />
+				set a password so you can log back in.<br />
+				password also needed for post editing and deletion.
+			</label>
+			<i class="fa fa-key"></i>
+			<input type="text" name="password" id="password" placeholder="<?php echo $random_password; ?>" />
+		</section>
+	<?php }
+	/** If a password has been set
+	 */
+	if ( $profilepassword ) { ?>
+		<section class="profile-section">
+			<label class="small-left">
+				<u>change password</u>
+				<hr />
+				&mdash; enter your current password first<br />
+				&mdash; enter your new password second<br />
+				save your profile to update your password.
+			</label>
+			<i class="fa fa-key"></i>
+			<input type="text" name="oldpassword" id="oldpassword" placeholder="Enter current password" />
 			<input type="text" name="newpassword" id="newpassword" placeholder="Enter new password" />
-		</section>';
+		</section>
+	<?php }
+	/** End User Password
+	 */
+	/** Begin User Display Name
+	 ** Allow the user to set a name that they wish to be displayed with their posts,
+	 ** and that they wish to be publicly known by (all connection requests and follows
+	 ** will depend on this name, however, should the user change it, all occurrences of
+	 ** the name in the database will also be changed to reflect that.
+	 */ 
+	if ( $profile_email ) { ?>	
+	<section class="profile-section">
+		<label class="small-left" for="USERNAME">
+			<u>display name</u>
+			<hr />
+			set a name that you would like to be known by.<br />
+			names are unique &mdash; choose wisely.<br />
+			you can change this name at any time.
+		</label>
+		<i class="fa fa-user"></i>
+		<input type="text" name="USERNAME" id="USERNAME" placeholder="Your memorable name" 
+		<?php if ( $profile_name != 'null' && $profile_name ) { ?>
+			value = "<?php echo $profile_name; ?>"
+		<?php } ?>
+		/>
+	</section>
+	<?php 
 	}
-	if ( $protocol == 'boards' ) {
-		if ( count ( $getboards ) > 0 ) {
-			if ( !$thisboard ) { 
-				echo '<section>
-					<label for="boards">Boards</label>';
-				foreach ( $getboards as $board ) {
-					$board->board_shortname . ' &mdash; ';
-				}
-				echo '<input type="text" name="boards" id="boards" value="' . $boards . '" placeholder="Boards" />
-				<span>By putting a comma separated list of boards, you are able to build a customized feed of content 
-				tailored to your personal tastes from the boards available.  Simply use the follow format: board,board,board... 
-				to customize your viewing preferences.</span>
-				</section>';
+	/** End User Display Name
+	 */
+	/** Begin User Board Subscription
+	 ** If use boards is set as such, and there are boards created, 
+	 ** this option will be available to the user, allowing them to 
+	 ** designate a comma-separated list of boards to which they wish 
+	 ** to be subscribed.
+	 */
+	if ( $profile_email ) { 
+		if ( $protocol == 'boards' ) {
+			if ( count ( $getboards ) > 0 ) {
+				if ( !$thisboard ) { ?>
+				<section class="profile-section">
+						<label class="small-left" for="boards">
+							<u>subscribe to boards</u>
+							<hr />
+							comma-separated list of boards to subscribe to<br />
+							example: <strong>board_1, board_2, board_3</strong><br />
+							see your feed at <a href="<?php echo $this_page; ?>?a=subscribed">this link</a>
+						</label>
+						<i class="fa fa-sitemap"></i>
+						<input type="text" name="boards" id="boards" value="<?php echo $boards; ?>" placeholder="Boards" />
+					</section>
+				<?php }
 			}
 		}
 	}
-	echo '<section>
-		<label for="follow">Follow</label>
-		<input type="text" name="follow" id="follow" value="' . $profilefollow . '" placeholder="Usernames" />
-		<span>By putting a comma separated list of usernames, you are able to build a customized feed of content 
-		tailored to your personal tastes from the people you like.  Simply use the follow format: username,username,username... 
-		or userid,userid,userid... to customize your viewing preferences.</span>
+	/** End User Board Subscription
+	 */
+	/** Begin User Following
+	 ** Allow the user to designate a comma-separated list of usernames that they wish to 
+	 ** follow, which acts like the subscribed list, but instead outputs a feed of 
+	 ** specific user-generated content.
+	 */ 
+	if ( $profile_email ) { ?>
+	<section class="profile-section">
+		<label class="small-left" for="follow">
+			<u>follow other users</u>
+			<hr />
+			comma-separated list of usernames to follow<br />
+			example: <strong>user_1, user_2, user_3</strong><br />
+			see your followed feed at <a href="<?php echo $this_page; ?>?a=following">this link</a>
+		</label>
+		<i class="fa fa-group"></i>
+		<input type="text" name="follow" id="follow" value="<?php echo $profilefollow; ?>" placeholder="Usernames" />
 	</section>
-	<section>
-		<label for="slogan">Slogan</label>
-		<input type="text" name="slogan" id="slogan" value="' . $profileslogan . '" />
-		<span>A quote or a line of text to appear on your profile.</span>
+	<?php 
+	}
+	/** End User Following
+	 */
+	/** Begin User Slogan
+	 ** Allow the user to affix a line of text to their public profile.
+	 */ 
+	if ( $profile_email ) {  ?>
+	<section class="profile-section">
+		<label class="small-left" for="slogan">
+			<u>profile slogan</u>
+			<hr />
+			a line of text for your public profile<br />
+			example: a quote, pickup line, or anecdote
+		</label>
+		<i class="fa fa-microphone"></i>
+		<input type="text" name="slogan" id="slogan" value="<?php echo $profileslogan; ?>" />
 	</section>
-	<section>
-		<label for="avatar">Avatar IMG URL</label>
-		<input type="text" name="avatar" id="avatar" value="' . $profileavatar . '" />
-		<span>An image to appear on your profile.</span>
-	</section>
-	<section><label>anonymous?</label>
+	<?php 
+	}
+	/** End User Slogan
+	 */
+	/** Begin User Always Anonymous
+	 ** Allow the user to determine whether or not they always wish to post anonymously, 
+	 ** which will prevent any of their posts from being publicly tied to their profile.
+	 */ 
+	if ( $profile_email ) {  ?>
+	<section class="profile-section">
+		<label class="small-left">
+			<u>always anonymous</u>
+			<hr />
+			post anonymously?<br />
+			anonymous posts are not tied to your public profile<br />
+			can be turned on/off at your leisure
+		</label>
+		<i class="fa fa-volume-off"></i>
 		<select name="heaven" id="heaven">
-			<option '; if ( $profileheaven == 0 ){ echo 'selected="selected" '; } echo 'value="0">no</option>
-			<option '; if ( $profileheaven == 1 ){ echo 'selected="selected" '; } echo 'value="1">yes</option>
+			<option <?php if ( $profileheaven == 0 ){ ?> selected="selected" <?php } ?> value="0">no</option>
+			<option <?php if ( $profileheaven == 1 ){ ?> selected="selected" <?php } ?> value="1">yes</option>
 		</select>
 	</section>
-	<section>
-		<label for="options">Save</label>
+	<?php 
+	}
+	/** End User Always Anonymous
+	 */ ?>
 		<input type="submit" name="options" id="options" value="Save these options" />
-	</section>
-</form>';
-
-echo '<hr />';
-
-if ( isset ( $_POST['friendrequest'] ) && isset ( $_REQUEST['request_id'] ) ) {
-	if ( strtolower ( $_REQUEST['request_id'] ) != strtolower ( $profile_name ) ) {
-		$checked_user      = 0;
-		$check_user        = sanitize_text_field ( $_REQUEST['request_id'] );
-		$checked_user      = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_users WHERE user_name = '$check_user' " );
-		if ( $checked_user > 0 ) {
-			$check_request = 0;
-			$check_request = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_friends WHERE ( friends_connector = '$profile_name' AND friends_connectee = '$check_user' OR friends_connector = '$check_user' AND friends_connectee = '$profile_name')" );
-			if ( $check_request == 0 ) {
-				$wpdb->query ( 
-					$wpdb->prepare ( 
-						"INSERT INTO $regular_board_friends 
-						( 
-							friends_id, 
-							friends_connector, 
-							friends_connectee, 
-							friends_mutual
-						) VALUES ( 
-							%d,
-							%s,
-							%s,
-							%d
-						)", 
-						'', 
-						$profile_name,
-						$check_user,
-						0
-					) 
-				);
+	</form>
+	<?php 
+	/** End User Options Form
+	 */ ?>
+		
+	<?php 
+	/** Begin Connections
+	 ** If the user has incoming connections, they will be displayed here.
+	 ** They can then decide to either decline or accept the connection invitation.
+	 */
+	if ( count ( $my_waiting ) > 0 ) {
+		foreach ( $my_waiting as $waiting ) {
+			$this_form = $waiting->friends_id;
+			if ( isset ( $_POST['accept' . $this_form . ''] ) ) {
+				$wpdb->query ( "UPDATE $regular_board_friends SET friends_mutual = 1 WHERE friends_id = $this_form" );
+				echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $this_page . '?a=options"></p>';
 			}
-		} else {
-			echo '<p><em>That user does not exist.</em></p>';
-		}
-	} else {
-		echo '<p><em>You can\'t be friends with yourself - sorry.</em></p>';
-	}
-}
-echo '
-<form method="post" name="friend_request" action="' . $current_page . '?a=options">
-<p><strong>Friend Connections</strong></p>';
-wp_nonce_field( 'friend_request' );
-echo '<section><label for="request_id">Enter a username</label><input type="text" id="request_id" name="request_id" placeholder="Enter username to initiate request" /></section>
-<section><input type="submit" name="friendrequest" id="friendrequest" value="Initiate connection" /></section>
-</form>';
-
-if ( count ( $my_waiting ) > 0 ) {
-	foreach ( $my_waiting as $waiting ) {
-		
-		$this_form = $waiting->friends_id;
-		
-		if ( isset ( $_POST['accept' . $this_form . ''] ) ) {
-			$wpdb->query ( "UPDATE $regular_board_friends SET friends_mutual = 1 WHERE friends_id = $this_form" );
-		}
-		if ( isset ( $_POST['decline' . $this_form . ''] ) ) {
-			$wpdb->delete ( $regular_board_friends, array ( 'friends_id' => $this_form ), array ( '%d' ) );
-		}
-		
-		echo '<form class="friend_request" method="post" action="' . $current_page . '?a=options">
-		<section>
-			<label>Request from ' . sanitize_text_field ( $waiting->friends_connector ) . '</label>
-			<input type="submit" name="decline' . $waiting->friends_id . '" value="Decline" />
-			<input type="submit" name="accept' . $waiting->friends_id . '" value="Accept" />
-		</section>
-		</form></div>';
-	}
-}
-echo '
+			if ( isset ( $_POST['decline' . $this_form . ''] ) ) {
+				$wpdb->delete ( $regular_board_friends, array ( 'friends_id' => $this_form ), array ( '%d' ) );
+				echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $this_page . '?a=options"></p>';
+			} ?>
+			<form class="friend_request" method="post" action="<?php echo $current_page; ?>?a=options">
+			<section>
+				<label>
+					<?php echo sanitize_text_field ( $waiting->friends_connector ); ?> wants to connect
+				</label>
+				<input type="submit" name="decline<?php echo $waiting->friends_id; ?>" value="Decline" />
+				<input type="submit" name="accept<?php echo $waiting->friends_id; ?>" value="Accept" />
+			</section>
+			</form>
+		<?php }
+	} ?>
+	<?php 
+	/** End Connections
+	 */ ?>
+</div>
 <script type="text/javascript">
-	document.title = \'Options\';
-</script>';
+	document.title = 'Options';
+</script>

@@ -17,7 +17,6 @@
 			var regbo_relid  = $(this).attr('xdata');
 			$('.omitted' + regbo_relid + '').load(regbo_relurl + ' .omitted'+ regbo_relid + '');
 		});
-
 		$(document).on('click','.rb_yt',function(e){
 			e.preventDefault();
 			var youtube_id = $(this).attr('data');

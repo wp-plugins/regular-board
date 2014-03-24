@@ -3,7 +3,7 @@
  * Plugin Name: Regular Board
  * Plugin URI: https://github.com/onebillion/regular_board
  * Description: Standalone (continuation) project for Regular Board, an anonymous text-based WordPress powered bbs.
- * Version: 1.13
+ * Version: 1.13.1
  * Author: boyevul
  * License: GNU General Public License v2
  * License URI: //www.gnu.org/licenses/gpl-2.0.html
@@ -33,7 +33,7 @@
  *
  */
 
-$regular_board_version = '1.13-stable-final-public';
+$regular_board_version = '1.13.1-stable-final-public';
 
 register_activation_hook ( __FILE__, 'regular_board_installation_option' );
 function regular_board_installation_option() {
@@ -73,39 +73,29 @@ function regular_board_installation_option() {
 	
 	$wpdb->query ( 
 		"ALTER TABLE $regular_board_users 
-		ADD user_avatar TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci AFTER user_follow"
+		ADD ( 
+				user_avatar TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci AFTER user_follow, 
+				user_slogan TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci AFTER user_avatar, 
+				user_posts BIGINT(20) NOT NULL AFTER user_slogan, 
+				user_level BIGINT(20) NOT NULL AFTER user_posts, 
+				user_strikes BIGINT(20) NOT NULL AFTER user_level, 
+				user_logged_in BIGINT(20) NOT NULL AFTER user_strikes,
+				user_logged_in_from TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci AFTER user_logged_in
+			)"
 	);
 	$wpdb->query ( 
-		"ALTER TABLE $regular_board_users 
-		ADD user_slogan TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci AFTER user_avatar"
+		"ALTER TABLE $regular_board_boards 
+			ADD board_rules LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci AFTER board_description"
 	);
-	$wpdb->query ( 
-		"ALTER TABLE $regular_board_users 
-		ADD user_posts BIGINT(20) NOT NULL AFTER user_slogan"
-	);
-	$wpdb->query ( 
-		"ALTER TABLE $regular_board_users 
-		ADD user_level BIGINT(20) NOT NULL AFTER user_posts"
-	);
-	$wpdb->query ( 
-		"ALTER TABLE $regular_board_users 
-		ADD user_strikes BIGINT(20) NOT NULL AFTER user_level"
-	);
-	$wpdb->query ( 
-		"ALTER TABLE $regular_board_users 
-		ADD user_logged_in BIGINT(20) NOT NULL AFTER user_strikes"
-	);	
-	$wpdb->query ( 
-		"ALTER TABLE $regular_board_users 
-		ADD user_logged_in_from TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci AFTER user_logged_in"
-	);	
 	$wpdb->query ( 
 		"ALTER TABLE $regular_board_logs 
-		ADD logs_content TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci AFTER logs_message"
+			ADD logs_content TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci AFTER logs_message"
 	);
 	$wpdb->query ( 
 		"ALTER TABLE $regular_board_posts 
-		ADD post_comment_parent BIGINT(20) NOT NULL AFTER post_comment"
+			ADD (
+				post_comment_parent BIGINT(20) NOT NULL AFTER post_comment
+			)"
 	);
 	add_option ( 'regular_board_installation', 0 );
 	delete_option ( 'regular_board_postingoptions' );

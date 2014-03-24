@@ -13,6 +13,19 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
 
 echo '<div class="left-half">';
+
+if ( $this_area == 'history' && $user_exists || $this_user ) {
+	echo '<strong>';
+		if ( $the_profile_name ) { 
+			echo $the_profile_name;
+		} else {
+			echo 'anonymous';
+		}
+	echo '</strong>';
+	echo $the_profile_avatar . $the_profile_slogan . $the_profile_details . $connect_with;
+	echo '<hr />';
+}
+
 if ( $search_enabled ) {
 	$search_action = $current_page;
 	echo '<form name="regular_board_search" method="post" action="' . $search_action . '">';
@@ -21,36 +34,35 @@ if ( $search_enabled ) {
 		<input type="text" name="regular_board_search" id="regular_board_search" placeholder="Search" />
 		<input type="submit" class="hidden" id="regular_board_search_submit" name="regular_board_search_submit" value="Search" />
 	</form>';
-}		
-
+}
 if ( !$user_exists && !$userisbanned ) {
 	include ( plugin_dir_path(__FILE__) . '/regular_board_loginorregister.php' );
-} else {
-	if ( $this_area != 'post' ) {
-		if ( !$this_thread ) {
-			if ( $the_board || $correct == 0 && $this_thread && count($getposts) > 0 || $nothing_is_here || $this_thread ) {
-				if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_post_form.php' ) ) {
-					include ( ABSPATH . '/regular_board_child/regular_board_post_form.php' );
-				} else {
-					include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
-				}
-			}
-		}
-	}
+} else { }
+
+echo '<hr />';
+
+if ( get_option ( 'regular_board_frontpage' ) ) {
+	echo '<span class="frontinfo">Welcome</span>' . regular_board_format ( wpautop ( get_option ( 'regular_board_frontpage' ) ) );
+	echo '<hr />';
 }
 
-echo '<small class="clear smallstats">
-<i class="fa fa-user" title="You are using ' . $check_ammount . ' of ' . $accounts_per_ip . ' user slots available to you."> ' . $check_ammount . ' / ' . $accounts_per_ip . '</i>
- &mdash; 
-<i class="fa fa-users" title="Accounts total"> ' . $count_users_total;
-if ( $user_total_allowed ) {
-	echo ' / ' . $user_total_allowed . ' / ' . $count_logged_total; 
-}
-echo '</i>
-&mdash; 
-<i class="fa fa-pencil" title="Active posts / total posts created (overall)"> ' . $posts_active_total . ' / ' . $posts_users_total . '</i>
-</small>';
 
+if ( $board_name ) {
+	echo '<span class="frontinfo">/' . $board_short . '/ ' . $board_name . '</span><em>' . $board_description . '</em><hr />';
+}
+
+echo '<div class="tag_cloud">
+		<span><a href="' . $this_page . '?'; if ( $the_board ) { echo 'b=' . $the_board . '&amp;'; } echo 'a=submit&amp;self">Submit a new text post</a></span>
+		<span><a href="' . $this_page . '?'; if ( $the_board ) { echo 'b=' . $the_board . '&amp;'; } echo 'a=submit">Submit a new link</a></span>
+		<span><a href="' . $this_page . '?a=create">Create a new board</a></span>
+	</div>
+';
+
+if ( $board_rules ) {
+	echo '<hr />';
+	echo regular_board_format ( $board_rules );
+}
+echo '<hr />';
 echo '<div class="tag_cloud"><span><a href="#">navigation</a></span>';
 
 if ( $protocol == 'boards' ) {
@@ -113,5 +125,16 @@ if ( $protocol == 'boards' ) {
 echo '<span><a href="' . $this_page . '?a=replies"'; if ( $this_area == 'replies' ) { echo ' class="active"'; } echo '>all replies</a></span>
 <span><a href="' . $this_page . '?a=subscribed"'; if ( $this_area == 'subscribed' ) { echo ' class="active"'; } echo '>all subscribed</a></span>
 <span><a href="' . $this_page . '?a=following"'; if ( $this_area == 'following' ) { echo ' class="active"'; } echo '>all followed</a></span>';
+echo '<span><a href="#">
+<i class="fa fa-user" title="You are using ' . $check_ammount . ' of ' . $accounts_per_ip . ' user slots available to you."> ' . $check_ammount . ' / ' . $accounts_per_ip . '</i>
+ &mdash; 
+<i class="fa fa-users" title="Accounts total"> ' . $count_users_total;
+if ( $user_total_allowed ) {
+	echo ' / ' . $user_total_allowed . ' / ' . $count_logged_total; 
+}
+echo '</i>
+&mdash; 
+<i class="fa fa-pencil" title="Active posts / total posts created (overall)"> ' . $posts_active_total . ' / ' . $posts_users_total . '</i>
+</a></span>';
 echo '</div>';
 echo '</div>';

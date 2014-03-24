@@ -156,6 +156,7 @@ if( current_user_can( 'manage_options' )) {
 				$board_name         = '';
 				$board_shortname    = '';
 				$board_description  = '';
+				$board_rules        = '';
 				$board_moderators   = '';
 				$board_janitors     = '';
 				$board_locked       = '';
@@ -168,6 +169,7 @@ if( current_user_can( 'manage_options' )) {
 							$board_name         = $edit->board_name;
 							$board_shortname    = $edit->board_shortname;
 							$board_description  = $edit->board_description;
+							$board_rules        = $edit->board_rules;
 							$board_moderators   = $edit->board_mods;
 							$board_janitors     = $edit->board_janitors;
 							$board_locked       = $edit->board_locked;
@@ -194,13 +196,103 @@ if( current_user_can( 'manage_options' )) {
 				</div>';
 			
 				if ( isset ( $_POST['save_newboard'] ) && $_REQUEST['board_shortname'] ) {
-					$regular_board_board = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_boards WHERE board_shortname = '" . $_REQUEST['board_shortname'] . "'" );
+					$regular_board_board    = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_boards WHERE board_shortname = '" . $_REQUEST['board_shortname'] . "'" );
+					$regular_board_board_pc = $wpdb->get_var( "SELECT board_postcount FROM $regular_board_boards WHERE board_shortname = '" . $_REQUEST['board_shortname'] . "'" );
 					if ( $regular_board_board == 0 ) {
-						$wpdb->query( $wpdb->prepare("INSERT INTO $regular_board_boards ( board_id,  board_date,  board_name,  board_shortname,  board_description,  board_mods,  board_janitors,  board_postcount, board_locked, board_logged, board_wipe ) VALUES ( %d, %s, %s, %s, %s, %s, %s, %d, %d, %d, %s ) ", '', $date, str_replace('\\','',$_REQUEST['board_name']), str_replace('\\','',$_REQUEST['board_shortname']), str_replace('\\','',$_REQUEST['board_description']), str_replace('\\', '', $_REQUEST['board_mods']), str_replace('\\','',$_REQUEST['board_janitors']), 0, str_replace('\\','',$_REQUEST['board_locked']), str_replace('\\','',$_REQUEST['board_logged']), str_replace('\\','',$_REQUEST['board_wipe']) ) );
+						$wpdb->query( 
+							$wpdb->prepare(
+								"INSERT INTO $regular_board_boards ( 
+									board_id,  
+									board_date,  
+									board_name,  
+									board_shortname,  
+									board_description, 
+									board_rules,  
+									board_mods,  
+									board_janitors,  
+									board_postcount, 
+									board_locked, 
+									board_logged, 
+									board_wipe 
+								) VALUES ( 
+									%d, 
+									%s,
+									%s, 
+									%s, 
+									%s, 
+									%s, 
+									%s, 
+									%s, 
+									%d, 
+									%d, 
+									%d, 
+									%s 
+								)", 
+								'', 
+								$date, 
+								str_replace ( '\\', '', $_REQUEST['board_name'] ), 
+								str_replace ( '\\', '', $_REQUEST['board_shortname'] ), 
+								str_replace ( '\\', '', $_REQUEST['board_description'] ), 
+								str_replace ( '\\', '', $_REQUEST['board_rules'] ), 
+								str_replace ( '\\', '', $_REQUEST['board_mods'] ), 
+								str_replace ( '\\', '', $_REQUEST['board_janitors'] ), 
+								0, 
+								str_replace ( '\\', '', $_REQUEST['board_locked'] ), 
+								str_replace ( '\\', '', $_REQUEST['board_logged'] ), 
+								str_replace ( '\\', '', $_REQUEST['board_wipe'] ) 
+							) 
+						);
+						
 						echo '<div><section><label>' . $_REQUEST['board_name'] . ' added.</label></section></div>';
 					} else {
-						$wpdb->delete ( $regular_board_boards, array ( 'board_shortname' => $_REQUEST['board_shortname'] ), array ( '%s' ) );
-						$wpdb->query( $wpdb->prepare("INSERT INTO $regular_board_boards ( board_id,  board_date,  board_name,  board_shortname,  board_description,  board_mods,  board_janitors,  board_postcount, board_locked, board_logged, board_wipe ) VALUES ( %d, %s, %s, %s, %s, %s, %s, %d, %d, %d, %s ) ", '', $date, str_replace('\\','',$_REQUEST['board_name']), str_replace('\\','',$_REQUEST['board_shortname']), str_replace('\\','',$_REQUEST['board_description']), str_replace('\\', '', $_REQUEST['board_mods']), str_replace('\\','',$_REQUEST['board_janitors']), 0, str_replace('\\','',$_REQUEST['board_locked']), str_replace('\\','',$_REQUEST['board_logged']), str_replace('\\','',$_REQUEST['board_wipe']) ) );
+						$wpdb->delete ( 
+							$regular_board_boards, 
+								array ( 'board_shortname' => $_REQUEST['board_shortname'] ), 
+									array ( '%s' ) 
+								);
+						$wpdb->query ( 
+							$wpdb->prepare(
+								"INSERT INTO $regular_board_boards ( 
+									board_id, 
+									board_date, 
+									board_name, 
+									board_shortname, 
+									board_description, 
+									board_rules, 
+									board_mods, 
+									board_janitors, 
+									board_postcount, 
+									board_locked, 
+									board_logged, 
+									board_wipe 
+								) VALUES ( 
+									%d, 
+									%s, 
+									%s, 
+									%s, 
+									%s, 
+									%s, 
+									%s, 
+									%s, 
+									%d, 
+									%d, 
+									%d, 
+									%s 
+								) ", 
+								'', 
+								$date, 
+								str_replace ( '\\', '', $_REQUEST['board_name'] ), 
+								str_replace ( '\\', '', $_REQUEST['board_shortname'] ), 
+								str_replace ( '\\', '', $_REQUEST['board_description'] ), 
+								str_replace ( '\\', '', $_REQUEST['board_rules'] ), 
+								str_replace ( '\\', '', $_REQUEST['board_mods'] ), 
+								str_replace ( '\\', '', $_REQUEST['board_janitors'] ), 
+								$regular_board_board_pc, 
+								str_replace ( '\\', '', $_REQUEST['board_locked'] ), 
+								str_replace ( '\\', '', $_REQUEST['board_logged'] ), 
+								str_replace ( '\\', '', $_REQUEST['board_wipe'] ) 
+							) 
+						);
 						echo '<div><section><label>' . $_REQUEST['board_name'] . ' Updated.</label></section></div>';
 					}
 				}
@@ -208,6 +300,7 @@ if( current_user_can( 'manage_options' )) {
 						<section><label>Board name: </label><input name="board_name" type="text" value="' . $board_name . '"/></section>
 						<section><label>Board shortname: </label><input name="board_shortname" type="text" value="' . $board_shortname . '"/></section>
 						<section><label>Board description: </label><input name="board_description" type="text" value="' . $board_description . '"/></section>
+						<section><label>Board rules: </label><textarea name="board_rules" >' . $board_rules . '</textarea></section>
 						<section><label>Board moderators: </label><textarea name="board_mods" />' . $board_moderators . '</textarea></section>
 						<section><label>Board janitors: </label><textarea name="board_janitors" />' . $board_janitors . '</textarea></section>
 						<section><label>This board is locked: </label><select name="board_locked" /><option value="0"'; if ( $board_locked == 0 ) { echo ' selected="selected"'; } echo '>No.</option><option value="1"'; if ( $board_locked == 1 ) { echo ' selected="selected"'; } echo '>Yes.</option></select></section>

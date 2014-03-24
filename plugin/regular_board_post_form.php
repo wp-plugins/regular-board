@@ -91,18 +91,37 @@ if ( $userisbanned ) {
 					}
 					if ( $LOCKED == 0){
 					$correct = 0;
-					if ( !$user_exists ) { } else {
-						if ( $the_board || $this_area != 'editpost' && $the_board && $archived == 0 || $nothing_is_here || $this_thread || $this_area == 'messages' ) {
-							if( $the_board || $correct == 0 && $this_thread && count($getposts) > 0 || $nothing_is_here || $this_thread ||  $this_area == 'messages' ){
+					if ( !$user_exists ) { 
+						echo '<p class="information">You need to sign-in before you can submit content or comment on 
+						submissions.  Simply enter a username (the best username is your e-mail address, which 
+						we do not store in a readable format) and password, and click the Register button.</p>
+						<p class="information">Once registered and signed in, you can change your posting name, 
+						follow other users, send and receive messages from users you have connected with, 
+						and more.</p>';
+					} else {
+						if ( $the_board || $this_area != 'editpost' && $the_board && $archived == 0 || $nothing_is_here || $this_thread || $this_area == 'messages' || $this_area == 'submit' ) {
+							if( $the_board || $correct == 0 && $this_thread && count($getposts) > 0 || $nothing_is_here || $this_thread ||  $this_area == 'messages' || $this_area == 'submit' ){
 								if ( $tlast != 1 ) {
 									if ( $this_area == 'messages' ) {
 										echo '<hr />';
 									}
 									echo '<div id="reply" class="reply">';
+
+									if ( !$this_thread ) {
+										if ( $this_area != 'messages' ) {
+											if ( $selfpost ) {
+												echo '<p class="information">You are submitting a text-based post'; if ( $the_board ) { echo ' to ' . $the_board; } echo '.  A title is optional, but a comment is required.</p>';
+											}
+											if ( !$selfpost ) {
+												echo '<p class="information">You are submitting a link'; if ( $the_board ) { echo ' to ' . $the_board; } echo '.</p>';
+											}
+										}	
+									}
+									
 									echo '<form enctype="multipart/form-data" name="regularboard" method="post" action="' . $current_page . '?a=post">';
 									wp_nonce_field('regularboard');
 									
-									if ( $protocol == 'boards' ) {
+									if ( $protocol == 'boards' && $the_board ) {
 										echo '<input type="hidden" value="' . $the_board . '" NAME="board" />';
 									}
 									
@@ -132,45 +151,67 @@ if ( $userisbanned ) {
 									}
 									
 									if ( $protocol == 'boards' ) {
-										if ( !$this_area == 'messages' ) {
-												echo '<label for="EMAIL">email</label><input type="text" name="EMAIL" id="EMAIL"'; if ( $profileheaven ) { echo ' value="heaven"'; } echo ' />';
+										if ( $this_area != 'messages' ) {
+												echo '
+													<select name="EMAIL" id="EMAIL">
+														<option value=""></option>
+														<option value="heaven"'; if ( $profileheaven ) { echo ' selected="selected" '; } echo '>post this anonymously</option>';
+														if ( $this_thread ) {
+															echo '<option value="sage">do not bump this thread</option>';
+														}
+													echo '</select>';
 										}
 									}
 
-									echo '<label for="SUBJECT">subject</label><input type="text" id="SUBJECT" maxlength="' . $max_text . '" name="SUBJECT" />';
+									if ( !$this_thread ) {
+										echo '<label for="SUBJECT">subject</label><input type="text" id="SUBJECT" maxlength="' . $max_text . '" name="SUBJECT" />';
+									}
 									
-									if ( $protocol == 'boards' ) {
-										if ( count ( $getboards ) > 0 ) {
-											if ( !$this_thread ) {
+									if ( !$this_thread ) {
+										if ( !$selfpost ) {
+											if ( $enable_url && !$this_thread || $enable_rep && $this_thread ) { 
 												if ( $this_area != 'messages' ) {
-													echo '<label>select a board</label>
-													<select name="board" id="board">
-													<option value="">none selected</option>';
-													foreach ( $getboards as $gotboards ) {
-														echo '<option value="' . $gotboards->board_shortname . '">' . $gotboards->board_name . '</option>';
+													echo '<label for="URL">URL</label>
+													<input type="text" id="URL" maxlength="' . $max_text . '" value="" name="URL" /></section>';
+												}
+											}
+										}
+									}
+
+									if ( !$the_board ) {
+										if ( $protocol == 'boards' ) {
+											if ( count ( $getboards ) > 0 ) {
+												if ( !$this_thread ) {
+													if ( $this_area != 'messages' ) {
+														echo '<label>submit to</label>
+														<select name="board" id="board">
+														<option value="">none selected</option>';
+														foreach ( $getboards as $gotboards ) {
+															echo '<option value="' . $gotboards->board_shortname . '">' . $gotboards->board_name . '</option>';
+														}
+														echo '</select>';
 													}
-													echo '</select>';
 												}
 											}
 										}
 									}
 									
-									if ( $enable_url && !$this_thread || $enable_rep && $this_thread ) { 
-										if ( $this_area != 'messages' ) {
-											echo '<label for="URL">URL</label>
-											<input type="text" id="URL" maxlength="' . $max_text . '" value="" name="URL" /></section>';
-										}
-									}
 									if ( $this_thread ) {
 										echo '<label for="post_comment_parent">reply to</label><input type="text" name="post_comment_parent" id="post_comment_parent" />';
-									}									
-									if ( $imgurid ) { 
-										if ( $this_area != 'messages' ) {
-											echo '<label for="img">upload</label>
-											<input id="img" name="img" size="35" type="file"/>';
+									}
+									
+									if ( !$selfpost ) {
+										if ( $imgurid ) { 
+											if ( $this_area != 'messages' ) {
+												echo '<label for="img">or upload (replaces URL)</label>
+												<input id="img" name="img" size="35" type="file"/>';
+											}
 										}
 									}
-									echo '<label for="COMMENT">comment</label><textarea id="COMMENT" name="COMMENT"></textarea>';									
+									
+									if ( $selfpost || $this_thread || $this_area == 'messages' ) {
+										echo '<label for="COMMENT">comment</label><textarea id="COMMENT" name="COMMENT"></textarea>';									
+									}
 									echo '<input type="submit" data="' . $current_page . '?a=post" name="FORMSUBMIT" id="FORMSUBMIT" value="';
 									if ( $this_thread ) {
 										echo 'Reply';

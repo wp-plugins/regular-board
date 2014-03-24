@@ -36,7 +36,7 @@ if ( isset ( $_POST['FORMSUBMIT'] ) ) {
 			$URL       = $pms['data']['link'];
 			$TYPE      = 'image';
 		}
-	}else{
+	} else {
 		$URL = sanitize_text_field ( wp_strip_all_tags( $_REQUEST['URL'] ) );
 	}
 	include ( plugin_dir_path(__FILE__) . '/regular_board_post_action.php' );

@@ -57,6 +57,7 @@ if ( $search_enabled && $search ) {
 		} else {
 			$where_by = "WHERE post_parent = 0 ";
 		}
+		$order_by = "post_date DESC";
 	}
 	if( !$the_board && $this_area == 'gallery' && !$this_thread && !$this_user ) {
 		$use_this++;

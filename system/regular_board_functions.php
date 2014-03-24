@@ -48,17 +48,17 @@ function regular_board_style(){
 	global $wp, $post, $regular_board_version;
 	$content = $post->post_content;
 	if( has_shortcode ( $content, 'regular_board' ) ) {
-		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board00000000131.js?' . $regular_board_version;
+		$regularboard   = plugins_url() . '/regularboard/system/js/regular_board00000000145.js?' . $regular_board_version;
 		if ( get_option ( 'regular_board_css_url' ) ) {
 			$css_file   = get_option ( 'regular_board_css_url' );
 		} else { 
-			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_00000000131.css';
+			$css_file   = plugins_url() . '/regularboard/system/css/regular_board_00000000145.css';
 		}
 		$regbostyle     = $css_file . '?' . $regular_board_version;
 		// Selectively load lazyload!
 		if ( get_option ( 'regular_board_lazyload' ) ) {
 			$lazy_load           = '//cdn.jsdelivr.net/jquery.lazyload/1.9.0/jquery.lazyload.min.js';
-			$lazy_load_functions = plugins_url() . '/regular-board/system/js/lazyload.js';
+			$lazy_load_functions = plugins_url() . '/regularboard/system/js/lazyload.js';
 			wp_deregister_script ( 'regular_board-lazyload');
 			wp_register_script   ( 'regular_board-lazyload', protocol_relative_url_dangit ( $lazy_load ), array( 'jquery' ), '', null, false);
 			wp_enqueue_script    ( 'regular_board-lazyload');
@@ -67,7 +67,7 @@ function regular_board_style(){
 			wp_enqueue_script    ( 'regular_board-lazy_load_functions' );
 			
 		}
-		$fontawesome         = plugins_url() . '/regular-board/system/css/fontawesome/css/font-awesome.min.css?' . $regular_board_version;
+		$fontawesome         = plugins_url() . '/regularboard/system/css/fontawesome/css/font-awesome.min.css?' . $regular_board_version;
 		wp_register_style    ( 'font-awesome', protocol_relative_url_dangit ( $fontawesome ) );
 		wp_enqueue_style     ( 'font-awesome' );
 		wp_register_style    ( 'regular_board', protocol_relative_url_dangit ( $regbostyle ) );
@@ -108,14 +108,14 @@ function regular_board_timesince ( $date, $granularity=2 ) {
 	$retval = '';
 	$date = strtotime ( $date );
 	$difference = time() - $date;
-	$periods = array( 'decade' => 315360000, 
-		'year' => 31536000, 
-		'month' => 2628000, 
-		'week' => 604800,  
-		'day' => 86400, 
-		'hour' => 3600, 
-		'minute' => 60, 
-		'second' => 1 );
+	$periods = array( ' decades' => 315360000, 
+		' years' => 31536000, 
+		' months' => 2628000, 
+		' weeks' => 604800,  
+		' days' => 86400, 
+		' hours' => 3600, 
+		' minutes' => 60, 
+		' seconds' => 1 );
 
 	foreach ( $periods as $key => $value ) {
 		if ( $difference >= $value ) {
@@ -127,7 +127,7 @@ function regular_board_timesince ( $date, $granularity=2 ) {
 		}
 		if ( $granularity == '0' ) { break; }
 	}
-	return str_replace( array ( 'decade', 'year', 'month', 'week', 'day', 'hour', 'minute', 'second' ), array ( 'D', 'Y', 'm', 'w', 'd', 'h', 'm', 's' ), $retval . ' ago' );
+	return $retval . ' ago';
 }	
 
 /**

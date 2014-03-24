@@ -77,6 +77,7 @@ if ( $userisbanned ) {
 		}
 	
 	} else {
+		
 		$archived       = 0;
 		$edited         = 0;
 

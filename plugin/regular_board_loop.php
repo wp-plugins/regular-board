@@ -34,9 +34,11 @@ if ( count ( $posts ) > 0 ) {
 	if ( $protocol == 'boards' ) {
 		$posts->post_board          = $posts->post_board;
 		$board                      = $posts->post_board;
-		if ( !$posts->post_parent ) {
-			$the_board              = $posts->post_board;
-		}		
+		if ( $this_thread ) {
+			if ( !$posts->post_parent ) {
+				$the_board              = $posts->post_board;
+			}		
+		}
 	}
 	$posts->post_last           = $posts->post_last;
 	$posts->post_sticky         = intval ( $posts->post_sticky );
@@ -56,8 +58,10 @@ if ( count ( $posts ) > 0 ) {
 	if ( $posts->post_parent ) {
 		$threaded   = $wpdb->get_results ( $wpdb->prepare ("SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_parent = %d AND post_comment_parent = %d ORDER BY post_last ASC", $posts->post_parent, $posts->post_id  ) );
 	}
-	if ( in_array ( $posts->post_board, $protectedboards, true ) ) {
-		$this_is_protected = 1;
+	if ( $protectedboards) {
+		if ( in_array ( $posts->post_board, $protectedboards, true ) ) {
+			$this_is_protected = 1;
+		}
 	}
 	if ( $posts->post_comment == '[deleted]' && $posts->post_title == '[deleted]' && $posts->post_name == 'null' ) {
 		$wpdb->delete ( $regular_board_posts, array ( 'post_id' => $posts->post_id ), array ( '%d' ) );
@@ -267,7 +271,7 @@ if ( count ( $posts ) > 0 ) {
 						echo '<small class="fa fa-globe"> ';
 						
 						if ( $posts->post_url && $posts->post_type != 'youtube') { 
-							echo '( <a href="' . regular_board_get_domain ( $posts->post_url ) . '">' . regular_board_get_domain ( $posts->post_url ) . '</a> )' ; 
+							echo '( <a href="//' . regular_board_get_domain ( $posts->post_url ) . '">' . regular_board_get_domain ( $posts->post_url ) . '</a> )' ; 
 						}
 						if ( $posts->post_url && $posts->post_type == 'youtube') { 
 							echo '( <a href="http://youtube.com/">youtube.com</a> )' ; 
@@ -496,7 +500,7 @@ if ( count ( $posts ) > 0 ) {
 					echo '<div class="clear media' . $posts->post_id . '"><iframe src="//player.vimeo.com/video/' . substr ( $posts->post_url, 17 ) . '?title=0&amp;byline=0&amp;portrait=0&amp;color=d6cece" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>'; 
 				} elseif ( $posts->post_type == 'youtube' && $posts->post_url ) { 
 					// ( 03 ) Youtube embedding
-					echo '<div class="clear media' . $posts->post_id . '"><hr /><a class="rb_yt" data="'.$posts->post_url.'" href="//youtube.com/watch?v=' . $posts->post_url . '"><small><i class="fa fa-play"> click to play video</i></small><img class="regular_board_video_thumbnail_large" src="//img.youtube.com/vi/' . $posts->post_url . '/0.jpg"></a><div id="' . $posts->post_url . '"></div><hr /></div>'; 
+					echo '<div class="clear media' . $posts->post_id . '"><iframe src="//www.youtube.com/embed/' . $posts->post_url . '?autoplay=1&amp;playlist=' . $posts->post_url . '&amp;controls=1&amp;showinfo=0&amp;autohide=1" width="480" height="360" frameborder="0" allowfullscreen></iframe></div>'; 
 				} elseif ( $posts->post_type == 'image' && $posts->post_url ) { 
 					// ( 04 ) Image embedding
 					echo '<div class="clear media' . $posts->post_id . '"><a href="' . $posts->post_url . '"><img class="';

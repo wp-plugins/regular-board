@@ -46,3 +46,4 @@ if ( $protocol == 'boards' ) {
 		</div>';
 	}
 }
+echo '</div>';
