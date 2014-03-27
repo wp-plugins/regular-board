@@ -14,6 +14,12 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 
 echo '<div class="left-half">';
 
+$banner             = '';
+if ( $board_banner != '' ) {
+	$banner  = '<div class="banner"><img src="' . $board_banner . '" alt="Banner" /></div>';
+}
+echo $banner;
+
 if ( $this_area == 'history' && $user_exists || $this_user ) {
 	echo '<strong>';
 		if ( $the_profile_name ) { 
@@ -35,36 +41,35 @@ if ( $search_enabled ) {
 		<input type="submit" class="hidden" id="regular_board_search_submit" name="regular_board_search_submit" value="Search" />
 	</form>';
 }
+
 if ( !$user_exists && !$userisbanned ) {
 	include ( plugin_dir_path(__FILE__) . '/regular_board_loginorregister.php' );
-} else { }
-
-echo '<hr />';
-
-if ( get_option ( 'regular_board_frontpage' ) ) {
-	echo '<span class="frontinfo">Welcome</span>' . regular_board_format ( wpautop ( get_option ( 'regular_board_frontpage' ) ) );
-	echo '<hr />';
-}
-
-
-if ( $board_name ) {
-	echo '<span class="frontinfo">/' . $board_short . '/ ' . $board_name . '</span><em>' . $board_description . '</em><hr />';
-}
-
-echo '<div class="tag_cloud">
+} else { 
+	echo '<hr />
+	<div class="tag_cloud">
 		<span><a href="' . $this_page . '?'; if ( $the_board ) { echo 'b=' . $the_board . '&amp;'; } echo 'a=submit&amp;self">Submit a new text post</a></span>
 		<span><a href="' . $this_page . '?'; if ( $the_board ) { echo 'b=' . $the_board . '&amp;'; } echo 'a=submit">Submit a new link</a></span>
 		<span><a href="' . $this_page . '?a=create">Create a new board</a></span>
-	</div>
-';
+	</div>';
+}
 
+echo '<hr />';
+if ( !$the_board ) {
+	if ( get_option ( 'regular_board_frontpage' ) ) {
+		echo '<span class="frontinfo">Welcome</span>' . regular_board_format ( wpautop ( get_option ( 'regular_board_frontpage' ) ) );
+		echo '<hr />';
+	}
+}
+if ( $board_name ) {
+	echo '<span class="frontinfo">/' . $board_short . '/ ' . $board_name . '</span><em>' . $board_description . '</em>';
+}
 if ( $board_rules ) {
-	echo '<hr />';
 	echo regular_board_format ( $board_rules );
 }
-echo '<hr />';
+if ( $the_board ) {
+	echo '<hr />';
+}
 echo '<div class="tag_cloud"><span><a href="#">navigation</a></span>';
-
 if ( $protocol == 'boards' ) {
 	foreach ( $getboards as $gotboards ) {
 		

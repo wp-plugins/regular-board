@@ -48,17 +48,22 @@ function regular_board_style(){
 	global $wp, $post, $regular_board_version;
 	$content = $post->post_content;
 	if( has_shortcode ( $content, 'regular_board' ) ) {
-		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board00000000145.js?' . $regular_board_version;
+		$form_submit    = plugins_url() . '/regular-board/system/js/jquery.form.min.js?' . $regular_board_version;
+		wp_deregister_script ( 'regular_board-form');
+		wp_register_script   ( 'regular_board-form', protocol_relative_url_dangit ( $form_submit ), array( 'jquery' ), '', null, false);
+		wp_enqueue_script    ( 'regular_board-form');
+
+		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board00000000157.js?' . $regular_board_version;
 		if ( get_option ( 'regular_board_css_url' ) ) {
 			$css_file   = get_option ( 'regular_board_css_url' );
 		} else { 
-			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_00000000145.css';
+			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_00000000157.css';
 		}
 		$regbostyle     = $css_file . '?' . $regular_board_version;
 		// Selectively load lazyload!
 		if ( get_option ( 'regular_board_lazyload' ) ) {
 			$lazy_load           = '//cdn.jsdelivr.net/jquery.lazyload/1.9.0/jquery.lazyload.min.js';
-			$lazy_load_functions = plugins_url() . '/regularboard/system/js/lazyload.js';
+			$lazy_load_functions = plugins_url() . '/regular-board/system/js/lazyload.js';
 			wp_deregister_script ( 'regular_board-lazyload');
 			wp_register_script   ( 'regular_board-lazyload', protocol_relative_url_dangit ( $lazy_load ), array( 'jquery' ), '', null, false);
 			wp_enqueue_script    ( 'regular_board-lazyload');
@@ -67,7 +72,7 @@ function regular_board_style(){
 			wp_enqueue_script    ( 'regular_board-lazy_load_functions' );
 			
 		}
-		$fontawesome         = plugins_url() . '/regularboard/system/css/fontawesome/css/font-awesome.min.css?' . $regular_board_version;
+		$fontawesome         = plugins_url() . '/regular-board/system/css/fontawesome/css/font-awesome.min.css?' . $regular_board_version;
 		wp_register_style    ( 'font-awesome', protocol_relative_url_dangit ( $fontawesome ) );
 		wp_enqueue_style     ( 'font-awesome' );
 		wp_register_style    ( 'regular_board', protocol_relative_url_dangit ( $regbostyle ) );

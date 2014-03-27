@@ -18,8 +18,12 @@ if ( isset ( $_REQUEST['password'] ) && $_REQUEST['password'] ) { $password     
 if ( isset ( $_REQUEST['email'] ) && $_REQUEST['email'] )       { $username       = sanitize_text_field ( wp_hash ( $_REQUEST['email'] ) ); }
 echo '<div id="reply" class="reply">';
 
+	$data = '';
+	if     ( $the_board  ) { $data = $current_page . '?b=' . $the_board; }
+	elseif ( $this_thread ) { $data = $current_page . '?t=' . $this_thread; }
+	else   {                  $data = $current_page; }
 	
-	echo '<form enctype="multipart/form-data" name="i_want_to_log_in" method="post" action="' . $current_page . '">';
+	echo '<form enctype="multipart/form-data" data="' . $data . '" id="regularboard" name="i_want_to_log_in" method="post" action="' . $current_page . '">';
 	wp_nonce_field('i_want_to_log_in');
 	echo '<label for="email">username (will not be displayed)</label><input type="text" id="email" name="email" />';
 	echo '<label for="password">password</label><input type="password" id="password" name="password"  />';

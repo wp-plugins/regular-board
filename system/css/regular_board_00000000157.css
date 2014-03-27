@@ -628,7 +628,6 @@
  }
  .boardAll #reply form label, 
  .boardAll form label {
-	background-color: #fff;
 	border-radius: 0;
 	color: rgba(0,0,0,.4);
 	clear: both;
@@ -752,6 +751,12 @@
 	padding: 5px 25px 5px 5px;
 	width: 300px;
 	z-index: 2;
+ }
+ .boardAll .left-half input[type="text"] {
+	cursor: default;
+	display: block;
+	margin: 5px auto;
+	width: 100%;
  }
  .boardAll .right-half {
 	border-left: 1px solid #f6f6f6;

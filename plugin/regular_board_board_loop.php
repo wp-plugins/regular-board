@@ -45,7 +45,7 @@ foreach ( $getposts as $posts ) {
 		include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
 	}
 	if ( $this_thread && count ( $gotReplies ) > 0 ) { 
-		echo '<div class="omitted' . $posts->post_id . '">';
+		echo '<div class="omitted' . $posts->post_id . '"'; if ( $this_thread ) { echo ' id="omitted"'; } echo '>';
 	}
 
 	
@@ -62,6 +62,10 @@ foreach ( $getposts as $posts ) {
 		}
 	}
 	
+	if ( $this_thread && count ( $gotReplies ) > 0 ) { 
+		echo '</div>';
+	}
+	
 	if ( $this_thread ) {
 		echo '<div class="thread noborder">';
 		if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_post_form.php' ) ) {
@@ -70,12 +74,9 @@ foreach ( $getposts as $posts ) {
 			include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
 		}
 		echo '</div>';
-	}
+	}	
 	
 	
-	if ( $this_thread && count ( $gotReplies ) > 0 ) { 
-		echo '</div>';
-	}
 }
 
 if( $the_board && !$this_thread ) {

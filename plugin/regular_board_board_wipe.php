@@ -11,7 +11,9 @@
 if ( !defined ( 'regular_board_plugin' ) ) {
 	die();
 }
+$board_wipe_true     = '';
 if ( $board_wipe_every && $board_wipe_every != strtolower ( 'never' ) && $board_wipe_per == strtolower ( 'board' ) ) {
+	$board_wipe_true = 1;
 	$today_is   = strtotime ( $current_timestamp );
 	if ( strpos ( strtolower ( $board_wipe_every ), 'minute' ) ) {
 		$uptime = intval ( $board_wipe_every ) * 60;

@@ -28,7 +28,7 @@ if ( count ( $my_messages ) > 0 ) {
 		if ( !$messages->messages_subject ) {
 			$messages->messages_subject = 'No subject';
 		}
-		$messages->messages_subject = '<a href="' . $this_page . '?a=messages&message=' . $messages->messages_id . '">' . $messages->messages_subject . '</a>';
+		$messages->messages_subject = '<a class="load_link" href="' . $this_page . '?a=messages&message=' . $messages->messages_id . '">' . $messages->messages_subject . '</a>';
 		
 		$messages->messages_content = str_replace ( array ( '\\n', '\\r', '\\'), array( '<br />','<br />','' ), $messages->messages_content );
 		if ( $formatting ) {

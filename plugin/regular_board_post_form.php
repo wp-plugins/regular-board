@@ -101,7 +101,7 @@ if ( $userisbanned ) {
 					} else {
 						if ( $the_board || $this_area != 'editpost' && $the_board && $archived == 0 || $nothing_is_here || $this_thread || $this_area == 'messages' || $this_area == 'submit' ) {
 							if( $the_board || $correct == 0 && $this_thread && count($getposts) > 0 || $nothing_is_here || $this_thread ||  $this_area == 'messages' || $this_area == 'submit' ){
-								if ( $tlast != 1 ) {
+								if ( $tlast != 1 || !$board_wipe_true ) {
 									if ( $this_area == 'messages' ) {
 										echo '<hr />';
 									}
@@ -113,12 +113,23 @@ if ( $userisbanned ) {
 												echo '<p class="information">You are submitting a text-based post'; if ( $the_board ) { echo ' to ' . $the_board; } echo '.  A title is optional, but a comment is required.</p>';
 											}
 											if ( !$selfpost ) {
-												echo '<p class="information">You are submitting a link'; if ( $the_board ) { echo ' to ' . $the_board; } echo '.</p>';
+												echo '<p class="information">You are submitting a link'; if ( $the_board ) { echo ' to ' . $the_board; } echo '.<br /><br />You may expand further on the subject in a comment if necessary.</p>';
 											}
 										}	
 									}
 									
-									echo '<form enctype="multipart/form-data" name="regularboard" method="post" action="' . $current_page . '?a=post">';
+									$data = '';
+									if     ( $the_board  ) { $data = $current_page . '?b=' . $the_board; }
+									elseif ( $this_thread ) { $data = $current_page . '?t=' . $this_thread; }
+									else   {                  $data = $current_page; }
+									
+									echo '<form enctype="multipart/form-data" data="' . $data . '" name="regularboard" ';
+										if ( $this_thread ) {
+											echo 'id="regularboard_post" xdata="omitted' . $this_thread . '" ';
+										} else {
+											echo 'id="regularboard" ';
+										}
+									echo 'method="post" action="' . $current_page . '?a=post">';
 									wp_nonce_field('regularboard');
 									
 									if ( $protocol == 'boards' && $the_board ) {
@@ -153,6 +164,7 @@ if ( $userisbanned ) {
 									if ( $protocol == 'boards' ) {
 										if ( $this_area != 'messages' ) {
 												echo '
+												    <label>Post action</label>
 													<select name="EMAIL" id="EMAIL">
 														<option value=""></option>
 														<option value="heaven"'; if ( $profileheaven ) { echo ' selected="selected" '; } echo '>post this anonymously</option>';
@@ -167,7 +179,7 @@ if ( $userisbanned ) {
 										echo '<label for="SUBJECT">subject</label><input type="text" id="SUBJECT" maxlength="' . $max_text . '" name="SUBJECT" />';
 									}
 									
-									if ( !$this_thread ) {
+									
 										if ( !$selfpost ) {
 											if ( $enable_url && !$this_thread || $enable_rep && $this_thread ) { 
 												if ( $this_area != 'messages' ) {
@@ -176,7 +188,7 @@ if ( $userisbanned ) {
 												}
 											}
 										}
-									}
+									
 
 									if ( !$the_board ) {
 										if ( $protocol == 'boards' ) {
@@ -212,7 +224,7 @@ if ( $userisbanned ) {
 									if ( $selfpost || $this_thread || $this_area == 'messages' ) {
 										echo '<label for="COMMENT">comment</label><textarea id="COMMENT" name="COMMENT"></textarea>';									
 									}
-									echo '<input type="submit" data="' . $current_page . '?a=post" name="FORMSUBMIT" id="FORMSUBMIT" value="';
+									echo '<input type="submit" data="' . $current_page . '?a=post" data="' . $current_page . '?a=post" name="FORMSUBMIT" id="FORMSUBMIT" value="';
 									if ( $this_thread ) {
 										echo 'Reply';
 									} else { 

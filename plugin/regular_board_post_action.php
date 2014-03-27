@@ -136,10 +136,11 @@ if ( $userisbanned ) {
 					if ( $checked->post_locked ) {
 						$archived = 1;
 					}
-					
+					$dontbumpthis = '';
 					$check_last = $wpdb->get_var ( "SELECT post_userid FROM $regular_board_posts WHERE post_parent = $post_parent ORDER BY post_last DESC LIMIT 1" );
 					if ( $check_last == $profileid ) {
-						$tlast = 1;
+						// $tlast = 1;
+						$dontbumpthis = 1;
 					}
 				}
 			}
@@ -586,20 +587,22 @@ if ( $userisbanned ) {
 										}
 									}
 									
-									if ( $post_parent && !$LOCKED && strtolower ( $post_email ) != 'sage' ) {
-										$wpdb->update (
-											$regular_board_posts,
-											array ( 
-												'post_last'   => $current_timestamp
-											),
-											array ( 
-												'post_id'      => $post_parent
-											),
-											array ( 
-												'%s', 
-												'%d'
-											)
-										);
+									if ( !$dontbumpthis ) {
+										if ( $post_parent && !$LOCKED && strtolower ( $post_email ) != 'sage' ) {
+											$wpdb->update (
+												$regular_board_posts,
+												array ( 
+													'post_last'   => $current_timestamp
+												),
+												array ( 
+													'post_id'      => $post_parent
+												),
+												array ( 
+													'%s', 
+													'%d'
+												)
+											);
+										}
 									}
 									// Delete posts that somehow got through with no data
 									$wpdb->delete ( 

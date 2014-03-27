@@ -13,7 +13,6 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
 
 $my_alerts                                            = $my_waitings + $my_unread;
-$banner                                               = '';
 $stuff_link_class                                     = '';
 $home_link_class                                      = '';
 $topics_link_class                                    = '';
@@ -39,7 +38,12 @@ if ( $this_area == 'gallery' )  { $gallery_link_class = ' class="active" '; }
 if ( $this_area == 'history' )  { $history_link_class = ' class="active" '; }
 if ( $this_area == 'logout' )   { $logout_link_class  = ' class="active"'; }
 if ( $enable_rep || $enable_url || $imgurid ) {
-	$gallery_link                                     = '<a title="all images" href="' . $current_page . '?a=gallery"' . $gallery_link_class . '><span>gallery</span><i class="fa fa-camera"></i></a>';
+	if ( $the_board ) {
+		$gallery_link                                     = '<a title="all images" href="' . $current_page . '?b=' . $the_board . '&amp;a=gallery"' . $gallery_link_class . '><span>gallery</span><i class="fa fa-camera"></i></a>';
+	}
+	if ( !$the_board ) {
+		$gallery_link                                     = '<a title="all images" href="' . $current_page . '?a=gallery"' . $gallery_link_class . '><span>gallery</span><i class="fa fa-camera"></i></a>';
+	}
 }
 if ( $user_exists ) {
 	$history_link                                     = '<a title="my profile" href="' . $current_page . '?a=history"' . $history_link_class . '><span>me</span><i class="fa fa-user"></i></a>';
@@ -51,6 +55,35 @@ if ( $user_exists && $profile_name && $profilepassword) {
 	$logout_link                                      =  '<a id="logout-link" title="logout" href="' . $current_page . '?a=logout"' . $logout_link_class . '><span>logout</span><i class="fa fa-times-circle"></i></a>';
 }
 
+$reports_link     = '';
+$deleted_link     = '';
+$queue_link       = '';
+$video_link       = '';
+$video_link_class = '';
+
+if ( $this_area == 'videos' ) { $video_link_class = ' class="active" '; }
+if ( $enable_rep || $enable_url ) {
+	if ( $the_board ) {
+		$video_link = '<a title="all videos" href="' . $current_page . '?b=' . $the_board . '&amp;a=videos"' . $video_link_class . '><span>videos</span><i class="fa fa-video-camera"></i></a>';
+	} else {
+		$video_link = '<a title="all videos" href="' . $current_page . '?a=videos"' . $video_link_class . '><span>videos</span><i class="fa fa-video-camera"></i></a>';
+	}
+}
+
+if ( $is_moderator || $is_user_mod ) {
+	if ( count ( $get_reports ) > 0 || count ( $get_deleted ) > 0 || count ( $get_queue ) > 0 ) {
+		if ( count ( $get_reports ) > 0 ) {
+			$reports_link = '<a title="report queue" href="' . $current_page . '?a=reports"><span>reports ( ' . count ( $get_reports ) . ' )</span><i class="fa fa-warning"></i></a>';
+		}
+		if ( count ( $get_deleted ) > 0 ) {
+			$deleted_link = '<a title="deleted queue" href="' . $current_page . '?a=deleted"><span>deleted ( ' . count ( $get_deleted ) . ' )</span><i class="fa fa-warning"></i></a>';
+		}
+		if ( count ( $get_queue ) > 0 ) {
+			$queue_link   = '<a title="awaiting approval" href="' . $current_page . '?a=queue"><span>moderation ( ' . count ( $get_queue ) . ' )</span><i class="fa fa-warning"></i></a>';
+		}
+	}
+}
+
 $blog_link    = '<a title="home" href="' . $current_page . '"><span>' . $blog_title . '</span><i class="fa fa-rocket"></i></a>';
 $home_link    = '<a title="latest activity" href="' . $current_page . '"' . $home_link_class . '><span>new</span><i class="fa fa-home"></i></a>';
 $topics_link  = '<a title="all topics" href="' . $current_page . '?a=topics"' . $topics_link_class . '><span>topics</span><i class="fa fa-book"></i></a>';
@@ -58,8 +91,5 @@ $stuff_link   = '<a title="options and other misc. stuff of importance" href="' 
 if ( $user_exists ) {
 	$options_link = '<a id="settings-link" title="my personal account settings" href="' . $current_page . '?a=options"' . $options_link_class . '><span>settings</span><i class="fa fa-tachometer"></i></a>';
 }
-$navigation   =  '<div class="navi">' . $blog_link . $home_link . $topics_link . $stuff_link . $gallery_link . $history_link . $logout_link . $options_link . '</div>';
+$navigation   =  '<div class="navi">' . $blog_link . $home_link . $topics_link . $stuff_link . $gallery_link . $video_link . $history_link . $reports_link . $deleted_link . $queue_link . $logout_link . $options_link . '</div>';
 
-if ( $board_banner != '' ) {
-	$banner  = '<div class="banner"><img src="' . $board_banner . '" alt="Banner" /></div>';
-}

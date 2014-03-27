@@ -13,10 +13,12 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
 
 $total_posts = $wpdb->get_var ( "SELECT SUM(board_postcount) FROM $regular_board_boards" );
-$getuser     = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_bans WHERE banned_ip = %s AND banned_banned = %d LIMIT 1", $user_ip, 0  ) );
+$getuser     = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_bans WHERE banned_ip = %s LIMIT 1", $user_ip  ) );
+
 if ( count ( $getuser ) > 0 ) {
 	$userisbanned = 1;
 }
+
 if ( $search_enabled && isset ( $_POST['regular_board_search_submit'] ) && $_REQUEST['regular_board_search'] ) {
 	$search = sanitize_text_field ( str_replace ( '\'', '\\\'', $_REQUEST['regular_board_search'] ) );
 }
@@ -30,6 +32,15 @@ if ( $search_enabled && $search ) {
 		$use_this++;
 		$where_by = "WHERE post_comment LIKE '%#$the_tag%'";
 	}
+	if ( $this_area == 'videos' ) {
+		$use_this++;
+		if ( $the_board ) {
+			$where_by = "WHERE post_type = 'youtube' AND post_board = '$the_board'";
+		} else {
+			$where_by = "WHERE post_type = 'youtube'";
+		}
+		
+	}	
 	if ( $the_board && !$the_tag ) {
 		$use_this++;
 		if ( $protocol == 'boards' ) {
@@ -61,7 +72,12 @@ if ( $search_enabled && $search ) {
 	}
 	if( !$the_board && $this_area == 'gallery' && !$this_thread && !$this_user ) {
 		$use_this++;
-		$where_by = "WHERE post_url != ''";
+		if ( !$the_board ) {
+			$where_by = "WHERE post_url != '' AND post_type = 'image'";
+		} 
+		if ( $the_board ) {
+			$where_by = "WHERE post_url != '' AND post_type = 'image' AND post_board = '$the_board'";
+		}
 	}		
 	if( !$the_board && $this_area == 'subscribed' && $profileboards && !$this_user ) {
 		$use_this++;
@@ -104,7 +120,7 @@ if ( $use_this > 0 ) {
 		$totalpages = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_posts $where_by" );
 	}
 	if ( $totalpages > 0 ) {
-		if ( strpos ( strtolower ( $query ), 'n=' ) ) {
+		if ( isset ( $_GET['n'] ) ) {
 			$results    = intval ( $_GET['n'] );
 		}
 		if( $results ) {

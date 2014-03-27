@@ -1,4 +1,13 @@
 	jQuery(document).ready(function($){
+	
+		//var pathname = window.location.pathname;	
+		//$('.boardAll').get(pathname + ' .boardAll > *');
+		//window.onpopstate = function(event) {
+		//	if(event && event.state) {
+		//		location.reload();
+		//	}
+		//}		
+		
 		var hash = window.location.hash.substr(1);
 		if(hash != false && hash != 'undefined'){
 			$('#thread'+hash+'').addClass('current');
@@ -75,4 +84,18 @@
 			e.preventDefault();
 			$(this).toggleClass('imageEXPAND');
 		});
+		
+		
+		$('#regularboard').ajaxForm(function() { 
+			var data = $('#regularboard').attr('data');
+			$('.boardAll').load(data + ' .boardAll > *');
+			history.pushState('data', '', data);
+		}); 
+		$('#regularboard_post').ajaxForm(function() { 
+			var data  = $('#regularboard_post').attr('data');
+			var xdata = $('#regularboard_post').attr('xdata'); 
+			$('#omitted').load(data + ' .' + xdata + '');
+		});
+		
+		
 	});	

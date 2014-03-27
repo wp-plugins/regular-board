@@ -43,35 +43,15 @@ function regular_board_shortcode ( $content = null ) {
 	
 		include ( plugin_dir_path(__FILE__) . '/regular_board_strings.php' );
 		include ( plugin_dir_path(__FILE__) . '/regular_board_user_information.php' );
-		include ( plugin_dir_path(__FILE__) . '/regular_board_navigation_elements.php' );
 		include ( plugin_dir_path(__FILE__) . '/regular_board_board_information.php' );
 		include ( plugin_dir_path(__FILE__) . '/regular_board_loop_queries.php' );
 		include ( plugin_dir_path(__FILE__) . '/regular_board_board_wipe.php' );
 		include ( plugin_dir_path(__FILE__) . '/regular_board_determine_mod.php' );
+		include ( plugin_dir_path(__FILE__) . '/regular_board_navigation_elements.php' );
 
 		echo '<div class="boardAll"><div class="spacer">' . $banner . $navigation;
 		
 		if ( $userisbanned ) { include ( plugin_dir_path(__FILE__) . '/regular_board_posting_userbanned.php' ); }
-		
-		if ( $is_moderator || $is_user_mod ) {
-			if ( count ( $get_reports ) > 0 || count ( $get_deleted ) > 0 || count ( $get_queue ) > 0 ) {
-				echo '<hr />';
-				echo '<strong>Moderation queue</strong>: ';
-				if ( count ( $get_reports ) > 0 ) {
-					echo '<a href="' . $current_page . '?a=reports">reports ( ' . count ( $get_reports ) . ' )</a>';
-				}
-				if ( count ( $get_deleted ) > 0 ) {
-					echo '<a href="' . $current_page . '?a=deleted">deleted ( ' . count ( $get_deleted ) . ' )</a>';
-				}
-				if ( count ( $get_queue ) > 0 ) {
-					echo '<a href="' . $current_page . '?a=queue">moderation queue ( ' . count ( $get_queue ) . ' )</a>';
-				}
-			}
-		}
-		
-		
-		
-		
 		
 		echo '<div class="right-half">';
 		
@@ -106,8 +86,31 @@ function regular_board_shortcode ( $content = null ) {
 
 		
 		include ( plugin_dir_path(__FILE__) . '/regular_board_posting_deletepost.php' );
-		
-		if ( $this_area == 'create' ) {
+		if ( $this_area == 'videos' ) {
+			if ( $getposts ) {
+				echo '<div class="thread">
+					<h1>Video Feed';
+						if ( $the_board ) {
+							echo ' for /' . $the_board . '/';
+						}
+					echo '</h1>
+					<iframe src="//www.youtube.com/embed/?playlist=';
+				foreach ( $getposts as $posts ) {
+					if ( $posts->post_type == 'youtube' ) {
+						$post_count++;
+						if ( $post_count < count ( $getposts ) ) {
+							echo $posts->post_url . ',';
+						} else {
+							echo $posts->post_url;
+						}
+					}
+				}
+				echo '&amp;controls=1&amp;showinfo=1&amp;autohide=1" width="480" height="360" frameborder="0" allowfullscreen></iframe>
+				</div>';
+			} else {
+				echo '<div class="thread clear"><p><strong>Nothing to see here.</strong></p></div>';
+			}
+		} elseif ( $this_area == 'create' ) {
 			if ( $user_exists && $profile_level > 2 ) {
 				echo '<h1>Create a new board</h1>';
 				$board_name         = '';
@@ -175,13 +178,19 @@ function regular_board_shortcode ( $content = null ) {
 						echo '<p class="information">board already exists.</p>';
 					}
 				}
+				
+				$data = '';
+				if     ( $this_board  ) { $data = $current_page . '?b=' . $the_board; }
+				elseif ( $this_thread ) { $data = $current_page . '?t=' . $this_thread; }
+				else   {                  $data = $current_page; }				
+				
 				echo '<div id="reply" class="reply">
-					<form method="post" name="createboard" action="' . $current_page . '?a=create">
+					<form id="regularboard" data="' . $data . '" method="post" name="createboard" action="' . $current_page . '?a=create">
 					' . wp_nonce_field( 'createboard' ) . '
 						<section class="profile-section"><label class="small-left"><u>board name</u><hr />the extended name for this board</label><input name="board_name" type="text" value="' . $board_name . '"/></section>
 						<section class="profile-section"><label class="small-left"><u>board shortname</u><hr />the name used in the url</label><input name="board_shortname" type="text" value="' . $board_shortname . '"/></section>
 						<section class="profile-section"><label class="small-left"><u>board description</u><hr />a little something about this board</label><input name="board_description" type="text" value="' . $board_description . '"/></section>
-						<section class="profile-section"><label class="small-left"><u>board rules</u><hr />rules to go in the sidebar<br />use comment formatting<textarea name="board_rules"></textarea></section>
+						<section class="profile-section"><label class="small-left"><u>board rules</u><hr />rules to go in the sidebar<br />use comment formatting</label><textarea name="board_rules"></textarea></section>
 						<section><input type="submit" name="save_newboard" value="'; if ( $board_name ) { echo 'Edit'; } else { echo 'Create'; } echo ' this board" /></section>
 					</form>
 				</div>';
@@ -271,13 +280,13 @@ function regular_board_shortcode ( $content = null ) {
 						if ( $this_thread && $threadexists == 1 ) {
 							echo '<p>';
 							if ( $thisboard ) {
-								echo '<a href="' . $current_page . '">Return</a>';
+								echo '<a class="load_link" href="' . $current_page . '">Return</a>';
 							} elseif ( $the_board ) {
-								echo '<a href="' . $current_page . '?b=' . $the_board . '">Return</a>';
+								echo '<a class="load_link" href="' . $current_page . '?b=' . $the_board . '">Return</a>';
 							} elseif ( $thread_board ) {
-								echo '<a href="' . $current_page . '?b=' . $thread_board . '">Return</a>';
+								echo '<a class="load_link" href="' . $current_page . '?b=' . $thread_board . '">Return</a>';
 							} else {
-								echo '<a href="' . $current_page . '">Return</a>';
+								echo '<a class="load_link" href="' . $current_page . '">Return</a>';
 							}								
 							echo '<a href="#top">Top</a><a class="reload" xdata="' . $this_thread .'" data="' . $current_page . '?t=' . $this_thread . '">Refresh</a>
 							</p>';
@@ -287,8 +296,13 @@ function regular_board_shortcode ( $content = null ) {
 			}
 		}
 		
-		if ( $this_area == 'post' ) { include ( plugin_dir_path(__FILE__) . '/regular_board_area_post.php' ); }
-		elseif ( $this_area == 'gallery' || $this_area == 'replies' || $this_area == 'topics' || $this_area == 'subscribed' || $this_area == 'following' ) {
+		if ( $this_area == 'post' ) { 
+		
+		
+		include ( plugin_dir_path(__FILE__) . '/regular_board_area_post.php' ); 
+		
+		
+		} elseif ( $this_area == 'gallery' && !$the_board || $this_area == 'replies' || $this_area == 'topics' || $this_area == 'subscribed' || $this_area == 'following' ) {
 			echo '<div class="thread_container">';
 			echo '<h1>' . $this_area . '</h1>';
 			if ( $getposts ) {

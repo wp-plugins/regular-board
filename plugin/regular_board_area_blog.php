@@ -39,12 +39,12 @@ foreach($categories as $category) {
 	$posts = get_posts ( $args );
 	if ( $posts ) {
 		if ( $postno ) {
-			echo '<div class="thread"><a href="' . $this_page . '?a=blog">More blog entries</a></div>';
+			echo '<div class="thread"><a class="load_link" href="' . $this_page . '?a=blog">More blog entries</a></div>';
 		}
 		foreach($posts as $post) {
 			setup_postdata($post); 
 				echo '<div class="thread"><strong class="left">';
-				echo '<a href="' . $this_page . '?a=blog&amp;post=' . $post->ID . '">' . $post->post_title . '</a>';
+				echo '<a class="load_link" href="' . $this_page . '?a=blog&amp;post=' . $post->ID . '">' . $post->post_title . '</a>';
 				echo '</strong>';
 				echo '<span class="right">' . regular_board_timesince( $post->post_date ) . '</span>';
 				if ( $postno ) { 

@@ -57,7 +57,7 @@ if ( count ( $usprofile ) > 0 ) {
 					if ( $friends->friends_connectee != $the_profile_name ) {
 						$friend_name = sanitize_text_field ( $friends->friends_connectee );
 					}
-					echo ' [ <a href="' . $this_page . '?u=' . $friend_name . '">' . $friend_name . '</a> ] ';
+					echo ' [ <a class="load_link" href="' . $this_page . '?u=' . $friend_name . '">' . $friend_name . '</a> ] ';
 				}
 				echo '<hr />';
 			}

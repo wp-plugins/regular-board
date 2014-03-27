@@ -18,8 +18,8 @@ if ( isset ( $_GET['n'] ) ) {
 } else {
 	$results = 1;
 }
-$paging  = round ( $totalpages / $posts_per_page );
- 
+$paging  = $totalpages / $posts_per_page;
+
 $location = '';
 
 if ( $this_area ) {
@@ -34,25 +34,36 @@ if ( $this_user ) {
 
 if ( !$nothing_is_here ) {
 	$locale = $current_page . $location . '&amp;n=';
+	$latest = $current_page . $location;
 }
 if ( $nothing_is_here ) {
 	$locale = $current_page . '?n=';
+	$latest = $current_page;
 }
 
 if($paging > 0){
 	$pageresults = round($paging / 10);
-	echo '<p class="nav">';
+	echo '<p class="nav clear">';
 	if($results > 1){
-		echo ' [ <a href="' . $locale . '">Latest</a> ] ';
+		if ( $nothing_is_here ) {
+			echo ' [ <a class="load_link" href="' . $latest . '">Latest</a> ] ';
+		} else { 
+			echo ' [ <a class="load_link" href="' . $latest . '">Latest</a> ] ';
+		}
 	}
 	if($results > 2){
-		echo ' [ <a href="' . $locale . ($results - 1) . '">Newer</a> ] ';
+		echo ' [ <a class="load_link" href="' . $locale . ($results - 1) . '">Newer</a> ] ';
 	}
 	if($paging > 1 && $results < $paging && !$results ){
-		echo ' [ <a href="' . $locale . '2">Older</a> ] ';
+		echo ' [ <a class="load_link" href="' . $locale . '2">Older</a> ] ';
 	}
 	if($results < $paging && $results ){
-		echo ' [ <a href="' . $locale . ( $results + 1 ) . '">Older</a> ]  ';
+		echo ' [ <a class="load_link" href="' . $locale . ( $results + 1 ) . '">Older</a> ]  ';
 	}
+	
+	if ( $results ) {
+		echo ' [ Page ' . $results . ' ]';
+	}
+	
 	echo '</p>';
 }

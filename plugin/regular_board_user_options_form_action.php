@@ -46,6 +46,7 @@ if ( $_REQUEST['email'] ) {
 	$checkuser = $wpdb->get_results ( $wpdb->prepare ( "SELECT user_email FROM $regular_board_users WHERE user_email = %s", $update_email) );
 	if ( count ( $checkuser ) == 0 ) {
 		$wpdb->query ( "UPDATE $regular_board_users SET user_email = '$update_email' WHERE user_id = $profileid" );
+		echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $this_page . '?a=options"></p>';
 	} else {
 		echo '<p><strong>This username is already taken.  Please use a different one.</p>';
 	}
@@ -65,19 +66,29 @@ if ( $update_name ) {
 		$wpdb->query ( "UPDATE $regular_board_users SET user_name = '$update_name' WHERE user_id = $profileid" );
 		$wpdb->query ( "UPDATE $regular_board_posts SET post_name = '$update_name' WHERE post_userid = $profileid AND post_name != 'null' " );
 		$update_name_to = $update_name;
+		echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $this_page . '?a=options"></p>';
 	} else {
 		$update_name_to = $profile_name;
 		echo '<p><strong>' . $update_name . '</strong> is already taken.  Please use a different one.</p>';
 	}
 }
+
 if ( !$profilepassword && $password ) {
-	$update_password = $password;
 	$wpdb->query( "UPDATE $regular_board_posts SET post_password = '$password' WHERE post_userid = $profileid" );
+	$password = $password;
 } elseif ( $profilepassword  && $newpassword && $oldpassword ) {
-	$update_password = $password;
-	$wpdb->query( "UPDATE $regular_board_posts SET post_password = '$newpassword' WHERE post_userid = $profileid" );
+	$password = $profilepassword;
+	$check_password   = $wpdb->get_results ( $wpdb->prepare ( "SELECT user_password FROM $regular_board_users WHERE user_password = %s", $oldpassword) );	
+	if ( $check_password ) {
+		$wpdb->query( "UPDATE $regular_board_users SET user_password = '$newpassword' WHERE post_userid = $profileid" );
+		$wpdb->query( "UPDATE $regular_board_posts SET post_password = '$newpassword' WHERE post_userid = $profileid" );
+		$password = $newpassword;
+		echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $this_page . '?a=options"></p>';
+	} else {
+		echo '<p class="information">Password does not match.</p>';
+	}
 } else {
-	$update_password = $profilepassword;
+	$password = $profilepassword;
 }
 
 $wpdb->update (
@@ -89,7 +100,7 @@ $wpdb->update (
 		'user_boards'   => $update_boards,
 		'user_follow'   => $update_follow,
 		'user_slogan'   => $update_slogan,
-		'user_password' => $update_password
+		'user_password' => $password
 	),
 	array ( 
 		'user_id'    => $profileid
@@ -98,7 +109,6 @@ $wpdb->update (
 		'%s',
 		'%s',
 		'%s',
-		'%d',
 		'%s',
 		'%s',
 		'%s',

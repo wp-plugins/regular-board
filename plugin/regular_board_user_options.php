@@ -9,17 +9,17 @@
 if ( !defined ( 'regular_board_plugin' ) ) {
 	die();
 }
+
 if ( isset ( $_POST['options'] ) ) {
 	include ( plugin_dir_path(__FILE__) . '/regular_board_user_options_form_action.php' );
-	echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $this_page . '?a=options"></p>';
 } ?>
 <?php 
 /** Begin User Options Form
  ** This form will allow the user to set certain aspects of their account.
  */ ?>
 <div id="reply" class="reply">
-	<form method="post" name="useroptions" action="<?php echo $current_page; ?>?a=options">
-	<?php echo wp_nonce_field( 'useroptions' ); ?>
+	<form method="post" name="regularboard" action="<?php echo $current_page; ?>?a=options">
+	<?php echo wp_nonce_field( 'regularboard' ); ?>
 	<?php 
 	/** Begin User Options Form Elements
 	 ** Allows the user to set certain options for their account.
