@@ -12,7 +12,6 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 	die();
 }
 
-$my_alerts                                            = $my_waitings + $my_unread;
 $stuff_link_class                                     = '';
 $home_link_class                                      = '';
 $topics_link_class                                    = '';
@@ -48,8 +47,6 @@ if ( $enable_rep || $enable_url || $imgurid ) {
 if ( $user_exists ) {
 	$history_link                                     = '<a title="my profile" href="' . $current_page . '?a=history"' . $history_link_class . '><span>me</span><i class="fa fa-user"></i></a>';
 }
-if ( $my_alerts == 0 )          { $my_alerts          = ''; }
-if ( $my_alerts > 0 )           { $my_alerts          = ' <em>' . $my_alerts . ' alert(s)</em> '; }
 
 if ( $user_exists && $profile_name && $profilepassword) {
 	$logout_link                                      =  '<a id="logout-link" title="logout" href="' . $current_page . '?a=logout"' . $logout_link_class . '><span>logout</span><i class="fa fa-times-circle"></i></a>';
@@ -71,23 +68,13 @@ if ( $enable_rep || $enable_url ) {
 }
 
 if ( $is_moderator || $is_user_mod ) {
-	if ( count ( $get_reports ) > 0 || count ( $get_deleted ) > 0 || count ( $get_queue ) > 0 ) {
-		if ( count ( $get_reports ) > 0 ) {
-			$reports_link = '<a title="report queue" href="' . $current_page . '?a=reports"><span>reports ( ' . count ( $get_reports ) . ' )</span><i class="fa fa-warning"></i></a>';
-		}
-		if ( count ( $get_deleted ) > 0 ) {
-			$deleted_link = '<a title="deleted queue" href="' . $current_page . '?a=deleted"><span>deleted ( ' . count ( $get_deleted ) . ' )</span><i class="fa fa-warning"></i></a>';
-		}
-		if ( count ( $get_queue ) > 0 ) {
-			$queue_link   = '<a title="awaiting approval" href="' . $current_page . '?a=queue"><span>moderation ( ' . count ( $get_queue ) . ' )</span><i class="fa fa-warning"></i></a>';
-		}
-	}
+	$queue_link   = '<a title="awaiting approval" href="' . $current_page . '?a=queue"><span>moderation</span><i class="fa fa-warning"></i></a>';
 }
 
 $blog_link    = '<a title="home" href="' . $current_page . '"><span>' . $blog_title . '</span><i class="fa fa-rocket"></i></a>';
 $home_link    = '<a title="latest activity" href="' . $current_page . '"' . $home_link_class . '><span>new</span><i class="fa fa-home"></i></a>';
 $topics_link  = '<a title="all topics" href="' . $current_page . '?a=topics"' . $topics_link_class . '><span>topics</span><i class="fa fa-book"></i></a>';
-$stuff_link   = '<a title="options and other misc. stuff of importance" href="' . $current_page . '?a=stuff"' . $stuff_link_class . '><span>stuff ' . $my_alerts . '</span><i class="fa fa-cog"></i></a>';
+$stuff_link   = '<a title="options and other misc. stuff of importance" href="' . $current_page . '?a=stuff"' . $stuff_link_class . '><span>stuff</span><i class="fa fa-cog"></i></a>';
 if ( $user_exists ) {
 	$options_link = '<a id="settings-link" title="my personal account settings" href="' . $current_page . '?a=options"' . $options_link_class . '><span>settings</span><i class="fa fa-tachometer"></i></a>';
 }

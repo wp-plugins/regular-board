@@ -3,7 +3,7 @@
  * Plugin Name: Regular Board
  * Plugin URI: https://github.com/onebillion/regular_board
  * Description: Standalone (continuation) project for Regular Board, an anonymous text-based WordPress powered bbs.
- * Version: 1.13.2
+ * Version: 1.13.3
  * Author: boyevul
  * License: GNU General Public License v2
  * License URI: //www.gnu.org/licenses/gpl-2.0.html
@@ -33,7 +33,7 @@
  *
  */
 
-$regular_board_version = '1.13.2-stable-final-public';
+$regular_board_version = '1.13.3-stable-final-public';
 
 register_activation_hook ( __FILE__, 'regular_board_installation_option' );
 function regular_board_installation_option() {
@@ -91,15 +91,17 @@ function regular_board_installation_option() {
 		"ALTER TABLE $regular_board_logs 
 			ADD logs_content TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci AFTER logs_message"
 	);
-	$wpdb->query ( 
-		"ALTER TABLE $regular_board_posts 
-			ADD (
-				post_comment_parent BIGINT(20) NOT NULL AFTER post_comment
-			)"
-	);
+	$wpdb->query ( "ALTER TABLE $regular_board_posts ADD post_comment_parent BIGINT(20) NOT NULL AFTER post_comment" );
+	$wpdb->query ( "ALTER TABLE $regular_board_posts ADD post_reply_count BIGINT(20) NOT NULL AFTER post_reportcount" );
+	
 	add_option ( 'regular_board_installation', 0 );
 	delete_option ( 'regular_board_postingoptions' );
 }
+
+$regular_board_posts_select  = 'post_id, post_parent, post_name, post_date, post_email, post_title, post_comment, post_comment_parent, post_type, post_url, post_board, post_moderator, post_last, post_sticky, post_locked, post_password, post_userid, post_public, post_report, post_reportcount, post_reply_count';
+$regular_board_users_select  = 'user_id, user_date, user_ip, user_name, user_email, user_password, user_heaven, user_boards, user_follow, user_avatar, user_slogan, user_posts, user_level, user_strikes, user_logged_in, user_logged_in_from';
+$regular_board_boards_select = 'board_id, board_date, board_name, board_shortname, board_description, board_rules, board_mods, board_janitors, board_postcount, board_locked, board_logged, board_wipe';
+$regular_board_bans_select   = 'banned_id, banned_date, banned_ip, banned_banned, banned_message, banned_length';
 
 define         ( 'regular_board_plugin', true );
 require_once   ( ABSPATH . 'wp-includes/pluggable.php' );
@@ -109,7 +111,6 @@ require_once   ( 'system/regular_board_functions.php' );
 require_once   ( 'system/regular_board_ip_functions.php' );
 add_action     ( 'admin_enqueue_scripts', 'regular_board_admin_css' );
 require_once   ( 'system/regular_board_options.php' );
-$regular_board_posts_select = 'post_id, post_parent, post_name, post_date, post_email, post_title, post_comment, post_comment_parent, post_type, post_url, post_board, post_moderator, post_last, post_sticky, post_locked, post_password, post_userid, post_public, post_report, post_reportcount';
 require_once   ( 'plugin/regular_board.php' );
 remove_action  ( 'wp_head', 'rel_canonical' );
 

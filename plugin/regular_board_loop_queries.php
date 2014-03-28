@@ -13,7 +13,7 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
 
 $total_posts = $wpdb->get_var ( "SELECT SUM(board_postcount) FROM $regular_board_boards" );
-$getuser     = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_bans WHERE banned_ip = %s LIMIT 1", $user_ip  ) );
+$getuser     = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_bans_select FROM $regular_board_bans WHERE banned_ip = %s LIMIT 1", $user_ip  ) );
 
 if ( count ( $getuser ) > 0 ) {
 	$userisbanned = 1;
@@ -98,7 +98,7 @@ if ( $search_enabled && $search ) {
 	}
 	if ( $this_area == 'history' ) {
 		$use_this++;
-		$usprofile = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_users WHERE user_id = %d LIMIT 1", $profileid, $this_user ) );
+		$usprofile = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_users_select FROM $regular_board_users WHERE user_id = %d LIMIT 1", $profileid, $this_user ) );
 		$where_by = "WHERE post_userid = $profileid";
 		$order_by = "post_date DESC";		
 	}
@@ -108,7 +108,7 @@ if ( $search_enabled && $search ) {
 	if ( $this_user ) {
 		$my_friends  = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_friends_select FROM $regular_board_friends WHERE ( friends_connector = %s OR friends_connectee = %s ) AND friends_mutual = %d", $this_user, $this_user, 1 ) );
 		$use_this++;
-		$usprofile = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_users WHERE user_name = %s LIMIT 1", $profileid, $this_user ) );
+		$usprofile = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_users_select FROM $regular_board_users WHERE user_name = %s LIMIT 1", $profileid, $this_user ) );
 		$where_by = "WHERE post_name = '$this_user'";
 		$order_by = "post_date DESC";
 	}

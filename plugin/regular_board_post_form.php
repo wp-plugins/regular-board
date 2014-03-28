@@ -125,9 +125,7 @@ if ( $userisbanned ) {
 									
 									echo '<form enctype="multipart/form-data" data="' . $data . '" name="regularboard" ';
 										if ( $this_thread ) {
-											echo 'id="regularboard_post" xdata="omitted' . $this_thread . '" ';
-										} else {
-											echo 'id="regularboard" ';
+											echo 'class="regularboard_post" xdata="omitted' . $this_thread . '" ';
 										}
 									echo 'method="post" action="' . $current_page . '?a=post">';
 									wp_nonce_field('regularboard');

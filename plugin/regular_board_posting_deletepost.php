@@ -23,7 +23,7 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 if ( $this_area == 'ban' ) {
 	echo '<div id="post_action">';
 		if ( $is_moderator ) {
-		echo '<form method="post" name="form" action="' . $current_page . '?a=ban&t=' . $this_thread . '">';
+		echo '<form class="regularboard_form" method="post" name="form" action="' . $current_page . '?a=ban&t=' . $this_thread . '">';
 		wp_nonce_field('form');
 		echo '<label>Reason for ban</label><input type="text" name="reason" placeholder="Reason for ban">';
 		echo '</select><input type="submit" name="confirm" value="Reason" /></form>';
@@ -268,7 +268,7 @@ elseif ( $this_area == 'move' && $protocol == 'boards' ) {
 		
 		if ( !isset ( $_POST['confirm'] ) ) {
 			if ( count ( $getboards ) > 1 ) {
-				echo '<form method="post" name="form" action="' . $current_page . '?a=move&t=' . $this_thread . '">';
+				echo '<form class="regularboard_form" method="post" name="form" action="' . $current_page . '?a=move&t=' . $this_thread . '">';
 				wp_nonce_field('form');
 				echo '<select name="move_to" id="move_to">';
 				foreach($getboards as $gotBoard){
@@ -541,7 +541,7 @@ elseif ( $this_area == 'unsticky' ) {
  
 elseif ( $this_area == 'report' ) {
 	echo '<div id="post_action">
-	<form name="delete" name="form" method="post" action="' . $current_page . '?a=report&t=' . $this_thread . '" >';
+	<form class="regularboard_form" name="delete" name="form" method="post" action="' . $current_page . '?a=report&t=' . $this_thread . '" >';
 		wp_nonce_field('form');
 	echo '<input type="text" name="reason" placeholder="Reason for reporting..." />
 	<input type="submit" name="report" value="Report thread" />

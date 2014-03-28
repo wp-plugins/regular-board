@@ -51,7 +51,9 @@ if ( count ( $posts ) > 0 ) {
 		$this_is_protected      = '';
 	}
 	if ( $protocol == 'boards' ) {
-		$post_count = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_board = '$posts->post_board'" );
+		if ( $posts->post_board ) {
+			$post_count = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_board = '$posts->post_board'" );
+		}
 	}
 	
 	if ( $posts->post_parent ) {
@@ -148,7 +150,7 @@ if ( count ( $posts ) > 0 ) {
 			 */
 			 
 			if ( $posts->post_parent == 0 ) {
-				$thread_reply_count = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_parent = $posts->post_id" );
+				$thread_reply_count = $posts->post_reply_count;
 				if ( $thread_reply_count == 0 && $posts->post_userid == $profileid ) {
 					$tlast = 1;
 				} else {
@@ -322,7 +324,7 @@ if ( count ( $posts ) > 0 ) {
 							echo ' [ <strong>++This post has been reported for ' . $posts->post_report . '.  It has been reported ' . $posts->post_reportcount . ' times.</strong> ] ';
 						}
 						if ( $posts->post_public == 2 ) {
-							echo ' [ <strong>SPAM</span> ] ';
+							echo ' [ <strong>SPAM</strong> ] ';
 						}
 						if ( $posts->post_public == 3 ) {
 							echo ' [ <strong>Marked for deletion</strong> ] ';
@@ -378,8 +380,10 @@ if ( count ( $posts ) > 0 ) {
 						}
 						echo '</a>';
 						
-						if ( !$this_thread && !$posts->post_parent && $posts->post_url && $posts->post_type != 'URL' ) {
-							echo ' | <a class="load_link" href="' . $current_page . '?t=' . $posts->post_id . '&amp;a=media">load with media expanded</a>';						
+						if ( !$this_thread && !$posts->post_parent && $posts->post_url ) {
+							if ( $posts->post_comment || $posts->post_type == 'youtube' || $posts->post_type == 'image' || strpos ( $posts->post_url, '//imgur.com/a/' ) !== false || strpos ( $posts->post_url, '//vimeo.com/' ) !== false ) {
+								echo ' | <a class="load_link" href="' . $current_page . '?t=' . $posts->post_id . '&amp;a=media">load with media expanded</a>';						
+							}
 						}
 						
 						if ( $thread_reply_count > 0 ) {
@@ -404,26 +408,7 @@ if ( count ( $posts ) > 0 ) {
 							echo ' <a class="load_link" href="' . $current_page . '?a=editpost&amp;t=' . $posts->post_id . '">edit</a> '; 
 						}
 					}
-					
-					if ( !$this_thread ) {
-						if ( $tlast != 1 && $user_exists ) {
-							echo '<a class="hidden noreply'.$posts->post_id.'" data="' . $posts->post_id . '">cancel</a>
-							<a class="quickreply" ';
-							if ( $posts->post_parent != 0 ) {
-								echo ' childid="' . $posts->post_id . '" ';
-							}
-							echo ' data="' . $posts->post_id . '" href="' . $current_page;
-							if ( $posts->post_parent == 0 ) {
-								echo '?t=' . $posts->post_id;
-							}
-							if ( $posts->post_parent != 0 ) {
-								echo '?t=' . $posts->post_parent;
-							}
-							echo '">quick reply</a> ';
-						}
-					}
-					
-					
+				
 					echo '<span class="post_action">';
 					if ( $user_exists ) {
 							if ( $posts->post_userid ) {

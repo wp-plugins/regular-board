@@ -53,11 +53,11 @@ function regular_board_style(){
 		wp_register_script   ( 'regular_board-form', protocol_relative_url_dangit ( $form_submit ), array( 'jquery' ), '', null, false);
 		wp_enqueue_script    ( 'regular_board-form');
 
-		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board00000000157.js?' . $regular_board_version;
+		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board00000000158.js?' . $regular_board_version;
 		if ( get_option ( 'regular_board_css_url' ) ) {
 			$css_file   = get_option ( 'regular_board_css_url' );
 		} else { 
-			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_00000000157.css';
+			$css_file   = plugins_url() . '/regular-board/system/css/regular_board_00000000158.css';
 		}
 		$regbostyle     = $css_file . '?' . $regular_board_version;
 		// Selectively load lazyload!

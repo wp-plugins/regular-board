@@ -13,17 +13,17 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
 
 if ( $protocol == 'boards' ) {
-	$getboards = $wpdb->get_results ( "SELECT * FROM $regular_board_boards WHERE board_shortname != '' ORDER BY board_postcount DESC, board_name ASC" );
+	$getboards = $wpdb->get_results ( "SELECT $regular_board_boards_select FROM $regular_board_boards WHERE board_shortname != '' ORDER BY board_postcount DESC, board_name ASC" );
 }
 if ( $the_board ) {
-	$get_current_board = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_boards WHERE board_shortname = %s LIMIT 1", $the_board ) ) ;
+	$get_current_board = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_boards_select FROM $regular_board_boards WHERE board_shortname = %s LIMIT 1", $the_board ) ) ;
 }
 if ( isset ( $_REQUEST['board'] ) ) {
 	$the_board = sanitize_text_field ( strtolower ( $_REQUEST['board'] ) );
-	$get_current_board = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_boards WHERE board_shortname = %s LIMIT 1", $the_board ) ) ;
+	$get_current_board = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_boards_select FROM $regular_board_boards WHERE board_shortname = %s LIMIT 1", $the_board ) ) ;
 }
 if ( !$the_board && $thisboard ) {
-	$get_current_board = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_boards WHERE board_shortname = %s LIMIT 1", $thisboard ) );
+	$get_current_board = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_boards_select FROM $regular_board_boards WHERE board_shortname = %s LIMIT 1", $thisboard ) );
 }
 if ( $protocol == 'boards' ) {
 	if ( count ( $getboards ) == 1 ) {
@@ -35,7 +35,7 @@ if ( $protocol == 'boards' ) {
 if ( $this_thread ) {
 	$thread_board      = $wpdb->get_var ( "SELECT post_board FROM $regular_board_posts WHERE post_id = $this_thread LIMIT 1" );
 	if ( $thread_board ) {
-		$get_current_board = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_boards WHERE board_shortname = %s LIMIT 1", $thread_board ) );
+		$get_current_board = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_boards_select FROM $regular_board_boards WHERE board_shortname = %s LIMIT 1", $thread_board ) );
 	}
 }		
 if ( count ( $get_current_board ) > 0 && $protocol == 'boards' ) {

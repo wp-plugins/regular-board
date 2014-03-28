@@ -485,7 +485,8 @@ if ( $userisbanned ) {
 													post_userid, 
 													post_public, 
 													post_report, 
-													post_reportcount
+													post_reportcount,
+													post_reply_count
 												)
 												VALUES ( 
 													%d, 
@@ -507,6 +508,7 @@ if ( $userisbanned ) {
 													%d, 
 													%d, 
 													%s, 
+													%d,
 													%d
 												)",
 												'', 
@@ -528,6 +530,7 @@ if ( $userisbanned ) {
 												$profileid, 
 												$post_public, 
 												'', 
+												0,
 												0
 											)
 										);
@@ -561,11 +564,11 @@ if ( $userisbanned ) {
 											}
 										}
 										
-										if ( $the_board ) {
+										if ( $post_parent ) {
 											$wpdb->query ( 
-												"UPDATE $regular_board_boards SET 
-												board_postcount = board_postcount + 1 
-												WHERE board_shortname = '$the_board'" 
+												"UPDATE $regular_board_posts SET 
+												post_reply_count = post_reply_count + 1 
+												WHERE post_id = $post_parent" 
 											);
 										}
 										
@@ -616,7 +619,7 @@ if ( $userisbanned ) {
 									);
 								} else {
 									if ( $duplicate_count > 0 ) {
-										$auto_mute = $wpdb->get_results ( "SELECT * FROM $regular_board_bans WHERE banned_ip = '$user_ip' AND banned_message = 'unoriginal' LIMIT 1 " );
+										$auto_mute = $wpdb->get_results ( "SELECT $regular_board_bans_select FROM $regular_board_bans WHERE banned_ip = '$user_ip' AND banned_message = 'unoriginal' LIMIT 1 " );
 
 										if ( count ( $auto_mute ) == 0 ) {
 											$mute_count = 5;

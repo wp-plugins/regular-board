@@ -127,7 +127,7 @@ echo '<div id="reply" class="reply">';
 				echo '<meta http-equiv="refresh" content="0">';
 			} else {
 				echo '<p><center><small>Bad password attempt.  This has been recorded.</small></center></p>';
-				$login_limit = $wpdb->get_results ( "SELECT * FROM $regular_board_bans WHERE banned_ip = '$user_ip' AND banned_message = 'bad password' LIMIT 1 " );
+				$login_limit = $wpdb->get_results ( "SELECT $regular_board_bans_select FROM $regular_board_bans WHERE banned_ip = '$user_ip' AND banned_message = 'bad password' LIMIT 1 " );
 				if ( count ( $login_limit ) == 0 ) {
 					$mute_count = 3;
 					$wpdb->query (

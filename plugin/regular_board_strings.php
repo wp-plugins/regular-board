@@ -116,12 +116,6 @@ $user_mod_code                 = '<strong>' . get_option ( 'regular_board_usermo
 $current_page                  = protocol_relative_url_dangit( get_permalink() );
 $the_ip                        = $ipaddress;
 $user_ip                       = sanitize_text_field ( wp_hash ( $the_ip ) );
-$check_ammount                 = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_users WHERE user_ip = '$user_ip'" );
-$count_users_total             = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_users" );
-$count_logged_total            = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_users WHERE user_logged_in = 1" );
-$posts_users_total             = $wpdb->get_var ( "SELECT SUM(user_posts) FROM $regular_board_users" );
-$posts_active_total            = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_posts" );
-$user_total_allowed            = get_option ( 'regular_board_totaluserallowed' );
 if ( $user_total_allowed ) {
 	if ( $user_total_allowed <= $count_users_total ) {
 		$registration_open     = 0;

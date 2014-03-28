@@ -72,12 +72,7 @@ if ( $the_board ) {
 echo '<div class="tag_cloud"><span><a href="#">navigation</a></span>';
 if ( $protocol == 'boards' ) {
 	foreach ( $getboards as $gotboards ) {
-		
-		$board_post_count = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_board = '$gotboards->board_shortname' ");
-		if ( !$board_post_count ) {
-			$wpdb->query ( "UPDATE $regular_board_boards SET board_postcount = 0 WHERE board_shortname = '$gotboards->board_shortname'" );
-		}
-		
+	
 		if ( !$board_wipe_every ) {
 			if( $gotboards->board_wipe && $gotboards->board_wipe != strtolower ( 'never' ) ) {
 				$board_date = strtotime($gotboards->board_date);
@@ -130,16 +125,5 @@ if ( $protocol == 'boards' ) {
 echo '<span><a href="' . $this_page . '?a=replies"'; if ( $this_area == 'replies' ) { echo ' class="active"'; } echo '>all replies</a></span>
 <span><a href="' . $this_page . '?a=subscribed"'; if ( $this_area == 'subscribed' ) { echo ' class="active"'; } echo '>all subscribed</a></span>
 <span><a href="' . $this_page . '?a=following"'; if ( $this_area == 'following' ) { echo ' class="active"'; } echo '>all followed</a></span>';
-echo '<span><a href="#">
-<i class="fa fa-user" title="You are using ' . $check_ammount . ' of ' . $accounts_per_ip . ' user slots available to you."> ' . $check_ammount . ' / ' . $accounts_per_ip . '</i>
- &mdash; 
-<i class="fa fa-users" title="Accounts total"> ' . $count_users_total;
-if ( $user_total_allowed ) {
-	echo ' / ' . $user_total_allowed . ' / ' . $count_logged_total; 
-}
-echo '</i>
-&mdash; 
-<i class="fa fa-pencil" title="Active posts / total posts created (overall)"> ' . $posts_active_total . ' / ' . $posts_users_total . '</i>
-</a></span>';
 echo '</div>';
 echo '</div>';

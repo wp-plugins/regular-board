@@ -37,7 +37,10 @@ function regular_board_shortcode ( $content = null ) {
 			$ipaddress,
 			$random_password,
 			$regular_board_version,
-			$regular_board_posts_select;
+			$regular_board_posts_select,
+			$regular_board_users_select,
+			$regular_board_boards_select,
+			$regular_board_bans_select;
 	
 	if ( $ipaddress !== false ) { 
 	
@@ -127,7 +130,9 @@ function regular_board_shortcode ( $content = null ) {
 					$board_shortname     = sanitize_text_field ( preg_replace('/[^a-zA-Z0-9]/', '', $_REQUEST['board_shortname'] ) );
 					$board_rules         = sanitize_text_field ( $_REQUEST['board_rules'] );
 					$board_description   = sanitize_text_field ( $_REQUEST['board_description'] );
-					$regular_board_board = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_boards WHERE board_shortname = '$board_shortname'" );
+					if ( $board_shortname ) {
+						$regular_board_board = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_boards WHERE board_shortname = '$board_shortname'" );
+					}
 					if ( $regular_board_board == 0 ) {
 						$wpdb->query ( 
 							$wpdb->prepare(
@@ -204,31 +209,9 @@ function regular_board_shortcode ( $content = null ) {
 			} else {
 				include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
 			}
-		} elseif ( $this_area == 'deleted' ) {
-			if ( $is_moderator || $is_user_mod ) {
-				foreach ( $get_deleted as $posts ) {
-					if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
-						include ( ABSPATH . '/regular_board_child/regular_board_loop.php' );
-					} else {
-						include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
-					}
-					include ( plugin_dir_path(__FILE__) . '/regular_board_paging.php' );
-				}
-			}
 		} elseif ( $this_area == 'queue' ) {
 			if ( $is_moderator || $is_user_mod ) {
 				foreach ( $get_queue as $posts ) {
-					if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
-						include ( ABSPATH . '/regular_board_child/regular_board_loop.php' );
-					} else {
-						include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
-					}
-					include ( plugin_dir_path(__FILE__) . '/regular_board_paging.php' );
-				}
-			}
-		} elseif ( $this_area == 'reports' ) {
-			if ( $is_moderator || $is_user_mod ) {
-				foreach ( $get_reports as $posts ) {
 					if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
 						include ( ABSPATH . '/regular_board_child/regular_board_loop.php' );
 					} else {

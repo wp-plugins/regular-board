@@ -52,9 +52,7 @@ if ( $is_user_janitor ) {
 }
 
 if ( $is_moderator || $is_user_mod ) {
-	$get_reports = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_reportcount > %d OR post_public = %d", 0, 2 ) );
-	$get_deleted = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_public = %d", 3 ) );
-	$get_queue   = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_public = %d", 666 ) );
+	if ( $this_area == 'queue'   ) { $get_queue   = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE ( post_reportcount > %d OR post_public > %d )", 0, 1 ) ); }
 }
 
 if ( $lock == 1 ) {

@@ -86,15 +86,15 @@
 		});
 		
 		
-		$('#regularboard').ajaxForm(function() { 
-			var data = $('#regularboard').attr('data');
+		$('.regularboard_form').ajaxForm(function() { 
+			var data = $('.regularboard').attr('data');
 			$('.boardAll').load(data + ' .boardAll > *');
 			history.pushState('data', '', data);
 		}); 
-		$('#regularboard_post').ajaxForm(function() { 
-			var data  = $('#regularboard_post').attr('data');
-			var xdata = $('#regularboard_post').attr('xdata'); 
-			$('#omitted').load(data + ' .' + xdata + '');
+		$('.regularboard_post').ajaxForm(function() { 
+			var data  = $('.regularboard_post').attr('data');
+			var xdata = $('.regularboard_post').attr('xdata'); 
+			$('.' + xdata + '').load(data + ' .' + xdata + '');
 		});
 		
 		

@@ -13,10 +13,10 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 	die();
 }
 if ( $this_area == 'history' ) {
-	$usprofile = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_users WHERE user_id = %d LIMIT 1", $profileid ) );
+	$usprofile = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_users_select FROM $regular_board_users WHERE user_id = %d LIMIT 1", $profileid ) );
 }
 if ( $this_user ) {
-	$usprofile = $wpdb->get_results ( $wpdb->prepare ( "SELECT * FROM $regular_board_users WHERE user_name = %s LIMIT 1", $this_user ) );
+	$usprofile = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_users_select FROM $regular_board_users WHERE user_name = %s LIMIT 1", $this_user ) );
 }
 
 $the_profile_name    = '';

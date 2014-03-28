@@ -64,7 +64,7 @@ if ( count ( $checkPass ) > 0 ) {
 	}
 } else {
 
-	$false_access = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $regular_board_bans WHERE banned_ip = %d AND banned_message = %s", $user_ip, 'false access' ) );
+	$false_access = $wpdb->get_row( $wpdb->prepare( "SELECT $regular_board_bans_select FROM $regular_board_bans WHERE banned_ip = %d AND banned_message = %s", $user_ip, 'false access' ) );
 	if ( count ( $false_access ) == 0 ) {
 		$access_count = 5;
 		$wpdb->query (
