@@ -1,0 +1,1025 @@
+ /**
+  * Regular Board CSS
+  *
+  * CSS to style Regular Board (February 10th, 2014)
+  */
+
+ /**
+  * Table of contents
+  *
+  * Typography
+  * Multimedia
+  * Buttons
+  * Form Elements
+  * Tables
+  * Containers
+  * Responsive
+  */
+ /**
+  * Typography
+  *
+  * Typographical specifications
+  */
+ .boardAll .top_nav {
+	background-color: rgba(0,0,0,.8);
+	border-bottom: 1px solid rgba(0,0,0,.1);
+	display: block; 
+	font-size: 10px;
+	height: 15px;
+	margin: -8px 0 0 0;
+	overflow: hidden; 
+	padding: 5px;
+	text-transform: uppercase;
+	width: 100%;
+ }
+ .boardAll .top_nav a,
+ .boardAll .top_nav span {
+	color: rgba(255,255,255,.8) !important;
+	float: left; 
+	margin: 2px 0 0 2px;
+	padding: 3px;
+	text-decoration: none !important;
+ }
+ .boardAll .top_nav a:hover {
+	color: #fff !important;
+	text-decoration: underline !important;
+ }
+ .boardAll #settings-link,
+ .boardAll #logout-link {
+	margin: 0 5px 0 0;
+	float: right;
+ }
+ .boardAll .profile-section i {
+	color: rgba(0,0,0,.4);
+	cursor: default;
+	float: right; 
+	font-size: 72px;
+ }
+  .boardAll .small-left { 
+	background-color: transparent !important;
+	font-size: 10px;
+	line-height: 15px;
+	float: left;
+	width: 350px !important;
+ } 
+ .boardAll .smallstats {
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
+	display: block; 
+	margin: 15px auto;
+	padding: 5px;
+	text-align: center;
+	width: 100%:
+ }
+ .boardAll .clear {
+	clear: both; 
+	display: block;
+ }
+ .boardAll .clear:after {
+	clear: both; 
+	content: "";
+	display: table;
+ }
+ .boardAll .prunedate {
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
+	border-radius: 2px;
+	padding: 2px;
+ }
+ .boardAll h1 {
+	margin: 0;
+	font-size: 30px;
+	line-height: 35px;
+ }
+ .boardAll h2 {
+	margin: 0;
+	font-size: 25px;
+	line-height: 30px;
+ }
+ .boardAll h3 {
+	margin: 0;
+	font-size: 20px;
+	line-height: 25px;
+ } 
+ 
+ .boardAll .left-half span {
+	display: block;
+	width: 100%;
+ }
+ .boardAll .left-half span:after {
+	clear: both; 
+	content: "";
+	display: table;
+ }
+ 
+ .boardAll .left-half .tag_cloud {
+	width: 100%;
+	margin: 5px auto;
+ }
+ .boardAll .left-half .tag_cloud:after {
+	clear: both; 
+	content: "";
+	display: table;
+ }
+ .boardAll .left-half .tag_cloud .nothing {
+	opacity: .5;
+ }
+ .boardAll .left-half .tag_cloud .nothing:hover{
+	opacity: 1!important;
+ }
+ .boardAll .left-half .tag_cloud span {
+	clear: none; 
+	display: block;
+	float: left; 
+	margin: 0;
+	position: relative;
+	width: auto; 
+ }
+ .boardAll .left-half .tag_cloud span a.active {
+	border: none!important;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
+ }
+ 
+ .boardAll .left-half span a {
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
+	display: block; 
+	margin: 0;
+	padding: 10px;
+	text-decoration: none!important;
+ }
+ 
+ .boardAll ul {
+	display: block;
+ }
+ .boardAll .powerlevel {
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
+	border-radius: 2px;
+	margin: 5px;
+	padding: 5px;
+ }
+ .boardAll .left {
+	float: left; 
+	padding: 5px;
+	text-align: left; 
+ }
+ .boardAll .right {
+	float: right; 
+	padding: 5px;
+	text-align: right;
+ }
+ .boardAll span.frontinfo {
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
+	display: block; 
+	font-size: 15px;
+	line-height: 20px;
+	padding: 5px;
+	width: 100%; 	
+ }
+ .boardAll a.boardlink {
+	display: block; 
+	float: left;
+	margin: 5px;
+	padding: 5px;
+	text-align: center;
+	width: 20%;
+ }
+ .boardAll .profile_deets {
+	clear: both; 
+	display: block; 
+	padding: 5px;
+	text-align: center;
+	
+ }
+ .boardAll .countdown {
+	display: block; 
+	padding: 5px;
+	text-align: center;
+ }
+ .boardAll .countdown span {
+ 	background-color: #000;
+	color: #fff;
+ }
+ .boardAll .announcement {
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
+	clear: both;
+	display: block;
+	margin: 5px 0;
+	padding: 5px;
+	width: 100%;
+ }
+ .boardAll .announcement a {
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
+	padding: 2px;
+ }
+ .boardAll form .fa-fw {
+	color: rgba(0,0,0,.5);
+	margin: 32px 0 0 3px;
+	position: absolute;
+	z-index: 2;
+ }
+ .boardAll .searchresult {
+	font-weight: 900;
+	text-decoration: underline;
+ }
+ .boardAll .urls a {
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
+	border-radius: 2px;
+	font-size: 10px;
+	line-height: 18px; 
+	padding: 2px;
+ }
+ .boardAll .reply h1,
+ .boardAll .reply h3 {
+	color: rgba(255,255,255,.5)!important;
+	text-align: center;
+ }
+ .boardAll .fa-play {
+	position: relative;
+	font-size: 20px;
+	margin: 0;
+	text-align: center;
+	text-shadow: -1px 0px 2px #000;
+	width: 100%;
+ }
+ .user_hash {
+	color: #7ab550;
+ }
+ .boardAll small{
+	cursor: default!important;
+	font-size: 10px;
+	padding: 1px!important;
+ }
+ .boardAll a {
+	border: none!important;
+	color: rgba(11,38,75,1)!important;
+	text-decoration: underline!important;
+	margin: 0 3px 0 0;
+ }
+ .boardAll a:hover {
+	color: rgba(75,11,40,1) !important;
+ }
+ .boardAll p{
+	height: auto!important;
+	margin: 0!important;
+	padding: 5px!important;
+	width: auto!important;
+	word-wrap: break-word!important;
+ }
+ .boardAll span.spoiler{
+	color: #000;
+	background-color: #000;
+	
+ }
+ .boardAll span.spoiler:hover{
+	color: #fff;
+	background-color: #000;
+ }
+.boardAll span.quotes{
+	
+ }
+ .boardAll .strike {
+	text-decoration: line-through;
+ }
+ a.newtopic,
+ span.notopic {
+	cursor: pointer;
+	margin: 0 0 0 5px;
+ }
+
+ /**
+  * Multimedia
+  *
+  * Images and iframes
+  */
+ 
+ .thumb {
+	padding: 5px;
+	border-radius: 3px;
+	width: 73px;
+ }
+ 
+ .boardAll .banner {
+	border: 1px solid rgba(0,0,0,.1);
+	display: block;
+	height: 100px;
+	margin: 5px;
+	padding: 0;
+	position: relative;
+	width: 300px;
+	z-index: 1;
+ }
+ .boardAll .banner img {
+	display: block;
+	margin: 2px auto;
+ }
+ .boardAll .gallery {
+	clear: none;
+	display: block; 
+	float: left;
+	font-size: 10px;
+	margin: 5px;
+	padding: 2px;
+	overflow: hidden;
+	text-align: center;
+	min-height: 150px;
+	width: 22%;
+ }
+ .boardAll .gallery span {
+	clear: both;
+	display: block;
+	height: 150px;
+	overflow: hidden;
+ }
+ .boardAll .thread .imgs img {
+	width: 25%;
+ }
+ .boardAll .thread .imgs .imageEXPAND{
+	height: auto;
+	width: 100%!important;
+	margin: 5px 5px 5px -5px;
+	position: relative;
+	padding: 5px;
+ } 
+ .regular_board_video_thumbnail_large {
+	clear: both;
+	display: block;
+	margin: 5px auto;
+	width: 100%;
+	height: 315px;
+ }
+ .boardAll .imageFULL{
+	clear: both;
+	height: auto;
+	margin: 5px 5px 5px -1px;
+	position: relative;
+	padding: 5px;
+	display: table;
+	max-width: 100%;
+ } 
+ .boardAll .imageOP{
+	height: auto;
+	max-width: 250px;
+	margin: 5px 5px 5px -1px;
+	position: relative;
+	padding: 5px;
+	float: left;
+	display: table;
+ }
+ .boardAll .imageEXPAND{
+	height: auto;
+	max-width: 100%;
+	margin: 5px 5px 5px -5px;
+	position: relative;
+	padding: 5px;
+	float: left;
+ }
+ .boardAll .thread .thumbnail {
+	border-radius: 3px;
+	display: table;
+	float: left; 
+	height: 35px; 
+	margin: 0 5px 0 0;
+	padding: 1px;
+ }  
+ 
+ /**
+  * Buttons
+  *
+  * Action buttons for various things like toggles
+  */
+  
+ .boardAll .srchideme,
+ .boardAll .srcme{
+	cursor: pointer;
+ }	
+ .boardAll .thread .loadme,
+ .boardAll .thread .hideme {
+	cursor: pointer;
+	display: block;
+	float: left;
+ }
+ .boardAll .thread i.fa-plus-square,
+ .boardAll .thread i.fa-minus-square {
+	font-size: 100%;
+	line-height: 105%;
+	margin: 5px;
+ }
+ 
+ /**
+  * Form Elements
+  *
+  * All elements that are related to forms
+  */
+ .boardAll input[type="submit"] {
+	border: none !important;
+	border-radius: 2px;
+	display: block;
+	font-size : 14px;
+	color : #081724;
+	height: 30px;
+	padding : 3px 3px;
+	margin: 5px 0 0 5px;
+	background-color : #dcebfa; 
+	width: 100%;
+ }  
+ .boardAll .profile-section {
+	border-bottom: 1px solid rgba(0,0,0,.1);
+	display: block;
+	margin: 5px 0;
+	overflow: hidden;
+	padding: 15px 0;
+	width: 100%;
+ }
+ .boardAll .profile-section:hover {
+	background-color: rgba(255,255,255,1);
+ }
+ .boardAll .profile-section input,
+ .boardAll .profile-section select {
+	margin: 5px 0;
+ }
+ .boardAll .friend_request {
+	display: block; 
+	float: left; 
+	padding: 5px;
+	width: 25%; 
+ }
+ .boardAll .friend_request label {
+	height: auto;
+ }
+ .boardAll form.right {
+	display: block; 
+	float: right;
+	padding: 5px;
+	width: 70px; 
+ }
+ .boardAll .user-options {
+	display: block; 
+	width: 100%;
+	margin: auto;
+ } 
+ .boardAll .user-options span {
+	display: none;
+	visibility: hidden; 
+	height: 0;
+ } 
+ .boardAll .user-options select,
+ .boardAll .user-options input {
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
+	border: none!important;
+	border-radius:0!important;
+	clear: none!important;
+	cursor: pointer!important;
+	display: block!important; 
+	float: right!important;
+	height: 31px!important;
+	font-size: 10px!important;
+	margin: 0!important;
+	width: 70%!important;
+ }
+ .boardAll .user-options input[type="text"]:focus ~ span,
+ .boardAll .user-options input[type="password"]:focus ~ span {
+	clear: both;
+	color: rgba(0,0,0,.9);
+	display: block;
+	height: auto;
+	margin: 5px;
+	padding: 5px;
+	visibility: visible;
+ }
+ .boardAll .user-options label {
+	border: none!important;
+	clear: none!important;
+	display: block!important; 
+	float: left!important;
+	height: 32px!important;
+	font-size: 10px!important;
+	text-align: left!important;
+	width: 25%!important;
+ } 
+ .boardAll .user-options h3 {
+	color: rgba(255,255,255,.9);
+	display: block;
+	text-align: center;
+ }
+ .boardAll .user-options section {
+	clear: both; 
+	display: block;
+	margin: 0;
+	width: 100%;
+ }
+ .boardAll .user-options section:after {
+	clear: both; 
+	content: "";
+	display: table;
+ }
+  
+ .boardAll .registration {
+	display: block;
+	width: 100%;
+ }
+ .boardAll .registration:after {
+	clear: both; 
+	content: "";
+	display: table;
+ }
+ .boardAll .registration form {
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
+	border-radius: 5px;
+	clear: none;
+	display: table;
+	float: left;
+	margin: 5px 2px;
+	padding: 5px; 
+	width: 100%; 
+ }
+ .boardAll .registration form label,
+ .boardAll .registration form input{
+	clear: both;
+	display: block; 
+	font-size: 10px;
+	width: 100%;
+ }
+ .boardAll p.information {
+	color: rgba(0,0,0,.3);	
+	cursor: default;
+	font-size: 25px;
+	line-height: 27px;
+	padding: 5px;
+ }
+ .boardAll form p {
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
+	clear: both; 
+	display: block;
+	padding: 5px;
+ }
+ .boardAll #FORMSUBMIT {
+	cursor: pointer;
+ }
+ .boardAll .reply {
+	color: rgba(255,255,255,.8);
+	overflow: hidden;
+	padding: 5px;
+	margin: 0;
+	width: 95%!important;
+ }
+ #regular_board_search {
+	box-shadow: none;
+	border: 1px solid rgba(0,0,0,.1);
+	border-radius: 2px;
+	clear: both;
+	display: block;
+	font-size: 25px;
+	margin: 0 auto;
+	position: relative;
+	visibility: visible;
+	width: 100%;
+ }
+ .imgur {
+	clear: both;
+	display: block;
+	height: 20px!important;
+	margin: 0 0 5px 0!important;
+	position: relative;
+ }
+ .boardAll #reply {
+	margin: 0 auto 0 auto;
+	width: 100%;
+ }
+ .boardAll .right-half #reply {
+	margin: 0 auto -2px 0;
+ }
+ .boardAll #reply section {
+	clear: both;
+ 	color: rgba(0,0,0,.5);
+	display: block;
+	line-height: 25px;
+ }
+ .boardAll #reply section:after {
+	border: 1px solid rgba(255,255,255,.1);
+	content: "";
+	clear: both;
+	display: table;
+ }
+ .boardAll #reply form {
+	display: block;
+	margin: 5px auto;
+	padding: 5px;
+	width: auto;
+ }
+ .boardAll #reply form textarea {
+	height: 200px;
+ }
+ .boardAll #reply form select {
+	margin: 0 0 5px 0 !important;
+ } 
+ .boardAll #reply form textarea,
+ .boardAll #reply form select,
+ .boardAll #reply form input[type="text"],
+ .boardAll #reply form input[type="password"],
+ .boardAll #reply form input[type="file"]{
+	color: rgba(0,0,0,.5);
+	background-color: rgba(0,0,0,.1);
+	box-shadow: none;
+	border: none;
+	border-radius: 2px;
+	clear: none;
+	cursor: default;
+	display: block;
+	float: left;
+	font-size: 25px;
+	margin: 5px auto;
+	padding: 8px 5px;
+	text-align: left;
+	visibility: visible;
+	width: 100%;
+ }
+ .boardAll #reply form label:hover {
+	color: rgba(0,0,0,.7);
+ }
+ .boardAll #reply form label, 
+ .boardAll form label {
+	border-radius: 0;
+	color: rgba(0,0,0,.4);
+	clear: both;
+	cursor: pointer;
+	display: block;
+	font-size: 15px;
+	height: auto;
+	margin: 0 0 -5px -5px;
+	position: relative;
+	padding: 5px;
+	text-align: left;
+	width: 100%;
+ }
+
+ /**
+  * Tables
+  *
+  * Mainly used on the stats page.
+  */
+  
+ .boardAll table {
+	
+	clear: both;
+	display: block;
+	margin: 15px 5px;
+	padding: 5px;
+	width: 95%;
+	width: calc(100% - 10px);
+ }
+ .boardAll table tr:hover td {
+	
+	
+ }
+ .boardAll table td {
+	
+	padding: 5px;
+ }
+ .boardAll table td:nth-child(even) {
+	margin: 2px -5px;
+	padding: 5px;
+ }
+ .boardAll table td:nth-child(odd) {
+	margin: 2px -5px;
+	padding: 5px;
+ }
+ 
+ /**
+  * Containers
+  *
+  * Containers for threads, replies, and boards.
+  */
+ footer {
+	border: none !important;
+	display: block; 
+	clear: both; 
+	width: 100%; 
+	margin: 15px auto;
+	padding: 5px;
+ }
+ footer:after {
+	clear: both; 
+	content: "";
+	display: table;
+ }
+ body {
+	background-color: #fff !important; 
+ } 
+ .boardAll {
+	display: block;
+	font-family: Arial, Verdana;
+	font-size: 12px;
+	line-height: 15px;
+	display: block;
+	line-height: 15px;
+	margin: 0 auto;
+	overflow-x: hidden;
+	position: relative;
+	text-shadow: none!important;
+	width: 100%;
+ }
+ .boardAll .thread_container:after,
+ .boardAll .lastthree span:after,
+ .boardAll .lastthree:after,
+ .boardAll .thread:after,
+ .boardAll:after {
+	clear: both;
+	content: "";
+	display: table;
+ }
+ 
+ .boardAll .thread_container {
+	width: 100%;
+	margin: 5px;
+ }
+ 
+ 
+ .boardAll .noborder {
+	border:none!important;
+ }
+ 
+ .boardAll .lastthree {
+	border-top: 1px solid rgba(0,0,0,.1);
+	display: block; 
+	padding: 5px;
+	width: 100%;
+ }
+ .boardAll .lastthree span {
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
+	display: block; 
+	line-height: 12px;
+	margin: 5px 0;
+	padding: 5px;
+	width: 100%;
+ }
+ .boardAll .lastthree span a {
+	color: rgba(0,0,0,.8)!important;
+	display: block;
+	height: 100%;
+	text-decoration: none!important;
+	width: 100%;
+ }
+ .boardAll .lastthree span img {
+	clear: both;
+	display: block; 
+	width: 100%;
+ }
+ 
+ .boardAll .left-half {
+	border-left: 1px solid #bed2ed;
+	border-bottom: 1px solid #bed2ed;
+	background-color: #f5f9ff;
+	position: relative;
+	overflow: hidden;
+	float:right;
+	display: block;
+	padding: 2px 5px 2px 2px;
+	width: 285px;
+	z-index: 2;
+ }
+ .boardAll .left-half input[type="text"] {
+	cursor: default;
+	display: block;
+	margin: 5px auto;
+	width: 100%;
+ }
+ .boardAll .right-half {
+	float: left;
+	margin: 0 -35px 5px 10px;
+	padding: 5px 10px 5px 20px;
+	width: calc(100% - 380px);
+ }
+ 
+ .boardAll .spacer {
+	background-color: #fff;
+	display: block;
+	height: auto;
+	margin: 0 0 10px 0;
+	width: 100%;
+ }
+ .boardAll .spacer:after {
+	clear: both;
+	content: "";
+	display: table;
+ }
+ .boardAll .container_half {
+	width: 45%;
+	margin: 5px;
+	text-align: left; 
+	float: left;
+ }
+ 
+ .boardAll ul.menu {
+	clear: both; 
+	display: block;
+	margin: 0 auto;
+	text-align: center;
+	width: 100%;
+ }
+ 
+ .boardAll ul.menu a {
+	text-decoration: none!important;
+ }
+ .boardAll ul.menu,
+ .boardAll ul.dropit-submenu {
+	border-radius: 2px;
+	background-color: #fff;
+	color: #000;
+	list-style: none;
+	padding: 5px; 	
+ }
+ .boardAll ul.dropit-submenu {
+ 	height: 200px; 
+	overflow: auto; 
+	text-align: center;
+	border: 1px solid rgba(0,0,0,.1);
+	margin: 5px 0 0 -10px;
+	width: 100%;
+ }
+ .boardAll ul.dropit-submenu li {
+	text-align: left!important;
+ }
+ .boardAll .imgs,
+ .boardAll .urls {
+	width: 100%;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
+	padding: 5px;
+ } 
+ .boardAll .imgs:before,
+ .boardAll .urls:before,
+ .boardAll .imgs:after,
+ .boardAll .urls:after {
+	clear: both; 
+	content: "";
+	display: table;
+ }
+ .boardAll p.newtopic {
+	margin: 25px auto;
+ }
+ .boardAll p.boardheader {
+	clear: both; 
+	font-size: 25px;
+	line-height: 35px;
+	margin: 10px auto;
+	text-align: center;
+ }
+ .boardAll p.boardheader a {
+	clear: both; 
+	display: block; 
+	font-size: 35px;
+	line-height: 45px;
+ }
+ .boardAll span.boards {
+	display: block; 
+	margin: -15px 0 0 -5px;
+	padding: 5px;
+	position: relative;
+	width: 100%; 
+	z-index: 2;
+ }
+ .boardAll .board_head {
+	height: 60px !important;
+ }
+ .boardAll .board_header {
+	font-size: 25px;
+	line-height: 35px;
+	height: 45px;
+	overflow: hidden;
+ }
+ .boardAll .board_header a {
+	text-decoration: none !important;
+ }
+ .boardAll .navi {
+	background-color: #bed2ed;
+	border-bottom: 1px solid #bed2ed;
+	clear: both;
+	display: block;
+	font-size: 10px;
+	height: 15px;
+	margin: 0 auto 0 auto;
+	overflow: hidden;
+	padding: 5px;
+	position: relative;
+	text-align: left;
+	width: 100%;
+	z-index: 3;
+ }
+ .boardAll .navi:after {
+	clear: both; 
+	content: "";
+	display: table;
+ }
+ .boardAll .navi a {
+	background-color: rgba(255,255,255,.5);
+	border: 1px solid #bed2ed !important;
+	border-bottom: 0 !important;
+	display: table;
+	float: left;
+	padding: 3px 5px 5px 5px;
+	text-decoration: none!important;
+	margin: 0 2px -6px 3px;
+	text-align: center;
+ }
+ .boardAll a.active {
+	color: #000 !important;
+	background-color: #fff;
+ }
+ .boardAll a.active i {
+	color: red;
+ }
+ .boardAll .navi a span {
+	margin: 0 0 0 5px;
+ }
+ .boardAll .userbar {
+	clear: both; 
+	display: block;
+	margin: 30px 0 0 0;
+	text-align: center;
+ }
+ .boardAll .thread {
+	clear: both;
+	color: rgba(0,0,0,.9);
+	display: block;
+	margin: 2px 0 2px -1px;
+	overflow: hidden;
+	padding: 5px;
+	text-align: left;
+	width: 100%;
+ }
+
+ .boardAll .child {
+	border: none!important;
+	background-color: #fafbff;
+ }
+ 
+ .boardAll .thread .thread {
+	margin: 5px;
+ }
+ .boardAll .thread:hover {
+	background-color: #f6f6f6!important;
+ }
+  
+ .boardAll .hidden {
+	display: none!important;
+	visibility: hidden!important;
+	width: 0!important;
+	height: 0!important;
+ }
+
+ .boardAll .src{
+	display: block;
+	width: 100%;
+	height: 150px;
+	padding: 5px;
+	margin: 0;
+ } 
+ .boardAll .current{
+	border-right: 1px dotted red;
+	border-top: 1px dotted red;
+	border-bottom: 1px dotted red;
+ }
+ .boardAll .stats,
+ .boardAll #stats{
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
+	border: 1px solid rgba(255,255,255,.1);
+	display: block;
+	margin: 0 0 5px 0;
+	padding: 5px;
+	width: 100%;
+ }
+ .boardAll #omitted {
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
+	border: 1px solid rgba(255,255,255,.1);
+	display: block;
+	margin: 3px 0 5px 0;
+	width: 100%; 
+ }
+ .boardAll #omitted .thread {
+	margin: 5px 0;
+	color: rgba(0,0,0,.8);
+	margin: 5px 0;
+ }
+ /**
+  *
+  * Responsive
+  *
+  */
+@media only screen and (max-width: 880px) {
+	.boardAll .navi a span {
+		display: none;
+	}
+}  

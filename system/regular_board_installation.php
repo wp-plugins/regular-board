@@ -26,6 +26,7 @@ function regular_board_installation(){
 	add_option ( 'regular_board_wipeall', 'never' );
 	add_option ( 'regular_board_wipealldate' );
 	add_option ( 'regular_board_frontpage' );
+	add_option ( 'regular_board_footer' );
 	add_option ( 'regular_board_formatting', 1);
 	add_option ( 'regular_board_autourl', 1 );
 	add_option ( 'regular_board_ascii' );
@@ -120,6 +121,7 @@ function regular_board_installation(){
 		post_public BIGINT(20) NOT NULL ,
 		post_report TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
 		post_reportcount BIGINT(20) NOT NULL ,
+		post_reply_count BIGINT(20) NOT NULL ,
 		PRIMARY KEY  (post_id)
 	);";
 	$users = "CREATE TABLE $regular_board_users(
@@ -134,6 +136,12 @@ function regular_board_installation(){
 		user_follow TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
 		user_avatar TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
 		user_slogan TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
+		user_posts BIGINT(20) NOT NULL ,
+		user_level BIGINT(20) NOT NULL ,
+		user_strikes BIGINT(20) NOT NULL ,
+		user_logged_in BIGINT(20) NOT NULL ,
+		user_logged_in_from TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
+		user_colormode BIGINT(20) ,
 		PRIMARY KEY  (user_id)
 	);";
 	$bans = "CREATE TABLE $regular_board_bans(

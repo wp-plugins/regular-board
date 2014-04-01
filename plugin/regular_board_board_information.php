@@ -97,7 +97,6 @@ if ( count ( $get_current_board ) > 0 && $protocol == 'boards' ) {
 		if( !$board_description ) {
 			$boardheader      = '<li><a href="' . $current_page . '?b=' . $board_short . '">' . $board_short .  ' - ' . $board_name . ' <i class="fa fa-caret-square-o-down"></i></a>';
 		}
-		echo '<script type="text/javascript">document.title = \'' . $board_name . ' / ' . $board_short . '\';</script>';
 	}
 } else {
 	$boardheader = '';

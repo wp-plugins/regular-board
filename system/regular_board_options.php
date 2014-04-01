@@ -487,6 +487,7 @@ if( current_user_can( 'manage_options' )) {
 							update_option ( 'regular_board_autourl', str_replace ( '\\', '', $_REQUEST['autourl'] ) );
 							update_option ( 'regular_board_formatting', str_replace ( '\\', '', $_REQUEST['formatting'] ) );
 							update_option ( 'regular_board_frontpage', str_replace ( '\\', '', $_REQUEST['frontpage'] ) );
+							update_option ( 'regular_board_footer', str_replace ( '\\', '', $_REQUEST['footer'] ) );
 							update_option ( 'regular_board_bannedimage', str_replace ( '\\', '', $_REQUEST['bannedimage'] ) );
 							update_option ( 'regular_board_boardbanner', str_replace ( '\\', '', $_REQUEST['boardbanner'] ) );
 							update_option ( 'regular_board_enableblog', str_replace ( '\\', '', $_REQUEST['enableblog'] ) );
@@ -575,6 +576,7 @@ if( current_user_can( 'manage_options' )) {
 							</form>
 							<form method="post">
 								<section><label>00:: Welcome message for front page of boards</label><textarea name="frontpage" id="frontpage">'. get_option ( 'regular_board_frontpage' ) . '</textarea></section>
+								<section><label>00:: Footer content</label><textarea name="footer" id="footer">' . get_option ( 'regular_board_footer' ) . '</textarea></section>
 								<section><label>01:: Enable URL embeds (for new topics):</label><select id="enableurl" name="enableurl">'; regular_board_enableurl_option(); echo '</select></section>
 								<section><label>02:: Enable URL embeds (for replies):</label><select id="enablerep" name="enablerep">'; regular_board_enablerep_option(); echo '</select></section>
 								<section><label>03:: Max body (comment):</label><input id="maxbody" name="maxbody" type="text" value="' . get_option ( 'regular_board_maxbody' ) . '" /></section>

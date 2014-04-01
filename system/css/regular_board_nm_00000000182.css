@@ -7,7 +7,6 @@
  /**
   * Table of contents
   *
-  * Time Circles
   * Typography
   * Multimedia
   * Buttons
@@ -21,12 +20,37 @@
   *
   * Typographical specifications
   */
+ .boardAll .top_nav {
+	background-color: #0f1112;
+	border-bottom: 1px solid rgba(0,0,0,.1);
+	display: block; 
+	font-size: 10px;
+	height: 15px;
+	margin: -8px 0 0 0;
+	overflow: hidden; 
+	padding: 5px;
+	text-transform: uppercase;
+	width: 100%;
+ }
+ .boardAll .top_nav a,
+ .boardAll .top_nav span {
+	color: #1f96b7 !important;
+	float: left; 
+	margin: 2px 0 0 2px;
+	padding: 3px;
+	text-decoration: none !important;
+ }
+ .boardAll .top_nav a:hover {
+	color: #fff !important;
+	text-decoration: underline !important;
+ }
  .boardAll #settings-link,
  .boardAll #logout-link {
 	float: right;
+	margin: 0 5px 0 0;
  }
  .boardAll .profile-section i {
-	color: rgba(0,0,0,.4);
+	color: #fff;
 	cursor: default;
 	float: right; 
 	font-size: 72px;
@@ -39,8 +63,8 @@
 	width: 350px !important;
  } 
  .boardAll .smallstats {
-	background-color: #eef4ff;
-	color: rgba(0,0,0,.8);
+	background-color: #1f2a3e;
+	color: #edf3ff;
 	display: block; 
 	margin: 15px auto;
 	padding: 5px;
@@ -57,8 +81,8 @@
 	display: table;
  }
  .boardAll .prunedate {
-	background-color: #eef4ff;
-	color: rgba(0,0,0,.8);
+	background-color: #1f2a3e;
+	color: #edf3ff;
 	border-radius: 2px;
 	padding: 2px;
  }
@@ -113,13 +137,16 @@
  }
  .boardAll .left-half .tag_cloud span a.active {
 	border: none!important;
-	background-color: #eef4ff;
-	color: rgba(0,0,0,.8);
+	background-color: #1f2a3e;
+	color: #edf3ff;
+ }
+ .boardAll .left-half .tag_cloud span a:hover {
+	color: #000 !important;
  }
  
  .boardAll .left-half span a {
-	background-color: #eef4ff;
-	color: rgba(0,0,0,.8);
+	background-color: #1f2a3e;
+	color: #edf3ff;
 	display: block; 
 	margin: 0;
 	padding: 10px;
@@ -130,8 +157,8 @@
 	display: block;
  }
  .boardAll .powerlevel {
-	background-color: #eef4ff;
-	color: rgba(0,0,0,.8);
+	background-color: #1f2a3e;
+	color: #edf3ff;
 	border-radius: 2px;
 	margin: 5px;
 	padding: 5px;
@@ -147,8 +174,8 @@
 	text-align: right;
  }
  .boardAll span.frontinfo {
-	background-color: #eef4ff;
-	color: rgba(0,0,0,.8);
+	background-color: #1f2a3e;
+	color: #edf3ff;
 	display: block; 
 	font-size: 15px;
 	line-height: 20px;
@@ -180,8 +207,8 @@
 	color: #fff;
  }
  .boardAll .announcement {
-	background-color: #eef4ff;
-	color: rgba(0,0,0,.8);
+	background-color: #1f2a3e;
+	color: #edf3ff;
 	clear: both;
 	display: block;
 	margin: 5px 0;
@@ -189,12 +216,12 @@
 	width: 100%;
  }
  .boardAll .announcement a {
-	background-color: #eef4ff;
-	color: rgba(0,0,0,.8);
+	background-color: #1f2a3e;
+	color: #edf3ff;
 	padding: 2px;
  }
  .boardAll form .fa-fw {
-	color: rgba(0,0,0,.5);
+	color: rgba(255,255,255,.5);
 	margin: 32px 0 0 3px;
 	position: absolute;
 	z-index: 2;
@@ -204,8 +231,8 @@
 	text-decoration: underline;
  }
  .boardAll .urls a {
-	background-color: #eef4ff;
-	color: rgba(0,0,0,.8);
+	background-color: #1f2a3e;
+	color: #edf3ff;
 	border-radius: 2px;
 	font-size: 10px;
 	line-height: 18px; 
@@ -234,12 +261,12 @@
  }
  .boardAll a {
 	border: none!important;
-	color: rgba(11,38,75,1)!important;
+	color: #1f96d8 !important;
 	text-decoration: underline!important;
 	margin: 0 3px 0 0;
  }
  .boardAll a:hover {
-	color: rgba(75,11,40,1)!important;
+	color: #fff !important;
  }
  .boardAll p{
 	height: auto!important;
@@ -285,7 +312,7 @@
 	border: 1px solid rgba(0,0,0,.1);
 	display: block;
 	height: 100px;
-	margin: 5px;
+	margin: 5px 0 0 -8px;
 	padding: 0;
 	position: relative;
 	width: 300px;
@@ -393,8 +420,22 @@
   *
   * All elements that are related to forms
   */
+  
+ .boardAll input[type="submit"] {
+	border: none !important;
+	border-radius: 2px;
+	display: block;
+	font-size : 14px;
+	color : #f0e4e4;
+	height: 30px;
+	padding : 3px 3px;
+	margin: 5px 0 0 5px;
+	background-color : #21314f; 
+	width: 100%;
+ }
+  
  .boardAll .profile-section {
-	border-bottom: 1px solid rgba(0,0,0,.1);
+	
 	display: block;
 	margin: 5px 0;
 	overflow: hidden;
@@ -402,7 +443,7 @@
 	width: 100%;
  }
  .boardAll .profile-section:hover {
-	background-color: rgba(255,255,255,1);
+	background-color: #0c0c0c!important;
  }
  .boardAll .profile-section input,
  .boardAll .profile-section select {
@@ -435,8 +476,8 @@
  } 
  .boardAll .user-options select,
  .boardAll .user-options input {
-	background-color: #eef4ff;
-	color: rgba(0,0,0,.8);
+	background-color: #1f2a3e;
+	color: #edf3ff;
 	border: none!important;
 	border-radius:0!important;
 	clear: none!important;
@@ -451,7 +492,7 @@
  .boardAll .user-options input[type="text"]:focus ~ span,
  .boardAll .user-options input[type="password"]:focus ~ span {
 	clear: both;
-	color: rgba(0,0,0,.9);
+	color: #fff;
 	display: block;
 	height: auto;
 	margin: 5px;
@@ -495,8 +536,8 @@
 	display: table;
  }
  .boardAll .registration form {
-	background-color: #eef4ff;
-	color: rgba(0,0,0,.8);
+	background-color: #1f2a3e;
+	color: #edf3ff;
 	border-radius: 5px;
 	clear: none;
 	display: table;
@@ -513,15 +554,15 @@
 	width: 100%;
  }
  .boardAll p.information {
-	color: rgba(0,0,0,.3);	
+	color: rgba(255,255,255,.3);	
 	cursor: default;
 	font-size: 25px;
 	line-height: 27px;
 	padding: 5px;
  }
  .boardAll form p {
-	background-color: #eef4ff;
-	color: rgba(0,0,0,.8);
+	background-color: #1f2a3e;
+	color: #edf3ff;
 	clear: both; 
 	display: block;
 	padding: 5px;
@@ -555,22 +596,6 @@
 	margin: 0 0 5px 0!important;
 	position: relative;
  }
- .registration form input[type="submit"],
- .boardAll input[type="submit"]{
-	border: none;
-	border-radius: 0;
-	box-shadow: none;
-	clear: both;
-	display: block;
-	color: rgba(0,0,0,.5);
-	font-size: 25px;
-	height: 35px;
-	margin: 5px auto;
-	padding: 0;
-	text-align: center;
-	width: 100% !important;
-	visibility: visible;
- }
  .boardAll #reply {
 	margin: 0 auto 0 auto;
 	width: 100%;
@@ -580,7 +605,7 @@
  }
  .boardAll #reply section {
 	clear: both;
- 	color: rgba(0,0,0,.5);
+ 	color: rgba(255,255,255,.5);
 	display: block;
 	line-height: 25px;
  }
@@ -607,8 +632,8 @@
  .boardAll #reply form input[type="text"],
  .boardAll #reply form input[type="password"],
  .boardAll #reply form input[type="file"]{
-	color: rgba(0,0,0,.5);
-	background-color: rgba(0,0,0,.1);
+	color: #fff;
+	background-color: rgba(255,255,255,.1);
 	box-shadow: none;
 	border: none;
 	border-radius: 2px;
@@ -624,12 +649,12 @@
 	width: 100%;
  }
  .boardAll #reply form label:hover {
-	color: rgba(0,0,0,.7);
+	color: rgba(255,255,255,.7);
  }
  .boardAll #reply form label, 
  .boardAll form label {
 	border-radius: 0;
-	color: rgba(0,0,0,.4);
+	color: #fff;
 	clear: both;
 	cursor: pointer;
 	display: block;
@@ -639,7 +664,7 @@
 	position: relative;
 	padding: 5px;
 	text-align: left;
-	width: 101%;
+	width: 100%;
  }
 
  /**
@@ -679,16 +704,33 @@
   *
   * Containers for threads, replies, and boards.
   */
- 
+
+ footer {
+	border: none !important;
+	display: block; 
+	clear: both; 
+	width: 100%; 
+	margin: 15px auto;
+	padding: 5px;
+ }
+ footer:after {
+	clear: both; 
+	content: "";
+	display: table;
+ }
+  
+ body {
+	background-color: #0f1112 !important;
+ } 
  .boardAll {
+	background-color: #0f1112;
 	display: block;
-	margin: 0 auto;
 	font-family: Arial, Verdana;
 	font-size: 12px;
 	line-height: 15px;
 	display: block;
 	line-height: 15px;
-	margin: 10px auto;
+	margin: 0 auto;
 	overflow-x: hidden;
 	position: relative;
 	text-shadow: none!important;
@@ -721,8 +763,8 @@
 	width: 100%;
  }
  .boardAll .lastthree span {
-	background-color: #eef4ff;
-	color: rgba(0,0,0,.8);
+	background-color: #1f2a3e;
+	color: #edf3ff;
 	display: block; 
 	line-height: 12px;
 	margin: 5px 0;
@@ -742,37 +784,38 @@
 	width: 100%;
  }
  
+ .boardAll .right-half {
+	float: left;
+	margin: 0 -35px 5px 10px;
+	padding: 5px 10px 5px 20px;
+	width: calc(100% - 355px);
+ } 
  .boardAll .left-half {
-	border-left: 1px solid #bed2ed;
-	border-bottom: 1px solid #bed2ed;
-	background-color: #f5f9ff;
-	position: relative;
+	background-color: #16202e;
 	float:right;
-	padding: 5px 25px 5px 5px;
-	width: 300px;
+	display: block;
+	overflow: hidden;
+	padding: 2px 5px 2px 2px;
+	position: relative;
+	width: 285px;
 	z-index: 2;
  }
+
  .boardAll .left-half input[type="text"] {
 	cursor: default;
 	display: block;
 	margin: 5px auto;
 	width: 100%;
  }
- .boardAll .right-half {
-	border-left: 1px solid #f6f6f6;
-	border-bottom: 1px solid #f6f6f6;
-	float: left;
-	margin: 0 -35px 5px 10px;
-	padding: 5px 10px 5px 20px;
-	width: calc(100% - 380px);
- }
+
  
  .boardAll .spacer {
-	background-color: #fff;
+	background-color: #0f1112;
+	color: #c4c9cb !important;
 	display: block;
 	height: auto;
-	margin: 0 0 10px -5px;
-	width: 102%;
+	margin: 0 0 10px 0;
+	width: 100%;
  }
  .boardAll .spacer:after {
 	clear: both;
@@ -819,8 +862,8 @@
  .boardAll .imgs,
  .boardAll .urls {
 	width: 100%;
-	background-color: #eef4ff;
-	color: rgba(0,0,0,.8);
+	background-color: #1f2a3e;
+	color: #edf3ff;
 	padding: 5px;
  } 
  .boardAll .imgs:before,
@@ -855,17 +898,31 @@
 	width: 100%; 
 	z-index: 2;
  }
+ .boardAll .board_head {
+	height: 60px !important;
+ }
+ .boardAll .board_header {
+	font-size: 25px;
+	line-height: 35px;
+	height: 45px;
+	overflow: hidden;
+ }
+ .boardAll .board_header a {
+	text-decoration: none !important;
+ }
  .boardAll .navi {
-	background-color: #fcfdff;
-	border-bottom: 1px solid #bed2ed;
+	background-color: #16202e;
+	border-bottom: 1px solid #16202e;
 	clear: both;
 	display: block;
 	font-size: 10px;
-	margin: 0 auto 0 0;
-	padding: 15px 5px;
+	height: 17px;
+	margin: 0 auto 0 auto;
+	overflow: hidden;
+	padding: 5px;
 	position: relative;
 	text-align: left;
-	width: 98%;
+	width: 100%;
 	z-index: 3;
  }
  .boardAll .navi:after {
@@ -874,24 +931,18 @@
 	display: table;
  }
  .boardAll .navi a {
+	border: 1px solid #16202e !important;
+	border-bottom: 0 !important;
 	display: table;
 	float: left;
-	padding: 5px;
+	padding: 3px 5px 5px 5px;
 	text-decoration: none!important;
-	margin: -20px 5px -5px 0;
-	border-bottom: 5px solid #fff!important;
-	height: 45px;
+	margin: 0 2px -6px 3px;
 	text-align: center;
  }
- .boardAll .navi a i {
-	clear: both;
-	color: rgba(0,0,0,.1);
-	display: block;
-	font-size: 25px;
-	margin: 5px 0;
- }
  .boardAll a.active {
-	border-bottom: 5px solid red!important;
+	color: #fff !important;
+	background-color: #0c0c0c;
  }
  .boardAll a.active i {
 	color: red;
@@ -907,7 +958,7 @@
  }
  .boardAll .thread {
 	clear: both;
-	color: rgba(0,0,0,.9);
+	color: #c4c9cb;
 	display: block;
 	margin: 2px 0 2px -1px;
 	overflow: hidden;
@@ -923,9 +974,6 @@
  
  .boardAll .thread .thread {
 	margin: 5px;
- }
- .boardAll .thread:hover {
-	background-color: #f6f6f6!important;
  }
   
  .boardAll .hidden {
@@ -949,8 +997,8 @@
  }
  .boardAll .stats,
  .boardAll #stats{
-	background-color: #eef4ff;
-	color: rgba(0,0,0,.8);
+	background-color: #1f2a3e;
+	color: #edf3ff;
 	border: 1px solid rgba(255,255,255,.1);
 	display: block;
 	margin: 0 0 5px 0;
@@ -958,8 +1006,8 @@
 	width: 100%;
  }
  .boardAll #omitted {
-	background-color: #eef4ff;
-	color: rgba(0,0,0,.8);
+	background-color: #1f2a3e;
+	color: #edf3ff;
 	border: 1px solid rgba(255,255,255,.1);
 	display: block;
 	margin: 3px 0 5px 0;
@@ -967,7 +1015,7 @@
  }
  .boardAll #omitted .thread {
 	margin: 5px 0;
-	color: rgba(0,0,0,.8);
+	color: #edf3ff;
 	margin: 5px 0;
  }
  /**

@@ -51,26 +51,55 @@ if ( $search_enabled && $search ) {
 		}
 		$order_by = "post_sticky DESC, post_last DESC";
 	}		
-	if ( $this_area == 'topics' || !$the_board && !$this_area && !$this_user && !$the_tag ) {
+	if ( $this_area == 'topics' || $this_area == 'topics' && $the_board || !$this_area && !$this_user && !$the_tag ) {
 		$use_this++;
-		$where_by = "WHERE post_parent = 0";
-		$order_by = "post_sticky DESC, post_last DESC";
+		if ( $the_board ) {
+			$where_by = "WHERE post_parent = 0 AND post_board = '$the_board'";
+			$order_by = "post_sticky DESC, post_last DESC";
+		} else {
+			$where_by = "WHERE post_parent = 0";
+			$order_by = "post_sticky DESC, post_last DESC";		
+		}
 	}
-	if( !$the_board && $this_area == 'replies' && !$this_thread && !$this_user ){
+	if ( !$the_board && $this_area == 'replies' && !$this_thread && !$this_user ){
 		$use_this++;
 		$where_by = "WHERE post_parent != 0";
 		$order_by = "post_sticky DESC, post_last DESC";
 	}
-	if( $nothing_is_here ) {
+
+	if ( $nothing_is_here ) {
 		$use_this++;
-		if ( $these_boards ) {
-			$where_by = "WHERE post_parent = 0 AND post_board IN ( " . join (',', $these_boards ) . ") ";
+		if ( $profileboards ) {
+			$profileboards = " post_board IN ( " . join (',', $profileboards ) . ")";
 		} else {
-			$where_by = "WHERE post_parent = 0 ";
+			$profileboards = '';
+		}
+		if ( $following  ) {
+			$following = " ( post_userid IN (" . join (',', $following ) . ") OR post_name IN (" . join (',', $following ) . ") )";
+		} else {
+			$following = '';
+		}
+
+		if ( $following || $profileboards ) {
+			$where_by = "WHERE post_parent = 0 AND $following $profileboards ";
+		} else {
+			if ( $these_boards ) {
+				$where_by = "WHERE post_parent = 0 AND post_board IN ( " . join (',', $these_boards ) . ")";
+			} elseif ( !$these_boards ) {
+				$where_by = "WHERE post_parent = 0 ";
+			}
 		}
 		$order_by = "post_date DESC";
 	}
-	if( !$the_board && $this_area == 'gallery' && !$this_thread && !$this_user ) {
+
+	if ( $this_area == 'all' ) {
+		$use_this++;
+		$where_by = "WHERE post_parent = 0 ";
+		$order_by = "post_date DESC";
+	}	
+	
+	
+	if ( !$the_board && $this_area == 'gallery' && !$this_thread && !$this_user ) {
 		$use_this++;
 		if ( !$the_board ) {
 			$where_by = "WHERE post_url != '' AND post_type = 'image'";
@@ -79,14 +108,6 @@ if ( $search_enabled && $search ) {
 			$where_by = "WHERE post_url != '' AND post_type = 'image' AND post_board = '$the_board'";
 		}
 	}		
-	if( !$the_board && $this_area == 'subscribed' && $profileboards && !$this_user ) {
-		$use_this++;
-		$where_by = "WHERE post_board IN ( " . join (',', $profileboards ) . ")";
-	}
-	if( !$the_board && $this_area == 'following' && $following && !$this_user ) {
-		$use_this++;
-		$where_by = "WHERE ( post_userid IN (" . join (',', $following ) . ") OR post_name IN (" . join (',', $following ) . ") )";
-	}
 	if ( $this_thread && !$this_user ) {
 		$use_this++;
 		$where_by = "WHERE post_id = $this_thread AND post_parent = 0";
@@ -123,7 +144,7 @@ if ( $use_this > 0 ) {
 		if ( isset ( $_GET['n'] ) ) {
 			$results    = intval ( $_GET['n'] );
 		}
-		if( $results ) {
+		if ( $results ) {
 			$start = ( $results - 1 ) * $posts_per_page;
 		} else {
 			$start = 0;

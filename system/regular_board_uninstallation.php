@@ -36,6 +36,7 @@ function regular_board_uninstallation() {
 	delete_option ( 'regular_board_wipeall' );
 	delete_option ( 'regular_board_wipealldate' );
 	delete_option ( 'regular_board_frontpage' );
+	delete_option ( 'regular_board_footer' );
 	delete_option ( 'regular_board_autourl' );
 	delete_option ( 'regular_board_formatting' );
 	delete_option ( 'regular_board_ascii' );

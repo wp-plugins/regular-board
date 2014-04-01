@@ -385,6 +385,30 @@ if ( $userisbanned ) {
 										$profile_name = 'null';
 									}
 									
+									$check_comment    = $_REQUEST['COMMENT'];
+									$sage_this        = '';
+									if ( strpos ( $check_comment, '!sage' ) !== false ) {
+										$sage_this    = 1;
+									}
+									if ( strpos ( $check_comment, '!heaven' ) !== false ) {
+										$post_email   = 'heaven';
+										$profile_name = 'null';
+									}
+									
+									if ( $post_parent == 0 ) {
+										preg_match ( '#\[\[(.*?)\]\]#', $check_comment, $match );
+										if ( $match[1] ) {
+											$checkboard = $wpdb->get_results ( "SELECT board_shortname FROM $regular_board_boards WHERE board_shortname = '$match[1]' " );
+											if ( count ( $checkboard ) > 0 ) {
+												$the_board    = esc_sql ( $match[1] );
+												$post_comment = str_replace ( '[[' . $match[1] . ']]', '', $post_comment );
+											} else {
+												$the_board    = $the_board;
+												$post_comment = $post_comment;
+											}
+										}
+									}
+									
 									if ( $is_moderator ) {
 										$mod_code = 1;
 									} elseif ( $is_user_mod ) {
@@ -571,6 +595,13 @@ if ( $userisbanned ) {
 												WHERE post_id = $post_parent" 
 											);
 										}
+										if ( $the_board ) {
+											$wpdb->query ( 
+												"UPDATE $regular_board_boards SET 
+												board_postcount = board_postcount + 1 
+												WHERE board_shortname = '$the_board'"
+											);										
+										}
 										
 										if ( $first_post ) {
 											echo '<div class="thread"><p>Since this is your first time posting, a moderator will need to approve it before it appears.  Once you have had 
@@ -591,7 +622,7 @@ if ( $userisbanned ) {
 									}
 									
 									if ( !$dontbumpthis ) {
-										if ( $post_parent && !$LOCKED && strtolower ( $post_email ) != 'sage' ) {
+										if ( $post_parent && !$LOCKED && strtolower ( $post_email ) != 'sage' || $sage_this ) {
 											$wpdb->update (
 												$regular_board_posts,
 												array ( 

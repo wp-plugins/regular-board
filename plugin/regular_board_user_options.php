@@ -267,6 +267,3 @@ if ( isset ( $_POST['options'] ) ) {
 	/** End Connections
 	 */ ?>
 </div>
-<script type="text/javascript">
-	document.title = 'Options';
-</script>

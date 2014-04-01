@@ -92,12 +92,7 @@ if ( $userisbanned ) {
 					if ( $LOCKED == 0){
 					$correct = 0;
 					if ( !$user_exists ) { 
-						echo '<p class="information">You need to sign-in before you can submit content or comment on 
-						submissions.  Simply enter a username (the best username is your e-mail address, which 
-						we do not store in a readable format) and password, and click the Register button.</p>
-						<p class="information">Once registered and signed in, you can change your posting name, 
-						follow other users, send and receive messages from users you have connected with, 
-						and more.</p>';
+						echo '<p class="information">Click the button labeled <em>Click to start posting</em>.</p>';
 					} else {
 						if ( $the_board || $this_area != 'editpost' && $the_board && $archived == 0 || $nothing_is_here || $this_thread || $this_area == 'messages' || $this_area == 'submit' ) {
 							if( $the_board || $correct == 0 && $this_thread && count($getposts) > 0 || $nothing_is_here || $this_thread ||  $this_area == 'messages' || $this_area == 'submit' ){
@@ -126,6 +121,8 @@ if ( $userisbanned ) {
 									echo '<form enctype="multipart/form-data" data="' . $data . '" name="regularboard" ';
 										if ( $this_thread ) {
 											echo 'class="regularboard_post" xdata="omitted' . $this_thread . '" ';
+										} else {
+											echo 'class="regularboard_form" ';
 										}
 									echo 'method="post" action="' . $current_page . '?a=post">';
 									wp_nonce_field('regularboard');
@@ -159,17 +156,19 @@ if ( $userisbanned ) {
 										echo '<label for="user_id">send to</label><input type="text" id="user_id" name="user_id" />';
 									}
 									
-									if ( $protocol == 'boards' ) {
-										if ( $this_area != 'messages' ) {
-												echo '
-												    <label>Post action</label>
-													<select name="EMAIL" id="EMAIL">
-														<option value=""></option>
-														<option value="heaven"'; if ( $profileheaven ) { echo ' selected="selected" '; } echo '>post this anonymously</option>';
-														if ( $this_thread ) {
-															echo '<option value="sage">do not bump this thread</option>';
-														}
-													echo '</select>';
+									if ( !$this_thread ) {
+										if ( $protocol == 'boards' ) {
+											if ( $this_area != 'messages' ) {
+													echo '
+														<label>Post action</label>
+														<select name="EMAIL" id="EMAIL">
+															<option value=""></option>
+															<option value="heaven"'; if ( $profileheaven ) { echo ' selected="selected" '; } echo '>post this anonymously</option>';
+															if ( $this_thread ) {
+																echo '<option value="sage">do not bump this thread</option>';
+															}
+														echo '</select>';
+											}
 										}
 									}
 

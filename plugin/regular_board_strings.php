@@ -70,6 +70,10 @@ if ( get_option ( 'regular_board_protected' ) ) {
 	$protectedboards           = explode   ( ',', get_option ( 'regular_board_protected' ) );
 	$protected_boards          = array_map ( 'regular_board_apply_quotes',  $protectedboards );
 }
+$regular_board_footer          = '';
+if ( get_option ( 'regular_board_footer' ) ) {
+	$regular_board_footer      = get_option ( 'regular_board_footer' );
+}
 $registration_open             = get_option ( 'regular_board_registration' );
 $enable_blog                   = get_option ( 'regular_board_enableblog' );
 $display_wipe                  = get_option ( 'regular_board_wipedisplay' );
@@ -89,6 +93,23 @@ $board_wipe_every              = get_option ( 'regular_board_wipeall' );
 $board_wipe_per                = get_option ( 'regular_board_wipeper' );
 $board_wipe_date               = strtotime ( get_option ( 'regular_board_wipealldate' ) );
 $current_timestamp             = date ( 'Y-m-d H:i:s' );		
+
+/*
+ * Time functionality
+ * Set up some variables for different points in time, using current time as an anchor.
+ */
+ $ten_minutes_from_now  = date("Y-m-d H:i:s", strtotime('+10 minutes'));
+ $ten_minutes_ago       = date("Y-m-d H:i:s", strtotime('-10 minutes'));
+ $two_hours_from_now    = date("Y-m-d H:i:s", strtotime('+2 hours'   ));
+ $two_hours_ago         = date("Y-m-d H:i:s", strtotime('-2 hours'   ));
+ $twelve_hours_from_now = date("Y-m-d H:i:s", strtotime('+12 hours'  ));
+ $twelve_hours_ago      = date("Y-m-d H:i:s", strtotime('-12 hours'  ));
+ $one_day_from_now      = date("Y-m-d H:i:s", strtotime('+1 day'     ));
+ $one_day_ago           = date("Y-m-d H:i:s", strtotime('-1 day'     ));
+ $one_month_from_now    = date("Y-m-d H:i:s", strtotime('+1 month'   ));
+ $one_month_ago         = date("Y-m-d H:i:s", strtotime('-1 month'   ));
+ 
+ 
 $formatting                    = get_option ( 'regular_board_formatting' );
 $auto_url                      = get_option ( 'regular_board_autourl' );
 $announcements                 = get_option ( 'regular_board_announcements' );
@@ -145,6 +166,9 @@ if ( $query ) {
 	if ( isset ( $_GET['self'] ) ) {
 		$selfpost              = 1;
 	}
+}
+if ( $this_thread ) {
+	$the_board = $wpdb->get_var( "SELECT post_board FROM $regular_board_posts WHERE post_id = $this_thread" );
 }
 if ( !$this_area && !$the_board && !$this_user && !$this_thread && !$the_tag ) {
 	$nothing_is_here           = 1;

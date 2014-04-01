@@ -19,60 +19,41 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 	die();
 }
 
-if ( $protocol == 'boards' ) {
-	$count_all  = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts" );
-	foreach($getboards as $gotboards){
-		$created_on       = $gotboards->board_date;
-		$count_all_posts  = $wpdb->get_var( $wpdb->prepare ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_board = %s AND post_public = %d", $gotboards->board_shortname, 1 ) );
-		$count_mod_posts  = $wpdb->get_var( $wpdb->prepare ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_board = %s AND ( post_moderator = %d OR post_moderator = %d) AND post_public = %d", $gotboards->board_shortname, 1, 2, 1 ) );
-		$count_my_posts   = $wpdb->get_var( $wpdb->prepare ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_board = %s AND post_public = %d AND post_userid = %d", $gotboards->board_shortname, 1, $profileid ) );
-		$count_user_posts = $wpdb->get_var( $wpdb->prepare ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_board = %s AND post_moderator = %d AND post_public = %d", $gotboards->board_shortname, 0, 1 ) );
-		$count_spam       = $wpdb->get_var( $wpdb->prepare ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_public = %s", 2 ) );  
-		$count_deleted    = $wpdb->get_var( $wpdb->prepare ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_public = %s", 3 ) );  
-		$count_posts      = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_board = %s AND post_public = %d", $gotboards->board_shortname, 1 ) );
-		$min10_t          = 0;
-		$hou02_t          = 0;
-		$hou12_t          = 0;
-		$hou24_t          = 0;
-		$currently        = strtotime ( $current_timestamp );
-		foreach ( $count_posts as $posts ) {
-			$timedif   = strtotime ( $posts->post_date );
-			$moderator = $posts->post_moderator;
-			$type      = $posts->post_type;
-			if ( $currently - 600 <= $timedif && $timedif + 600 >= $currently ) {
-				$min10_t++;
-			}
-			if ( $currently - 7200 <= $timedif && $timedif + 7200 >= $currently ) {
-				$hou02_t++;
-			}
-			if ( $currently - 43200 <= $timedif && $timedif + 43200 >= $currently ) {
-				$hou12_t++;
-			}
-			if ( $currently - 86400 <= $timedif && $timedif + 86400 >= $currently ) {
-				$hou24_t++;
-			}
-		}
-		echo '<div class="stats"><h1><a href="' . $current_page . '?b=' . $gotboards->board_shortname . '">' . $gotboards->board_name . '</a> ( ' . $gotboards->board_shortname . ' )</h1>
-		<p>
-			<em>Total posts: ' . $count_all_posts . '</em>
-			&mdash; 
-			<em>My posts: ' . $count_my_posts . '</em>
-		</p>
+$thread_count    = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_parent = 0" );
+$reply_count     = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_parent > 0" );
+$ten_minutes     = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_date BETWEEN '$ten_minutes_ago' AND '$current_timestamp'" );
+$two_hours       = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_date BETWEEN '$two_hours_ago' AND '$current_timestamp'" );
+$twelve_hours    = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_date BETWEEN '$twelve_hours_ago' AND '$current_timestamp'" );
+$month           = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_date BETWEEN '$one_month_ago' AND '$current_timestamp'" );
+$day             = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_date BETWEEN '$one_day_ago' AND '$current_timestamp'" );
+$count_users     = $wpdb->get_var( "SELECT COUNT(Distinct user_id) FROM $regular_board_users WHERE user_posts > 0 " );
+$count_boards    = $wpdb->get_var( "SELECT COUNT(Distinct post_board) FROM $regular_board_posts" );
 
-		<h3>Posts made within the last...</h3>
-		<p>
-			<code>10 minutes: ' . $min10_t . '</code> ::
-			<code>2 hours: ' . $hou02_t . '</code> ::
-			<code>12 hours: ' . $hou12_t . '</code> ::
-			<code>24 hours: ' . $hou24_t . '</code>
-		</p>
 
-		<h3>Moderator vs User Activity</h3>
-		<p>
-			The <strong>moderators</strong> have made ' . $count_mod_posts . ' posts, while <strong>users</strong> 
-			have made ' . $count_user_posts . ' posts.  <br />
-			On top of these ' . ( $count_mod_posts + $count_user_posts ) . ' posts, 
-			' . $count_deleted . ' were deleted while ' . $count_spam . ' were marked as spam.
-		</p></div>';
-	}
-}
+echo '<div class="stats"><h1>Installation statistics</h1>
+
+<p>
+	Statistics are based on <strong>active</strong> content.<br />
+	This page does not take into account posts that have been deleted or marked as spam.
+</p>
+
+<p>
+	<strong>Post statistics</strong>:<br />
+	There are <strong>' . $thread_count . '</strong> active threads with <strong>' . $reply_count . '</strong> active comments.<br />
+	Within the last ten minutes, <strong>' . $ten_minutes . '</strong> posts were made.<br />
+	<strong>' . $two_hours . '</strong> within the last two hours, and <strong>' . $twelve_hours . '</strong> within the last 12 hours.<br />
+	<strong>' . $month . '</strong> within the last month.<br />
+	Within the last day, there have been <strong>' . $day . '</strong> posts created.
+</p>
+
+<p>
+	<strong>User statistics</strong>:<br />
+	There have been ' . $count_users . ' unique posters.
+</p>
+
+<p>
+	<strong>Board statistics</strong>:<br />
+	There are currently ' . $count_boards . ' active boards.
+<?p>
+
+</div>';

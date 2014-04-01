@@ -34,6 +34,9 @@ if ( $query ) {
 				  );
 		if ( count ( $getres ) == 1 ) {
 			foreach ( $getres as $meta ) {
+				if ( $meta->post_board ) {
+					$the_board = $meta->post_board;
+				}
 				$canonical    = '';
 				$author       = '';
 				$title        = '';

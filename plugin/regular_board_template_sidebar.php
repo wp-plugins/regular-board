@@ -32,6 +32,38 @@ if ( $this_area == 'history' && $user_exists || $this_user ) {
 	echo '<hr />';
 }
 
+if ( isset ( $_POST['daymode_activate'] ) ) {
+	$data = '';
+	if     ( $the_board  ) { $data = $current_page . '?b=' . $the_board; }
+	elseif ( $this_thread ) { $data = $current_page . '?t=' . $this_thread; }
+	else   {                  $data = $current_page; }
+	$wpdb->query ( "UPDATE $regular_board_users SET user_colormode = 1 WHERE user_id = $profileid" );
+	echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $data . '"></p>';
+}
+if ( isset ( $_POST['nightmode_activate'] ) ) {
+	$data = '';
+	if     ( $the_board  ) { $data = $current_page . '?b=' . $the_board; }
+	elseif ( $this_thread ) { $data = $current_page . '?t=' . $this_thread; }
+	else   {                  $data = $current_page; }
+	$wpdb->query ( "UPDATE $regular_board_users SET user_colormode = 2 WHERE user_id = $profileid" );
+	echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $data . '"></p>';
+}
+
+
+if ( $user_exists ) {
+	echo '<form name="user_mode" method="post" action="' . $current_page . '">';
+	wp_nonce_field( 'user_mode' );
+	if ( $mode == 'night' ) {
+		echo '<input type="submit" value="activate day mode" name="daymode_activate" />';
+	}
+	if ( $mode == 'day' ) {
+		echo '<input type="submit" value="activate night mode" name="nightmode_activate" />';
+	}
+	echo '</form>';
+}
+
+echo '</center><hr />';
+
 if ( $search_enabled ) {
 	$search_action = $current_page;
 	echo '<form name="regular_board_search" method="post" action="' . $search_action . '">';
@@ -46,22 +78,15 @@ if ( !$user_exists && !$userisbanned ) {
 	include ( plugin_dir_path(__FILE__) . '/regular_board_loginorregister.php' );
 } else { 
 	echo '<hr />
-	<div class="tag_cloud">
-		<span><a href="' . $this_page . '?'; if ( $the_board ) { echo 'b=' . $the_board . '&amp;'; } echo 'a=submit&amp;self">Submit a new text post</a></span>
-		<span><a href="' . $this_page . '?'; if ( $the_board ) { echo 'b=' . $the_board . '&amp;'; } echo 'a=submit">Submit a new link</a></span>
-		<span><a href="' . $this_page . '?a=create">Create a new board</a></span>
-	</div>';
+	<span><a href="' . $current_page . '?'; if ( $the_board ) { echo 'b=' . $the_board . '&amp;'; } echo 'a=submit&amp;self">[ <i class="fa fa-pencil"></i> ] Submit a new text post</a></span>
+	<span><a href="' . $current_page . '?'; if ( $the_board ) { echo 'b=' . $the_board . '&amp;'; } echo 'a=submit">[ <i class="fa fa-link"></i> ] Submit a new link</a></span>
+	<span><a href="' . $current_page . '?a=create">[ <i class="fa fa-book"></i> ] Create a new board</a></span>
+	';
 }
 
 echo '<hr />';
-if ( !$the_board ) {
-	if ( get_option ( 'regular_board_frontpage' ) ) {
-		echo '<span class="frontinfo">Welcome</span>' . regular_board_format ( wpautop ( get_option ( 'regular_board_frontpage' ) ) );
-		echo '<hr />';
-	}
-}
 if ( $board_name ) {
-	echo '<span class="frontinfo">/' . $board_short . '/ ' . $board_name . '</span><em>' . $board_description . '</em>';
+	echo '<span class="frontinfo">/' . $board_short . '/ ' . $board_name . '</span><p><em>' . $board_description . '</em></p>';
 }
 if ( $board_rules ) {
 	echo regular_board_format ( $board_rules );
@@ -69,38 +94,15 @@ if ( $board_rules ) {
 if ( $the_board ) {
 	echo '<hr />';
 }
+
+if ( get_option ( 'regular_board_frontpage' ) ) {
+	echo '<span class="frontinfo">' . $blog_title . '</span>' . regular_board_format ( wpautop ( get_option ( 'regular_board_frontpage' ) ) );
+	echo '<hr />';
+}
+
 echo '<div class="tag_cloud"><span><a href="#">navigation</a></span>';
 if ( $protocol == 'boards' ) {
 	foreach ( $getboards as $gotboards ) {
-	
-		if ( !$board_wipe_every ) {
-			if( $gotboards->board_wipe && $gotboards->board_wipe != strtolower ( 'never' ) ) {
-				$board_date = strtotime($gotboards->board_date);
-				$today_is = strtotime($current_timestamp);
-				if ( strpos ( strtolower ( $gotboards->board_wipe ), 'minute' ) ) {
-					$uptime = intval ( $gotboards->board_wipe ) * 60;
-				} elseif ( strpos ( strtolower ( $gotboards->board_wipe ), 'hour' ) ) {
-					$uptime = intval ( $gotboards->board_wipe ) * 3600;
-				} elseif ( strpos ( strtolower ( $gotboards->board_wipe ), 'day' ) ) {
-					$uptime = intval ( $gotboards->board_wipe ) * 86400;
-				} elseif ( strpos ( strtolower ( $gotboards->board_wipe ), 'week' ) ) {
-					$uptime = intval ( $gotboards->board_wipe ) * 604800;
-				} elseif ( strpos ( strtolower ( $gotboards->board_wipe ), 'month' ) ) {
-					$uptime = intval ( $gotboards->board_wipe ) * 2628000;
-				} elseif ( strpos ( strtolower ( $gotboards->board_wipe ), 'year' ) ) {
-					$uptime = intval ( $gotboards->board_wipe ) * 31536000;
-				} else {
-					$uptime = intval ( $gotboards->board_wipe ) * 60;
-				}
-				$board_life = ( intval ( $board_date ) + intval ( $uptime ) );
-				$next_wipe = ( intval ( $uptime ) - ( intval ( $today_is ) - intval ( $board_date ) ) );
-				$wipe = number_format ( intval ( $today_is ) - intval ( $board_date ) ) / intval ( $uptime ) * 100;
-				if($today_is > $board_life){
-					$wpdb->delete ( $regular_board_posts, array ( 'post_board' => $gotboards->board_shortname ), array ( '%s' ) );
-					$wpdb->query ( "UPDATE $regular_board_boards SET board_date = '$current_timestamp' WHERE board_shortname = '$gotboards->board_shortname'" );
-				}
-			}
-		}
 		if ( $gotboards->board_postcount > 0 ) {
 			$percent = regular_board_percent ( $gotboards->board_postcount, $total_posts );
 		} else {
@@ -122,8 +124,6 @@ if ( $protocol == 'boards' ) {
 	}
 }
 
-echo '<span><a href="' . $this_page . '?a=replies"'; if ( $this_area == 'replies' ) { echo ' class="active"'; } echo '>all replies</a></span>
-<span><a href="' . $this_page . '?a=subscribed"'; if ( $this_area == 'subscribed' ) { echo ' class="active"'; } echo '>all subscribed</a></span>
-<span><a href="' . $this_page . '?a=following"'; if ( $this_area == 'following' ) { echo ' class="active"'; } echo '>all followed</a></span>';
+echo '<span><a href="' . $current_page . '?a=replies"'; if ( $this_area == 'replies' ) { echo ' class="active"'; } echo '>all replies</a></span>';
 echo '</div>';
 echo '</div>';

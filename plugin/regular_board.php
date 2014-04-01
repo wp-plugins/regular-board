@@ -43,7 +43,6 @@ function regular_board_shortcode ( $content = null ) {
 			$regular_board_bans_select;
 	
 	if ( $ipaddress !== false ) { 
-	
 		include ( plugin_dir_path(__FILE__) . '/regular_board_strings.php' );
 		include ( plugin_dir_path(__FILE__) . '/regular_board_user_information.php' );
 		include ( plugin_dir_path(__FILE__) . '/regular_board_board_information.php' );
@@ -51,8 +50,52 @@ function regular_board_shortcode ( $content = null ) {
 		include ( plugin_dir_path(__FILE__) . '/regular_board_board_wipe.php' );
 		include ( plugin_dir_path(__FILE__) . '/regular_board_determine_mod.php' );
 		include ( plugin_dir_path(__FILE__) . '/regular_board_navigation_elements.php' );
-
-		echo '<div class="boardAll"><div class="spacer">' . $banner . $navigation;
+		
+		echo '<div class="boardAll">';
+		
+		if ( $protocol == 'boards' ) {
+			echo '<div class="top_nav">' .  $blog_link . ' <span>-</span> ' . $all_link . ' <span>|</span> ';
+			$board_nom = 0;
+			foreach ( $getboards as $gotboards ) {
+				if ( !$board_wipe_every ) {
+					if( $gotboards->board_wipe && $gotboards->board_wipe != strtolower ( 'never' ) ) {
+						$board_date = strtotime($gotboards->board_date);
+						$today_is = strtotime($current_timestamp);
+						if ( strpos ( strtolower ( $gotboards->board_wipe ), 'minute' ) ) {
+							$uptime = intval ( $gotboards->board_wipe ) * 60;
+						} elseif ( strpos ( strtolower ( $gotboards->board_wipe ), 'hour' ) ) {
+							$uptime = intval ( $gotboards->board_wipe ) * 3600;
+						} elseif ( strpos ( strtolower ( $gotboards->board_wipe ), 'day' ) ) {
+							$uptime = intval ( $gotboards->board_wipe ) * 86400;
+						} elseif ( strpos ( strtolower ( $gotboards->board_wipe ), 'week' ) ) {
+							$uptime = intval ( $gotboards->board_wipe ) * 604800;
+						} elseif ( strpos ( strtolower ( $gotboards->board_wipe ), 'month' ) ) {
+							$uptime = intval ( $gotboards->board_wipe ) * 2628000;
+						} elseif ( strpos ( strtolower ( $gotboards->board_wipe ), 'year' ) ) {
+							$uptime = intval ( $gotboards->board_wipe ) * 31536000;
+						} else {
+							$uptime = intval ( $gotboards->board_wipe ) * 60;
+						}
+						$board_life = ( intval ( $board_date ) + intval ( $uptime ) );
+						$next_wipe = ( intval ( $uptime ) - ( intval ( $today_is ) - intval ( $board_date ) ) );
+						$wipe = number_format ( intval ( $today_is ) - intval ( $board_date ) ) / intval ( $uptime ) * 100;
+						if($today_is > $board_life){
+							$wpdb->delete ( $regular_board_posts, array ( 'post_board' => $gotboards->board_shortname ), array ( '%s' ) );
+							$wpdb->query ( "UPDATE $regular_board_boards SET board_date = '$current_timestamp' WHERE board_shortname = '$gotboards->board_shortname'" );
+						}
+					}
+				}
+				$board_nom++;
+				if ( $board_nom > 1 && $board_nom <= count ( $getboards ) ) {
+				 echo '<span>-</span>';
+				}
+				echo '<a href="' . $current_page . '?b=' . $gotboards->board_shortname . '"'; if ( $the_board && $the_board == $gotboards->board_shortname ) { echo ' class="active"'; } echo '>';
+				echo $gotboards->board_name . '</a>';
+			}
+			echo '</div>';
+		}		
+		
+		echo '<div class="spacer">' . $banner . $navigation;
 		
 		if ( $userisbanned ) { include ( plugin_dir_path(__FILE__) . '/regular_board_posting_userbanned.php' ); }
 		
@@ -63,7 +106,11 @@ function regular_board_shortcode ( $content = null ) {
 				echo '<div class="thread_container">
 					<span class="frontinfo">';
 						if ( !$search ) {
-							echo 'Latest activity';
+							if ( !$profileboards ) {
+								echo 'Latest activity';
+							} else {
+								echo 'Latest activity based on your subscriptions';
+							}
 						} else {
 							echo 'Search results';
 						}
@@ -285,7 +332,7 @@ function regular_board_shortcode ( $content = null ) {
 		include ( plugin_dir_path(__FILE__) . '/regular_board_area_post.php' ); 
 		
 		
-		} elseif ( $this_area == 'gallery' && !$the_board || $this_area == 'replies' || $this_area == 'topics' || $this_area == 'subscribed' || $this_area == 'following' ) {
+		} elseif ( $this_area == 'gallery' && !$the_board || $this_area == 'replies' || $this_area == 'topics' && !$the_board || $this_area == 'all' ) {
 			echo '<div class="thread_container">';
 			echo '<h1>' . $this_area . '</h1>';
 			if ( $getposts ) {
@@ -312,6 +359,41 @@ function regular_board_shortcode ( $content = null ) {
 		elseif ( $this_area == 'logout' && $user_exists   ) { include ( plugin_dir_path(__FILE__) . '/regular_board_logout.php'     ); }
 	echo '</div>';
 	include ( plugin_dir_path(__FILE__) . '/regular_board_template_sidebar.php' );
-	echo '</div></div>';
+	echo '</div>';
+	
+	if ( $regular_board_footer ) {
+		echo '<footer>' . $regular_board_footer . '</footer>';
 	}
+	
+	echo '</div>';
+	}
+
+ /**
+  ** Page title
+  ** (1) Set the title of the page using javascript
+  **/
+  if ( $the_board ) { 
+	$page_title = $the_board; 
+  }
+  if ( $the_tag ) { 
+	$page_title = $the_tag; 
+  }
+  if ( $this_area ) { 
+	$page_title = $this_area; 
+  }
+  if ( $this_user ) { 
+	$page_title = $this_user; 
+  }
+  if ( $this_thread ) { 
+	$page_title = $this_thread; 
+  }
+  if ( $post_title ) {
+	$page_title = $post_title;
+  }
+  if ( $page_title ) {
+	echo '<script type="text/javascript">
+	document.title = \'' . $page_title . '\';
+	</script>';
+  }
+  
 }

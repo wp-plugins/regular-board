@@ -87,7 +87,7 @@
 		
 		
 		$('.regularboard_form').ajaxForm(function() { 
-			var data = $('.regularboard').attr('data');
+			var data = $('.regularboard_form').attr('data');
 			$('.boardAll').load(data + ' .boardAll > *');
 			history.pushState('data', '', data);
 		}); 
