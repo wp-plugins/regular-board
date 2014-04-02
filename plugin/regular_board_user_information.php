@@ -25,6 +25,14 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 $myinformation = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_users_select FROM $regular_board_users WHERE user_logged_in_from = %s AND user_logged_in = 1 LIMIT 1", $user_ip ) );
 if ( count ( $myinformation ) > 0 ) {
 	foreach ( $myinformation as $myinfo ) {
+		$chanmode            = intval ( $myinfo->user_chanmode   );
+		if ( $chanmode == 1 || $chanmode == 0 ){
+			$style = 'tiny';
+		}
+		if ( $chanmode == 2 ) {
+			$style = 'expanded';
+		}
+		
 		$daynight            = intval ( $myinfo->user_colormode );
 		if ( $daynight == 1 || $daynight == 0 ) {
 			$mode        = 'day';

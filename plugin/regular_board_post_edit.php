@@ -22,8 +22,9 @@ if ( $is_moderator ) {
 }
 if ( count ( $checkPass ) > 0 ) {
 	foreach($checkPass as $EDITTHREAD){
+		$EDITTHREAD->post_comment = str_replace(array("\\r\\n", "\\r", "\\n", "\\"), array ( " || ", " || ", " || ", "" ), $EDITTHREAD->post_comment );
 		if ( $formatting ) {
-			$editComment = str_replace ( '\\', '', $EDITTHREAD->post_comment );
+			$editComment = $EDITTHREAD->post_comment;
 		} else {
 			$editComment = $EDITTHREAD->post_comment;
 		}
@@ -39,10 +40,9 @@ if ( count ( $checkPass ) > 0 ) {
 			<input type="hidden" value="" name="LOGIN" />
 			<input type="hidden" value="" name="USERNAME" />
 			<input type="hidden" value="' . $this_thread . '" id="editthisthread" name="editthisthread" />
-			<label for="SUBJECT">subject</label><input type="text" id="SUBJECT" maxlength="' . $max_text . '" name="SUBJECT" placeholder="Subject" value="' . $editSubject . '" />';
-			if ( !$EDITTHREAD->post_url ) {
-				echo '<label for="COMMENT">comment</label><textarea id="COMMENT" name="COMMENT">' . str_replace ( array ( '[', ']' ), array ( '&#91;', '&#93;' ), $editComment ) . '</textarea>';
-			}
+			<small>[[board]] [[title: my new post!]] ++http://url.tld++ *Example format.* || **new line!** |||| paragraph. #tag</small>
+			<textarea id="COMMENT" name="COMMENT">' . $editComment . '</textarea>';
+			
 			if ( !$EDITTHREAD->post_comment ) {
 				if ( $EDITTHREAD->post_url ) { 
 					echo '<label for="URL">url</label><input type="text" id="URL" maxlength="' . $max_text . '" value="';

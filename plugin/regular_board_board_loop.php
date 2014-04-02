@@ -16,6 +16,9 @@ if( $lock == 1 ) {
 	echo '<p>This board is currently locked.</p>';
 }
 
+if ( $the_board && !$this_thread ) {
+	echo '<div class="omitted' . htmlentities($the_board) . '">';
+}
 foreach ( $getposts as $posts ) {
 	if ( $search_enabled && $search && $this_thread ) {
 		$gotReplies = $wpdb->get_results( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE ( post_email = '$search' OR post_comment LIKE '%$search%' OR post_title LIKE '%$search%' OR post_url LIKE '%$search%' ) AND post_parent = $posts->post_id ORDER BY post_last ASC" );
@@ -32,7 +35,7 @@ foreach ( $getposts as $posts ) {
 	} else {
 		include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
 	}
-	if ( $this_thread && count ( $gotReplies ) > 0 ) { 
+	if ( $this_thread ) { 
 		echo '<div class="omitted' . $posts->post_id . '"'; if ( $this_thread ) { echo ' id="omitted"'; } echo '>';
 	}
 
@@ -50,21 +53,12 @@ foreach ( $getposts as $posts ) {
 		}
 	}
 	
-	if ( $this_thread && count ( $gotReplies ) > 0 ) { 
+	if ( $this_thread ) { 
 		echo '</div>';
 	}
-	
-	if ( $this_thread ) {
-		echo '<div class="thread noborder">';
-		if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_post_form.php' ) ) {
-			include ( ABSPATH . '/regular_board_child/regular_board_post_form.php' );
-		} else {
-			include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
-		}
-		echo '</div>';
-	}	
-	
-	
+}
+if ( $the_board && !$this_thread ) {
+	echo '</div>';
 }
 
 if( $the_board && !$this_thread ) {

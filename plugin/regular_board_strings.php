@@ -132,6 +132,7 @@ $archive_gate                  = get_option ( 'regular_board_archivegate' );
 $posts_per_page                = get_option ( 'regular_board_postsper' );
 $roll                          = get_option ( 'regular_board_roll' );
 $id_display                    = get_option ( 'regular_board_ids' );
+$user_create                   = get_option ( 'regular_board_usercreate' );
 $mod_code                      = '<strong>' . get_option ( 'regular_board_modcode', '##MOD' ) . '</strong>';
 $user_mod_code                 = '<strong>' . get_option ( 'regular_board_usermodcode', '##JRMOD' ) . '</strong>';
 $current_page                  = protocol_relative_url_dangit( get_permalink() );
@@ -163,9 +164,6 @@ if ( $query ) {
 	if ( isset ( $_GET['t'] ) ) {
 		$this_thread           = intval ( $_GET['t'] );
 	}
-	if ( isset ( $_GET['self'] ) ) {
-		$selfpost              = 1;
-	}
 }
 if ( $this_thread ) {
 	$the_board = $wpdb->get_var( "SELECT post_board FROM $regular_board_posts WHERE post_id = $this_thread" );
@@ -177,3 +175,5 @@ $is_user_mod                   = false;
 $is_user                       = true;
 $posting                       = 1;
 $userisbanned                  = 0;
+
+$style = 'tiny';

@@ -102,6 +102,7 @@ function regular_board_shortcode ( $content = null ) {
 		echo '<div class="right-half">';
 		
 		if ( $nothing_is_here ) {
+			echo '<div class="omitted">';
 			if ( $getposts ) {
 				echo '<div class="thread_container">
 					<span class="frontinfo">';
@@ -130,7 +131,7 @@ function regular_board_shortcode ( $content = null ) {
 						<span class="frontinfo">No activity to show</span>
 				</div>';
 			}
-			echo '</div>';
+			echo '</div></div>';
 		}
 
 
@@ -160,7 +161,7 @@ function regular_board_shortcode ( $content = null ) {
 			} else {
 				echo '<div class="thread clear"><p><strong>Nothing to see here.</strong></p></div>';
 			}
-		} elseif ( $this_area == 'create' ) {
+		} elseif ( $this_area == 'create' && $user_create == 1 ) {
 			if ( $user_exists && $profile_level > 2 ) {
 				echo '<h1>Create a new board</h1>';
 				$board_name         = '';
@@ -232,7 +233,7 @@ function regular_board_shortcode ( $content = null ) {
 				}
 				
 				$data = '';
-				if     ( $this_board  ) { $data = $current_page . '?b=' . $the_board; }
+				if     ( $the_board  ) { $data = $current_page . '?b=' . $the_board; }
 				elseif ( $this_thread ) { $data = $current_page . '?t=' . $this_thread; }
 				else   {                  $data = $current_page; }				
 				
@@ -249,12 +250,6 @@ function regular_board_shortcode ( $content = null ) {
 			} else {
 				echo '<p class="information">You need to have an account of least level 2 or above to create 
 				your own boards.</p>';
-			}
-		} elseif ( $this_area == 'submit' ) {
-			if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_post_form.php' ) ) {
-				include ( ABSPATH . '/regular_board_child/regular_board_post_form.php' );
-			} else {
-				include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
 			}
 		} elseif ( $this_area == 'queue' ) {
 			if ( $is_moderator || $is_user_mod ) {
@@ -275,6 +270,11 @@ function regular_board_shortcode ( $content = null ) {
 		elseif ( $this_area == 'stats'                                    ) { include ( plugin_dir_path(__FILE__) . '/regular_board_board_stats.php'  ); } 
 
 		elseif ( $the_board || $this_thread || $the_tag ) {
+			if ( $the_tag || $the_board ) {
+				if ( $the_tag ) { $the_board = $the_tag; }
+				if ( $the_board ) { $the_board = $the_board; }
+				echo '<div class="omitted' . htmlentities($the_board) . '">';
+			}
 			if ( $the_tag ) {
 				echo '<div class="thread">All posts tagged <strong> #' . $the_tag . '</strong></div>';
 			}
@@ -308,7 +308,7 @@ function regular_board_shortcode ( $content = null ) {
 							}
 						}
 						if ( $this_thread && $threadexists == 1 ) {
-							echo '<p>';
+							echo '<p class="nav_tools">';
 							if ( $thisboard ) {
 								echo '<a class="load_link" href="' . $current_page . '">Return</a>';
 							} elseif ( $the_board ) {
@@ -324,6 +324,9 @@ function regular_board_shortcode ( $content = null ) {
 					}
 				}
 			}
+			if ( $the_tag || $the_board ) {
+				echo '</div>';
+			}			
 		}
 		
 		if ( $this_area == 'post' ) { 
@@ -333,6 +336,7 @@ function regular_board_shortcode ( $content = null ) {
 		
 		
 		} elseif ( $this_area == 'gallery' && !$the_board || $this_area == 'replies' || $this_area == 'topics' && !$the_board || $this_area == 'all' ) {
+			echo '<div class="omitted' . $this_area . '">';
 			echo '<div class="thread_container">';
 			echo '<h1>' . $this_area . '</h1>';
 			if ( $getposts ) {
@@ -349,7 +353,7 @@ function regular_board_shortcode ( $content = null ) {
 			} else {
 				echo '<div class="thread"><p><strong>Nothing to see here.</strong></p></div>';
 			}
-			echo '</div>';
+			echo '</div></div>';
 		}
 		elseif ( $this_area == 'news'                     ) { include ( plugin_dir_path(__FILE__) . '/regular_board_area_news.php'  ); }
 		elseif ( $enable_blog && $this_area == 'blog'     ) { include ( plugin_dir_path(__FILE__) . '/regular_board_area_blog.php'  ); }
@@ -357,10 +361,12 @@ function regular_board_shortcode ( $content = null ) {
 		elseif ( $this_area == 'stuff'                    ) { include ( plugin_dir_path(__FILE__) . '/regular_board_area_stuff.php' ); }
 		elseif ( $this_area == 'messages' && $user_exists ) { include ( plugin_dir_path(__FILE__) . '/regular_board_messages.php'   ); } 
 		elseif ( $this_area == 'logout' && $user_exists   ) { include ( plugin_dir_path(__FILE__) . '/regular_board_logout.php'     ); }
+
+
+
 	echo '</div>';
 	include ( plugin_dir_path(__FILE__) . '/regular_board_template_sidebar.php' );
 	echo '</div>';
-	
 	if ( $regular_board_footer ) {
 		echo '<footer>' . $regular_board_footer . '</footer>';
 	}

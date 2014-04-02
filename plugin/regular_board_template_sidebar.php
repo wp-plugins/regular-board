@@ -30,28 +30,99 @@ if ( $this_area == 'history' && $user_exists || $this_user ) {
 	echo '</strong>';
 	echo $the_profile_avatar . $the_profile_slogan . $the_profile_details . $connect_with;
 	echo '<hr />';
+	
+			if ( count ( $my_friends ) > 0 ) {
+				echo 'Connections: ';
+				foreach ( $my_friends as $friends ) {
+					if ( $friends->friends_connector != $the_profile_name ) {
+						$friend_name = sanitize_text_field ( $friends->friends_connector );
+					}
+					if ( $friends->friends_connectee != $the_profile_name ) {
+						$friend_name = sanitize_text_field ( $friends->friends_connectee );
+					}
+					echo ' <a class="load_link" href="' . $this_page . '?u=' . $friend_name . '">' . $friend_name . '</a> ';
+				}
+				echo '<hr />';
+			}
+			
+			$check_friend = 0;
+			$check_friend = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_friends WHERE ( friends_connector = '$profile_name' AND friends_connectee = '$the_profile_name' OR friends_connector = '$the_profile_name' AND friends_connectee = '$profile_name')" );
+				if ( $user_exists) {
+				if ( $the_profile_name ) {
+					if ( $profile_name != $the_profile_name ) {
+						if ( $check_friend == 0 ) {
+							if ( strtolower ( $_REQUEST['request_id'] ) != strtolower ( $profile_name ) ) {
+								if ( isset ( $_POST['request_friendship'] ) ) {
+									$wpdb->query ( 
+										$wpdb->prepare ( 
+											"INSERT INTO $regular_board_friends 
+											( 
+												friends_id, 
+												friends_connector, 
+												friends_connectee, 
+												friends_mutual
+											) VALUES ( 
+												%d,
+												%s,
+												%s,
+												%d
+											)", 
+											'', 
+											$profile_name,
+											$the_profile_name,
+											0
+										) 
+									);
+								}
+							}
+							if ( $the_profile_name ) {
+								$connect_with = '
+								<form method="post" name="friend_request" class="friendship" action="' . $current_page . '?u=' . $the_profile_name . '">'
+								. wp_nonce_field( 'friend_request' ) . 
+								'<section><input type="submit" name="request_friendship" id="request_friendship" value="Connect with this user" /></section>
+								</form>';
+							}
+						}
+					}
+				}
+			}
+
+	
 }
 
-if ( isset ( $_POST['daymode_activate'] ) ) {
-	$data = '';
-	if     ( $the_board  ) { $data = $current_page . '?b=' . $the_board; }
-	elseif ( $this_thread ) { $data = $current_page . '?t=' . $this_thread; }
-	else   {                  $data = $current_page; }
-	$wpdb->query ( "UPDATE $regular_board_users SET user_colormode = 1 WHERE user_id = $profileid" );
-	echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $data . '"></p>';
-}
-if ( isset ( $_POST['nightmode_activate'] ) ) {
-	$data = '';
-	if     ( $the_board  ) { $data = $current_page . '?b=' . $the_board; }
-	elseif ( $this_thread ) { $data = $current_page . '?t=' . $this_thread; }
-	else   {                  $data = $current_page; }
-	$wpdb->query ( "UPDATE $regular_board_users SET user_colormode = 2 WHERE user_id = $profileid" );
-	echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $data . '"></p>';
-}
+$url_data = '';
+if     ( $the_board && !$this_thread  ) { $url_data = $current_page . '?b=' . $the_board; }
+elseif ( $this_thread ) { $url_data = $current_page . '?t=' . $this_thread; }
+elseif ( $this_area ) { $url_data = $current_page . '?a=' . $this_area; }
+else   {                  $url_data = $current_page; }
+
+echo '<div class="piece"><div class="form_form">';
+if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_post_form.php' ) ) {
+	include ( ABSPATH . '/regular_board_child/regular_board_post_form.php' );
+} else {
+	include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
+}	
+echo '</div></div>';
 
 
 if ( $user_exists ) {
-	echo '<form name="user_mode" method="post" action="' . $current_page . '">';
+	if ( isset ( $_POST['daymode_activate'] ) ) {
+		$wpdb->query ( "UPDATE $regular_board_users SET user_colormode = 1 WHERE user_id = $profileid" );
+		echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $url_data . '"></p>';
+	}
+	if ( isset ( $_POST['nightmode_activate'] ) ) {
+		$wpdb->query ( "UPDATE $regular_board_users SET user_colormode = 2 WHERE user_id = $profileid" );
+		echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $url_data . '"></p>';
+	}
+	if ( isset ( $_POST['tinymode_activate'] ) ) {
+		$wpdb->query ( "UPDATE $regular_board_users SET user_chanmode = 1 WHERE user_id = $profileid" );
+		echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $url_data . '"></p>';
+	}
+	if ( isset ( $_POST['expandedmode_activate'] ) ) {
+		$wpdb->query ( "UPDATE $regular_board_users SET user_chanmode = 2 WHERE user_id = $profileid" );
+		echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $url_data . '"></p>';
+	}
+	echo '<div class="piece"><form class="modes" name="user_mode" method="post" action="' . $current_page . '">';
 	wp_nonce_field( 'user_mode' );
 	if ( $mode == 'night' ) {
 		echo '<input type="submit" value="activate day mode" name="daymode_activate" />';
@@ -59,48 +130,45 @@ if ( $user_exists ) {
 	if ( $mode == 'day' ) {
 		echo '<input type="submit" value="activate night mode" name="nightmode_activate" />';
 	}
-	echo '</form>';
+	if ( $style == 'tiny' ) {
+		echo '<input type="submit" value="activate expanded mode" name="expandedmode_activate" />';
+	}
+	if ( $style == 'expanded' ) {
+		echo '<input type="submit" value="activate tiny mode" name="tinymode_activate" />';
+	}
+	echo '</form></div>';
 }
-
-echo '</center><hr />';
-
 if ( $search_enabled ) {
 	$search_action = $current_page;
-	echo '<form name="regular_board_search" method="post" action="' . $search_action . '">';
+	echo '<div class="piece"><form name="regular_board_search" class="modes" method="post" action="' . $search_action . '">';
 		wp_nonce_field('regular_board_search');
 		echo '
 		<input type="text" name="regular_board_search" id="regular_board_search" placeholder="Search" />
 		<input type="submit" class="hidden" id="regular_board_search_submit" name="regular_board_search_submit" value="Search" />
-	</form>';
+	</form></div>';
 }
 
 if ( !$user_exists && !$userisbanned ) {
 	include ( plugin_dir_path(__FILE__) . '/regular_board_loginorregister.php' );
 } else { 
-	echo '<hr />
-	<span><a href="' . $current_page . '?'; if ( $the_board ) { echo 'b=' . $the_board . '&amp;'; } echo 'a=submit&amp;self">[ <i class="fa fa-pencil"></i> ] Submit a new text post</a></span>
-	<span><a href="' . $current_page . '?'; if ( $the_board ) { echo 'b=' . $the_board . '&amp;'; } echo 'a=submit">[ <i class="fa fa-link"></i> ] Submit a new link</a></span>
-	<span><a href="' . $current_page . '?a=create">[ <i class="fa fa-book"></i> ] Create a new board</a></span>
-	';
+	if ( $user_create == 1 ) {
+		echo '<span><a href="' . $current_page . '?a=create">[ <i class="fa fa-book"></i> ] Create a new board</a></span>';
+	}
 }
-
-echo '<hr />';
 if ( $board_name ) {
-	echo '<span class="frontinfo">/' . $board_short . '/ ' . $board_name . '</span><p><em>' . $board_description . '</em></p>';
+	echo '<div class="piece"><span class="frontinfo">/' . $board_short . '/ ' . $board_name . '</span><p><em>' . $board_description . '</em></p>';
 }
 if ( $board_rules ) {
 	echo regular_board_format ( $board_rules );
 }
-if ( $the_board ) {
-	echo '<hr />';
+if ( $board_name ) {
+	echo '</div>';
 }
-
 if ( get_option ( 'regular_board_frontpage' ) ) {
-	echo '<span class="frontinfo">' . $blog_title . '</span>' . regular_board_format ( wpautop ( get_option ( 'regular_board_frontpage' ) ) );
-	echo '<hr />';
+	echo '<div class="piece"><span class="frontinfo">' . $blog_title . '</span>' . regular_board_format ( wpautop ( get_option ( 'regular_board_frontpage' ) ) ) . '</div>';
 }
 
-echo '<div class="tag_cloud"><span><a href="#">navigation</a></span>';
+echo '<div class="piece"><div class="tag_cloud"><span><a href="#">navigation</a></span>';
 if ( $protocol == 'boards' ) {
 	foreach ( $getboards as $gotboards ) {
 		if ( $gotboards->board_postcount > 0 ) {
@@ -125,5 +193,5 @@ if ( $protocol == 'boards' ) {
 }
 
 echo '<span><a href="' . $current_page . '?a=replies"'; if ( $this_area == 'replies' ) { echo ' class="active"'; } echo '>all replies</a></span>';
-echo '</div>';
+echo '</div></div>';
 echo '</div>';

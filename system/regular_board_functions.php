@@ -48,12 +48,12 @@ function regular_board_style(){
 	global $wpdb, $wp, $post, $regular_board_version, $ipaddress;
 	$content = $post->post_content;
 	if( has_shortcode ( $content, 'regular_board' ) ) {
-		$form_submit    = plugins_url() . '/regular_board/system/js/jquery.form.min.js?' . $regular_board_version;
+		$form_submit    = plugins_url() . '/regular-board/system/js/jquery.form.min.js?' . $regular_board_version;
 		wp_deregister_script ( 'regular_board-form');
 		wp_register_script   ( 'regular_board-form', protocol_relative_url_dangit ( $form_submit ), array( 'jquery' ), '', null, false);
 		wp_enqueue_script    ( 'regular_board-form');
 
-		$regularboard   = plugins_url() . '/regular_board/system/js/regular_board00000000182.js?' . $regular_board_version;
+		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board00000000192.js?' . $regular_board_version;
 		if ( get_option ( 'regular_board_css_url' ) ) {
 			$css_file   = get_option ( 'regular_board_css_url' );
 		} else { 
@@ -63,16 +63,16 @@ function regular_board_style(){
 			$css_choice = $wpdb->get_var( "SELECT user_colormode FROM $regular_board_users WHERE user_ip = '$user_ip'" );
 			if ( $css_choice ) {
 				if ( $css_choice == 1 ) {
-					$css_file   = plugins_url() . '/regular_board/system/css/regular_board_dm_00000000182.css';
+					$css_file   = plugins_url() . '/regular-board/system/css/regular_board_dm_00000000192.css';
 				}
 				if ( $css_choice == 2 ) {
-					$css_file   = plugins_url() . '/regular_board/system/css/regular_board_nm_00000000182.css';
+					$css_file   = plugins_url() . '/regular-board/system/css/regular_board_nm_00000000192.css';
 				}
 			} else {
 				if ( date ( 'H' ) >= 7 && date ( 'H' ) <= 19 ) {
-					$css_file   = plugins_url() . '/regular_board/system/css/regular_board_nm_00000000182.css';
+					$css_file   = plugins_url() . '/regular-board/system/css/regular_board_nm_00000000192.css';
 				} else {
-					$css_file   = plugins_url() . '/regular_board/system/css/regular_board_dm_00000000182.css';
+					$css_file   = plugins_url() . '/regular-board/system/css/regular_board_dm_00000000192.css';
 				}
 			}
 		}
@@ -80,7 +80,7 @@ function regular_board_style(){
 		// Selectively load lazyload!
 		if ( get_option ( 'regular_board_lazyload' ) ) {
 			$lazy_load           = '//cdn.jsdelivr.net/jquery.lazyload/1.9.0/jquery.lazyload.min.js';
-			$lazy_load_functions = plugins_url() . '/regular_board/system/js/lazyload.js';
+			$lazy_load_functions = plugins_url() . '/regular-board/system/js/lazyload.js';
 			wp_deregister_script ( 'regular_board-lazyload');
 			wp_register_script   ( 'regular_board-lazyload', protocol_relative_url_dangit ( $lazy_load ), array( 'jquery' ), '', null, false);
 			wp_enqueue_script    ( 'regular_board-lazyload');
@@ -89,7 +89,7 @@ function regular_board_style(){
 			wp_enqueue_script    ( 'regular_board-lazy_load_functions' );
 			
 		}
-		$fontawesome         = plugins_url() . '/regular_board/system/css/fontawesome/css/font-awesome.min.css?' . $regular_board_version;
+		$fontawesome         = plugins_url() . '/regular-board/system/css/fontawesome/css/font-awesome.min.css?' . $regular_board_version;
 		wp_register_style    ( 'font-awesome', protocol_relative_url_dangit ( $fontawesome ) );
 		wp_enqueue_style     ( 'font-awesome' );
 		wp_register_style    ( 'regular_board', protocol_relative_url_dangit ( $regbostyle ) );

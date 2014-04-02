@@ -457,6 +457,7 @@ if( current_user_can( 'manage_options' )) {
 				} else {
 
 						if ( isset ( $_POST['save'] ) ) {
+							update_option ( 'regular_board_usercreate', str_replace ( '\\', '', $_REQUEST['usercreate']) );
 							update_option ( 'regular_board_ascii', str_replace ( array ('\\', '"' ), '', $_REQUEST['ascii']) );
 							update_option ( 'regular_board_announcements', str_replace ( '\\', '', $_REQUEST['announcements'] ) );
 							update_option ( 'regular_board_hideannouncements', str_replace ( '\\', '', $_REQUEST['hideannouncements'] ) );
@@ -551,7 +552,11 @@ if( current_user_can( 'manage_options' )) {
 						function regular_board_registration_option() {
 							echo '<option value="0"'; if ( get_option ( 'regular_board_registration' ) == 0 ) { echo ' selected="selected"'; } echo '>No</option>';
 							echo '<option value="1"'; if ( get_option ( 'regular_board_registration' ) == 1 ) { echo ' selected="selected"'; } echo '>Yes</option>';
-						}						
+						}
+						function regular_board_usercreate() {
+							echo '<option value="0"'; if ( get_option ( 'regular_board_usercreate' ) == 0 ) { echo ' selected="selected"'; } echo '>No</option>';
+							echo '<option value="1"'; if ( get_option ( 'regular_board_usercreate' ) == 1 ) { echo ' selected="selected"'; } echo '>Yes</option>';
+						}
 						
 						if ( isset ( $_POST['wipesave'] ) ) {
 							$current_timestamp = date ( 'Y-m-d H:i:s' );
@@ -611,6 +616,7 @@ if( current_user_can( 'manage_options' )) {
 								<section><label>32:: How many accounts per unique IP address can a person have?</label><input type="text" name="accountsper" id="accountsper" value="' . get_option ( 'regular_board_accountsper' ) . '" /></section>
 								<section><label>33:: How many accounts (TOTAL) can be registered at one time?</label><input type="text" name="accountstotal" id="accountstotal" value="' . get_option ( 'regular_board_totaluserallowed' ) . '" /></section>
 								<section><label>34:: Use boards or #tags?</label><select name="useboards" id="useboards">'; regular_board_useboards_option(); echo '</select></section>
+								<section><label>35:: Allow users to create new boards</label><select name="usercreate" id="usercreate">'; regular_board_usercreate(); echo '</select></section>
 								<section><input type="submit" name="save" value="Save options" /></section>
 							</form>
 						</div>

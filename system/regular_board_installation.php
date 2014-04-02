@@ -14,6 +14,7 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
 
 function regular_board_installation(){
+	add_option ( 'regular_board_usercreate', 0 );
 	add_option ( 'regular_board_useboards', 'boards' );
 	add_option ( 'regular_board_totaluserallowed' );
 	add_option ( 'regular_board_accountsper', 5 );
@@ -142,6 +143,7 @@ function regular_board_installation(){
 		user_logged_in BIGINT(20) NOT NULL ,
 		user_logged_in_from TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci ,
 		user_colormode BIGINT(20) ,
+		user_chanmode BIGINT(20) ,
 		PRIMARY KEY  (user_id)
 	);";
 	$bans = "CREATE TABLE $regular_board_bans(

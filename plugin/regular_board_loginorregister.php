@@ -59,7 +59,9 @@ echo '<div id="reply" class="reply">';
 								user_level,
 								user_strikes,
 								user_logged_in,
-								user_logged_in_from
+								user_logged_in_from,
+								user_colormode,
+								user_chanmode
 							) VALUES ( 
 								%d, 
 								%s, 
@@ -75,7 +77,9 @@ echo '<div id="reply" class="reply">';
 								%d,
 								%d,
 								%d,
-								%s
+								%s,
+								%d,
+								%d
 							)", 
 						'', 
 						$current_timestamp, 
@@ -91,7 +95,9 @@ echo '<div id="reply" class="reply">';
 						0,
 						0,
 						1,
-						$user_ip
+						$user_ip,
+						1,
+						1
 					) 
 				);
 				echo '<meta http-equiv="refresh" content="0;' . $this_page . '?a=options">';

@@ -13,12 +13,6 @@ if ( !defined ( 'regular_board_plugin' ) || isset ( $_POST['FORMSUBMIT']) && !$_
 	die();
 }
 
-if ( isset ( $_REQUEST['post_comment_parent'] ) && $_REQUEST['post_comment_parent'] ) {
-	$post_comment_parent = intval ( $_REQUEST['post_comment_parent'] );
-} else {
-	$post_comment_parent = 0;
-}
-
 if ( $userisbanned ) {
 
 } else {
@@ -85,7 +79,8 @@ if ( $userisbanned ) {
 		$_REQUEST['SUBJECT'] = sanitize_text_field ( $_REQUEST['SUBJECT'] );
 		$_REQUEST['URL']     = sanitize_text_field ( $_REQUEST['URL'] );
 		$_REQUEST['EMAIL']   = sanitize_text_field ( $_REQUEST['EMAIL'] );
-		$_REQUEST['COMMENT'] = esc_sql ( wp_strip_all_tags ( wpautop ( $_REQUEST['COMMENT'] ) ) );
+		$_REQUEST['COMMENT'] = sanitize_text_field ( $_REQUEST['COMMENT'] );
+		$check_comment       = $_REQUEST['COMMENT'];
 
 
 		if ( !$_REQUEST['board'] ) {
@@ -273,9 +268,12 @@ if ( $userisbanned ) {
 								 */
 								
 								// If URLs are enabled, prepare the entered URL
-								if ( isset ( $_REQUEST['PARENT'] ) && $enable_rep || !isset ( $_REQUEST['PARENT'] ) && $enable_url || $imgurid ) {
-									if ( !$URL ) {
-										$clean_url = $_REQUEST['URL'];
+
+
+									if ( preg_match ( '/\+\+(.*)\+\+/', $check_comment, $match ) ) {
+										if ( $match[1] ) {
+											$clean_url = $match[1];
+										}
 									} elseif ( $URL ) {
 										$clean_url = $URL;
 									}
@@ -322,7 +320,7 @@ if ( $userisbanned ) {
 										$post_type = 'post';
 										$post_url  = '';
 									}
-								}
+								
 								
 								// Comment
 								if ( $_REQUEST['COMMENT'] ) {
@@ -385,7 +383,6 @@ if ( $userisbanned ) {
 										$profile_name = 'null';
 									}
 									
-									$check_comment    = $_REQUEST['COMMENT'];
 									$sage_this        = '';
 									if ( strpos ( $check_comment, '!sage' ) !== false ) {
 										$sage_this    = 1;
@@ -394,20 +391,31 @@ if ( $userisbanned ) {
 										$post_email   = 'heaven';
 										$profile_name = 'null';
 									}
-									
-									if ( $post_parent == 0 ) {
-										preg_match ( '#\[\[(.*?)\]\]#', $check_comment, $match );
+									if ( preg_match ( '/\[\[title\:(.*)\]\]/', $check_comment, $match ) ) {
 										if ( $match[1] ) {
-											$checkboard = $wpdb->get_results ( "SELECT board_shortname FROM $regular_board_boards WHERE board_shortname = '$match[1]' " );
-											if ( count ( $checkboard ) > 0 ) {
-												$the_board    = esc_sql ( $match[1] );
-												$post_comment = str_replace ( '[[' . $match[1] . ']]', '', $post_comment );
-											} else {
-												$the_board    = $the_board;
-												$post_comment = $post_comment;
-											}
+											$post_subject = $match[1];
 										}
 									}
+									if ( $post_parent == 0 ) {
+										if ( preg_match ( '/\[\[(.*?)\]\]/', $check_comment, $match ) ) {
+											if ( $match[1] ) {
+												$checkboard = $wpdb->get_results ( "SELECT board_shortname FROM $regular_board_boards WHERE board_shortname = '$match[1]' " );
+												if ( count ( $checkboard ) > 0 ) {
+													$the_board    = esc_sql ( $match[1] );
+												} else {
+													$the_board    = $the_board;
+													$post_comment = $post_comment;
+												}
+											}
+										}
+									} else {
+										if ( preg_match ( '/\^(.*?)\^/', $check_comment, $parent_comment ) ) {
+											if ( $parent_comment[1] ) {
+												$post_comment_parent = intval ( $parent_comment[1] );
+											} 
+										}
+									}
+									
 									
 									if ( $is_moderator ) {
 										$mod_code = 1;
@@ -434,6 +442,12 @@ if ( $userisbanned ) {
 															  );
 											if ( count ( $check_pass ) > 0 ) {
 												foreach ( $check_pass as $pass ) {
+													if ( $pass->post_parent > 0 ) {
+														$return_to = $pass->post_parent;
+													}
+													if ( !$pass->post_parent ) {
+														$return_to = $check_id;
+													}
 													$last = $pass->post_last;
 													$wpdb->update (
 														$regular_board_posts,
@@ -466,14 +480,13 @@ if ( $userisbanned ) {
 																			1 
 																		) 
 																	 );
-												echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $current_page . '?t=' . $check_id . '"></p>';
+												echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $current_page . '?t=' . $return_to . '"></p>';
 												}
 											} else {
 												$edited = 3;
 											}
 										}
 									} elseif ( $timegateactive !== true ) {
-									
 										if ( !$profile_posts ) {
 											$post_public = 666;
 											$first_post  = 1;
@@ -481,11 +494,6 @@ if ( $userisbanned ) {
 											$post_public = 1;
 											$first_post  = 0;
 										}
-										
-										if ( $post_parent == $post_comment_parent ) {
-											$post_comment_parent = 0;
-										}
-										
 										$wpdb->query (
 											$wpdb->prepare (
 												"INSERT INTO $regular_board_posts 

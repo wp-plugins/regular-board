@@ -24,6 +24,7 @@ function regular_board_uninstallation() {
 	$regular_board_logs    = $wpdb->prefix . 'regular_board_logs';
 	$regular_board_friends = $wpdb->prefix . 'regular_board_friends';
 	$regular_board_message = $wpdb->prefix . 'regular_board_messages';
+	delete_option ( 'regular_board_usercreate' );
 	delete_option ( 'regular_board_useboards' );
 	delete_option ( 'regular_board_totaluserallowed' );
 	delete_option ( 'regular_board_accountsper' );
