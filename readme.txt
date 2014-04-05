@@ -3,7 +3,7 @@ Contributors: boyevul
 Tags: anonymous, bbs, bulletin board system, forum
 Requires at least: 3.8
 Tested up to: 3.8
-Stable tag: 1.13.4.1
+Stable tag: 1.13.5
 
 == Description ==
 Regular Board is a text-based anonymous message board to which anyone may post without the need for account registration.  
@@ -46,6 +46,9 @@ and not be offset by the current theme's style.
 7. Done.
 
 == Changelog ==
+* 1.13.5.0  Double-output post expansion (fixed) Thread titles being replaces by reply titles (fixed)
+* 1.13.5.0  Double time stamps for replies (fixed) Multiple instances of certain reply elements resulted in unintended output (fixed)
+* 1.13.5.0  replies section, history and user profiles: comments expanded by default
 * 1.13.4.1  Content submission form condensed to a single element.  (See http://www.dailyprune.com/?a=news&post=127#formatting for information on formatting).  
 * 1.13.4.0  Upgrade procedure fixed.  New options added.  Two CSS styles (nightmode/daymode).
 * 1.13.3.0  SEVERAL queries have been removed or made more efficient.  

@@ -15,7 +15,7 @@ echo '<div class="thread">';
 foreach ( $getuser as $banneddetails ) {
 	$LENGTH = $banneddetails->banned_length;
 	$FILED = $banneddetails->banned_date;
-	if ( $LENGTH != 0 ) {
+	if ( strtolower ( $LENGTH ) != 'permanent' ) {
 		$DATEFILED   = strtotime ( $banneddetails->banned_date );
 		$CURRENTDATE = strtotime ( $current_timestamp );
 
@@ -35,11 +35,10 @@ foreach ( $getuser as $banneddetails ) {
 			$bantime = intval ( $LENGTH ) * 60;
 		}
 		$banIsActiveFor = ( $DATEFILED + $bantime );
+	} else {
+		$LENGTH = 'permanent';
 	}
-	if ( !$LENGTH ) {
-		$LENGTH = 'Permanent';
-	}
-	if ( $LENGTH ) {
+	if ( $LENGTH != 'permanent' ) {
 		if ( $CURRENTDATE > $banIsActiveFor ) { 
 			$banLifted = 1;
 		} else {
@@ -68,7 +67,7 @@ foreach ( $getuser as $banneddetails ) {
 		$unbanned = ( intval ( $bantime ) - ( intval ( $today_is ) - intval ( $filed_on ) ) );
 		
 		
-		if ( $LENGTH ) {
+		if ( $LENGTH != 'permanent' ) {
 			echo '<h3>Ban length: ' . $LENGTH . '</h3> ' . $unbanned . ' seconds until unbanned.<hr />';
 		} else {
 			echo '<h3>Ban length: PERMANENT</h3>';
@@ -77,7 +76,7 @@ foreach ( $getuser as $banneddetails ) {
 		echo '<p>Reason: ' . $MESSAGE . '</p>
 		</div>';
 	}
-	if ( $LENGTH ) {
+	if ( $LENGTH != 'permanent' ) {
 		if ( $unbanned <= 0 ) {
 			$wpdb->delete ( $regular_board_bans, array('banned_id' => $BANID ), array ( '%d' ) );
 		}

@@ -46,9 +46,9 @@ function regular_board_shortcode ( $content = null ) {
 		include ( plugin_dir_path(__FILE__) . '/regular_board_strings.php' );
 		include ( plugin_dir_path(__FILE__) . '/regular_board_user_information.php' );
 		include ( plugin_dir_path(__FILE__) . '/regular_board_board_information.php' );
+		include ( plugin_dir_path(__FILE__) . '/regular_board_determine_mod.php' );
 		include ( plugin_dir_path(__FILE__) . '/regular_board_loop_queries.php' );
 		include ( plugin_dir_path(__FILE__) . '/regular_board_board_wipe.php' );
-		include ( plugin_dir_path(__FILE__) . '/regular_board_determine_mod.php' );
 		include ( plugin_dir_path(__FILE__) . '/regular_board_navigation_elements.php' );
 		
 		echo '<div class="boardAll">';
@@ -104,18 +104,7 @@ function regular_board_shortcode ( $content = null ) {
 		if ( $nothing_is_here ) {
 			echo '<div class="omitted">';
 			if ( $getposts ) {
-				echo '<div class="thread_container">
-					<span class="frontinfo">';
-						if ( !$search ) {
-							if ( !$profileboards ) {
-								echo 'Latest activity';
-							} else {
-								echo 'Latest activity based on your subscriptions';
-							}
-						} else {
-							echo 'Search results';
-						}
-					echo '</span>';
+				echo '<div class="thread_container">';
 					if ( count ( $getposts ) > 0 ) {
 						foreach ( $getposts as $posts ) {
 							if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
@@ -129,7 +118,7 @@ function regular_board_shortcode ( $content = null ) {
 				} else {
 					echo '<div class="thread_container">
 						<span class="frontinfo">No activity to show</span>
-				</div>';
+				';
 			}
 			echo '</div></div>';
 		}
@@ -156,7 +145,7 @@ function regular_board_shortcode ( $content = null ) {
 						}
 					}
 				}
-				echo '&amp;controls=1&amp;showinfo=1&amp;autohide=1" width="480" height="360" frameborder="0" allowfullscreen></iframe>
+				echo '&amp;controls=1&amp;showinfo=1&amp;autohide=1" width="600" height="338" frameborder="0" allowfullscreen></iframe>
 				</div>';
 			} else {
 				echo '<div class="thread clear"><p><strong>Nothing to see here.</strong></p></div>';
@@ -263,8 +252,6 @@ function regular_board_shortcode ( $content = null ) {
 				}
 			}
 		} 
-		
-		elseif ( $this_area == 'editpost' && $user_exists && $this_thread ) { include ( plugin_dir_path(__FILE__) . '/regular_board_post_edit.php'    ); }
 		elseif ( $this_area == 'options' && $user_exists                  ) { include ( plugin_dir_path(__FILE__) . '/regular_board_user_options.php' ); } 
 		elseif ( $this_area == 'history' && $user_exists || $this_user    ) { include ( plugin_dir_path(__FILE__) . '/regular_board_profile_loop.php' ); }
 		elseif ( $this_area == 'stats'                                    ) { include ( plugin_dir_path(__FILE__) . '/regular_board_board_stats.php'  ); } 
@@ -307,20 +294,6 @@ function regular_board_shortcode ( $content = null ) {
 								echo '<div class="thread"><p><strong>Nothing to see here.</strong></p></div>';
 							}
 						}
-						if ( $this_thread && $threadexists == 1 ) {
-							echo '<p class="nav_tools">';
-							if ( $thisboard ) {
-								echo '<a class="load_link" href="' . $current_page . '">Return</a>';
-							} elseif ( $the_board ) {
-								echo '<a class="load_link" href="' . $current_page . '?b=' . $the_board . '">Return</a>';
-							} elseif ( $thread_board ) {
-								echo '<a class="load_link" href="' . $current_page . '?b=' . $thread_board . '">Return</a>';
-							} else {
-								echo '<a class="load_link" href="' . $current_page . '">Return</a>';
-							}								
-							echo '<a href="#top">Top</a><a class="reload" xdata="' . $this_thread .'" data="' . $current_page . '?t=' . $this_thread . '">Refresh</a>
-							</p>';
-						}
 					}
 				}
 			}
@@ -338,7 +311,6 @@ function regular_board_shortcode ( $content = null ) {
 		} elseif ( $this_area == 'gallery' && !$the_board || $this_area == 'replies' || $this_area == 'topics' && !$the_board || $this_area == 'all' ) {
 			echo '<div class="omitted' . $this_area . '">';
 			echo '<div class="thread_container">';
-			echo '<h1>' . $this_area . '</h1>';
 			if ( $getposts ) {
 				if ( count ( $getposts ) > 0 ) {
 					foreach ( $getposts as $posts ) {
@@ -391,7 +363,7 @@ function regular_board_shortcode ( $content = null ) {
 	$page_title = $this_user; 
   }
   if ( $this_thread ) { 
-	$page_title = $this_thread; 
+	$page_title = $this_title; 
   }
   if ( $post_title ) {
 	$page_title = $post_title;

@@ -19,7 +19,7 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 	die();
 }
 
-$check_user_last_post = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_userid = %d ORDER BY post_date DESC LIMIT 1", $profileid ) );
+$check_user_last_post = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE ( post_userid = %d OR post_guestip = %s ) ORDER BY post_date DESC LIMIT 1", $profileid, $user_ip ) );
 if ( count ( $check_user_last_post ) > 0 ) {
 	if ( $user_flood ) {
 		$user_flood = array ( $user_flood );

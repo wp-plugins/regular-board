@@ -20,18 +20,12 @@
   *
   * Typographical specifications
   */
- .boardAll .nav_tools {
-	margin: 5px 0 5px 5px !important;
-	padding: 5px;
-	width: 100%; 
-	text-align: center;
- }
- .boardAll blockquote {
-	background-color: #101c22 !important;
-	color: #ceeeff !important;
+  .boardAll span.frontinfo,
+ .boardAll h1{
+	clear: none !important;
  }
  .boardAll .top_nav {
-	background-color: #0f1112;
+	background-color: rgba(0,0,0,.8);
 	border-bottom: 1px solid rgba(0,0,0,.1);
 	display: block; 
 	font-size: 10px;
@@ -44,7 +38,7 @@
  }
  .boardAll .top_nav a,
  .boardAll .top_nav span {
-	color: #1f96b7 !important;
+	color: rgba(255,255,255,.8) !important;
 	float: left; 
 	margin: 2px 0 0 2px;
 	padding: 3px;
@@ -54,13 +48,12 @@
 	color: #fff !important;
 	text-decoration: underline !important;
  }
- .boardAll #settings-link,
- .boardAll #logout-link {
-	float: right;
+ .boardAll .nav-right {
 	margin: 0 5px 0 0;
+	float: right;
  }
  .boardAll .profile-section i {
-	color: #fff;
+	color: rgba(0,0,0,.4);
 	cursor: default;
 	float: right; 
 	font-size: 72px;
@@ -73,8 +66,8 @@
 	width: 350px !important;
  } 
  .boardAll .smallstats {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	display: block; 
 	margin: 15px auto;
 	padding: 5px;
@@ -91,8 +84,8 @@
 	display: table;
  }
  .boardAll .prunedate {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	border-radius: 2px;
 	padding: 2px;
  }
@@ -147,16 +140,13 @@
  }
  .boardAll .left-half .tag_cloud span a.active {
 	border: none!important;
-	background-color: #1f2a3e;
-	color: #edf3ff;
- }
- .boardAll .left-half .tag_cloud span a:hover {
-	color: #000 !important;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
  }
  
  .boardAll .left-half span a {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	display: block; 
 	margin: 0;
 	padding: 10px;
@@ -167,8 +157,8 @@
 	display: block;
  }
  .boardAll .powerlevel {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	border-radius: 2px;
 	margin: 5px;
 	padding: 5px;
@@ -184,14 +174,13 @@
 	text-align: right;
  }
  .boardAll span.frontinfo {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	display: block; 
 	font-size: 15px;
 	line-height: 20px;
 	margin: -5px 0 0 -5px;
 	padding: 5px;
-	width: 100%; 	
  }
  .boardAll a.boardlink {
 	display: block; 
@@ -218,8 +207,8 @@
 	color: #fff;
  }
  .boardAll .announcement {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	clear: both;
 	display: block;
 	margin: 5px 0;
@@ -227,12 +216,12 @@
 	width: 100%;
  }
  .boardAll .announcement a {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	padding: 2px;
  }
  .boardAll form .fa-fw {
-	color: rgba(255,255,255,.5);
+	color: rgba(0,0,0,.5);
 	margin: 32px 0 0 3px;
 	position: absolute;
 	z-index: 2;
@@ -242,8 +231,8 @@
 	text-decoration: underline;
  }
  .boardAll .urls a {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	border-radius: 2px;
 	font-size: 10px;
 	line-height: 18px; 
@@ -272,12 +261,12 @@
  }
  .boardAll a {
 	border: none!important;
-	color: #1f96d8 !important;
+	color: rgba(11,38,75,1)!important;
 	text-decoration: underline!important;
 	margin: 0 3px 0 0;
  }
  .boardAll a:hover {
-	color: #fff !important;
+	color: rgba(75,11,40,1) !important;
  }
  .boardAll p{
 	height: auto!important;
@@ -320,7 +309,6 @@
  }
  
  .boardAll .banner {
-	border: 1px solid rgba(0,0,0,.1);
 	display: block;
 	height: 100px;
 	margin: 5px 0 -8px -8px;
@@ -431,24 +419,20 @@
   *
   * All elements that are related to forms
   */
-  .boardAll form.modes {
-	margin: 5px;
-  }
  .boardAll input[type="submit"] {
 	border: none !important;
 	border-radius: 2px;
 	display: block;
 	font-size : 14px;
-	color : #f0e4e4;
+	color : #081724;
 	height: 30px;
 	padding : 3px 3px;
 	margin: 5px 0 0 -2px;
-	background-color : #21314f; 
+	background-color : #dcebfa; 
 	width: 100%;
- }
-  
+ }  
  .boardAll .profile-section {
-	
+	border-bottom: 1px solid rgba(0,0,0,.1);
 	display: block;
 	margin: 5px 0;
 	overflow: hidden;
@@ -456,7 +440,7 @@
 	width: 100%;
  }
  .boardAll .profile-section:hover {
-	background-color: #0c0c0c!important;
+	background-color: rgba(255,255,255,1);
  }
  .boardAll .profile-section input,
  .boardAll .profile-section select {
@@ -489,8 +473,8 @@
  } 
  .boardAll .user-options select,
  .boardAll .user-options input {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	border: none!important;
 	border-radius:0!important;
 	clear: none!important;
@@ -505,7 +489,7 @@
  .boardAll .user-options input[type="text"]:focus ~ span,
  .boardAll .user-options input[type="password"]:focus ~ span {
 	clear: both;
-	color: #fff;
+	color: rgba(0,0,0,.9);
 	display: block;
 	height: auto;
 	margin: 5px;
@@ -549,8 +533,8 @@
 	display: table;
  }
  .boardAll .registration form {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	border-radius: 5px;
 	clear: none;
 	display: table;
@@ -567,15 +551,15 @@
 	width: 100%;
  }
  .boardAll p.information {
-	color: rgba(255,255,255,.3);	
+	color: rgba(0,0,0,.3);	
 	cursor: default;
 	font-size: 25px;
 	line-height: 27px;
 	padding: 5px;
  }
  .boardAll form p {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	clear: both; 
 	display: block;
 	padding: 5px;
@@ -611,7 +595,7 @@
  }
  .boardAll .noborder #reply {
 	margin: 0 0 0 -5px !important;
- }
+ } 
  .boardAll #reply {
 	margin: 0 auto 0 auto;
 	width: 100%;
@@ -621,7 +605,7 @@
  }
  .boardAll #reply section {
 	clear: both;
- 	color: rgba(255,255,255,.5);
+ 	color: rgba(0,0,0,.5);
 	display: block;
 	line-height: 25px;
  }
@@ -633,12 +617,12 @@
  }
  .boardAll #reply form {
 	display: block;
-	margin: 5px 5px 5px 0;
-	padding: 5px 10px 5px 5px;
-	width: 100%;
+	margin: 5px auto;
+	padding: 5px;
+	width: auto;
  }
  .boardAll #reply form textarea {
-	height: 100px;
+	height: 200px;
  }
  .boardAll #reply form select {
 	margin: 0 0 5px 0 !important;
@@ -648,29 +632,29 @@
  .boardAll #reply form input[type="text"],
  .boardAll #reply form input[type="password"],
  .boardAll #reply form input[type="file"]{
-	color: #fff;
-	background-color: rgba(255,255,255,.1);
+	color: rgba(0,0,0,.5);
+	background-color: rgba(0,0,0,.1);
 	box-shadow: none;
 	border: none;
 	border-radius: 2px;
 	clear: none;
 	cursor: default;
 	display: block;
-	font-family: Arial, Verdana;
+	float: left;
 	font-size: 15px;
 	margin: 5px 0 5px -2px;
-	padding: 5px;
+	padding: 8px 5px;
 	text-align: left;
 	visibility: visible;
-	width: 260px;
+	width: 98%;
  }
  .boardAll #reply form label:hover {
-	color: rgba(255,255,255,.7);
+	color: rgba(0,0,0,.7);
  }
  .boardAll #reply form label, 
  .boardAll form label {
 	border-radius: 0;
-	color: #fff;
+	color: rgba(0,0,0,.4);
 	clear: both;
 	cursor: pointer;
 	display: block;
@@ -681,7 +665,7 @@
 	padding: 5px;
 	text-align: left;
 	text-transform: uppercase;
-	width: 98%;
+	width: 98%;	
  }
 
  /**
@@ -715,7 +699,6 @@
 	margin: 2px -5px;
 	padding: 5px;
  }
-
  
  /**
   * Containers
@@ -734,17 +717,21 @@
  .boardAll .form_form form {
 	margin: -8px 0 0 0 !important;
  }
+ .boardAll .form_form form input[type="submit"]{
+	margin: 5px 0 0 0!important;
+ }
  .boardAll .form_form small {
+	color: rgba(0,0,0,.8);
 	display: block;
 	text-align: center;
 	width: 100%;
- }
+ }  
  footer {
 	border: none !important;
 	display: block; 
 	clear: both; 
 	width: 100%; 
-	margin: 15px auto !important;
+	margin: 15px auto;
 	padding: 5px;
  }
  footer:after {
@@ -752,14 +739,11 @@
 	content: "";
 	display: table;
  }
-  
  body {
-	background-color: #0f1112 !important;
-	overflow-x: hidden;
+	background-color: #fff !important; 
  } 
  .boardAll {
-	background-color: #0f1112;
-	border: 1px solid #16202e;
+	border: 1px solid #bed2ed;
 	display: block;
 	font-family: Arial, Verdana;
 	font-size: 12px;
@@ -799,8 +783,8 @@
 	width: 100%;
  }
  .boardAll .lastthree span {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	display: block; 
 	line-height: 12px;
 	margin: 5px 0;
@@ -820,39 +804,40 @@
 	width: 100%;
  }
  
- .boardAll .right-half {
-	float: left;
-	margin: 5px -35px 5px 10px;
-	padding: 5px 10px 5px 0;
-	width: 610px;
- } 
- .boardAll .left-half .piece {
-	background-color: #16202e;
-	border-radius: 5px;
-	margin: 5px auto;
-	padding: 5px;
- }
  .boardAll .left-half {
+	position: relative;
 	float:right;
 	display: block;
-	overflow: hidden;
 	padding: 2px 5px 2px 2px;
-	position: relative;
 	width: 285px;
 	z-index: 2;
  }
-
+ .boardAll .left-half .piece_form {
+	z-index: 99;
+ }
+ .boardAll .left-half .piece_form,
+ .boardAll .left-half .piece {
+	background-color: #f5f9ff;
+	border-radius: 5px;
+	margin: 5px auto;
+	padding: 5px;
+	position: relative;
+ } 
  .boardAll .left-half input[type="text"] {
 	cursor: default;
 	display: block;
 	margin: 5px auto;
 	width: 100%;
  }
-
+ .boardAll .right-half {
+	float: left;
+	margin: 5px -35px 5px 10px;
+	padding: 5px 10px 5px 0;
+	width: calc(100% - 335px);
+ } 
  
  .boardAll .spacer {
-	background-color: #0f1112;
-	color: #c4c9cb !important;
+	background-color: #fff;
 	display: block;
 	height: auto;
 	margin: 0 0 10px 0;
@@ -903,8 +888,8 @@
  .boardAll .imgs,
  .boardAll .urls {
 	width: 100%;
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	padding: 5px;
  } 
  .boardAll .imgs:before,
@@ -952,12 +937,12 @@
 	text-decoration: none !important;
  }
  .boardAll .navi {
-	background-color: #16202e;
-	border-bottom: 1px solid #16202e;
+	background-color: #bed2ed;
+	border-bottom: 1px solid #bed2ed;
 	clear: both;
 	display: block;
 	font-size: 10px;
-	height: 17px;
+	height: 15px;
 	margin: 0 auto 0 auto;
 	overflow: hidden;
 	padding: 5px;
@@ -972,7 +957,8 @@
 	display: table;
  }
  .boardAll .navi a {
-	border: 1px solid #16202e !important;
+	background-color: rgba(255,255,255,.5);
+	border: 1px solid #bed2ed !important;
 	border-bottom: 0 !important;
 	display: table;
 	float: left;
@@ -982,8 +968,8 @@
 	text-align: center;
  }
  .boardAll a.active {
-	color: #fff !important;
-	background-color: #0c0c0c;
+	color: #000 !important;
+	background-color: #fff;
  }
  .boardAll a.active i {
 	color: red;
@@ -999,7 +985,7 @@
  }
  .boardAll .thread {
 	clear: both;
-	color: #c4c9cb;
+	color: rgba(0,0,0,.9);
 	display: block;
 	margin: 2px 0 2px 0;
 	overflow: hidden;
@@ -1010,11 +996,14 @@
 
  .boardAll .child {
 	border: none!important;
-	background-color: #04121f;
+	background-color: #fafbff;
  }
  
  .boardAll .thread .thread {
 	margin: 5px;
+ }
+ .boardAll .thread:hover {
+	background-color: #f6f6f6!important;
  }
   
  .boardAll .hidden {
@@ -1038,8 +1027,8 @@
  }
  .boardAll .stats,
  .boardAll #stats{
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	border: 1px solid rgba(255,255,255,.1);
 	display: block;
 	margin: 0 0 5px 0;
@@ -1047,8 +1036,8 @@
 	width: 100%;
  }
  .boardAll #omitted {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	border: 1px solid rgba(255,255,255,.1);
 	display: block;
 	margin: 3px 0 5px 0;
@@ -1056,7 +1045,7 @@
  }
  .boardAll #omitted .thread {
 	margin: 5px 0;
-	color: #edf3ff;
+	color: rgba(0,0,0,.8);
 	margin: 5px 0;
  }
  /**

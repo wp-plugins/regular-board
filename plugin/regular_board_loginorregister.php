@@ -29,7 +29,7 @@ echo '<div id="reply" class="reply">';
 	echo '<label for="password">password</label><input type="password" id="password" name="password"  />';
 	if ( $registration_open ) {
 		echo '<input type="submit" name="i_want_to_log_in" value="Sign-in" />
-		<input type="submit" name="i_dont_want_to_sign_up" value="Click to start posting" />';
+		<input type="submit" name="i_dont_want_to_sign_up" value="Create account" />';
 	} else {
 		echo '<input type="submit" name="i_want_to_log_in" value="Sign-in" />';
 	}

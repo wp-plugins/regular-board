@@ -54,28 +54,28 @@ if ( $search_enabled && $search ) {
 	if ( $this_area == 'topics' || $this_area == 'topics' && $the_board || !$this_area && !$this_user && !$the_tag ) {
 		$use_this++;
 		if ( $the_board ) {
-			$where_by = "WHERE post_parent = 0 AND post_board = '$the_board'";
+			$where_by = "WHERE post_parent = 0 AND post_board = '$the_board' AND post_public = 1";
 			$order_by = "post_sticky DESC, post_last DESC";
 		} else {
-			$where_by = "WHERE post_parent = 0";
+			$where_by = "WHERE post_parent = 0 AND post_public = 1";
 			$order_by = "post_sticky DESC, post_last DESC";		
 		}
 	}
 	if ( !$the_board && $this_area == 'replies' && !$this_thread && !$this_user ){
 		$use_this++;
-		$where_by = "WHERE post_parent != 0";
+		$where_by = "WHERE post_parent != 0 AND post_public = 1";
 		$order_by = "post_sticky DESC, post_last DESC";
 	}
 
 	if ( $nothing_is_here ) {
 		$use_this++;
 		if ( $profileboards ) {
-			$profileboards = " post_board IN ( " . join (',', $profileboards ) . ")";
+			$profileboards = " post_board IN ( " . join (',', $profileboards ) . ") AND post_public = 1";
 		} else {
 			$profileboards = '';
 		}
 		if ( $following  ) {
-			$following = " ( post_userid IN (" . join (',', $following ) . ") OR post_name IN (" . join (',', $following ) . ") )";
+			$following = " ( post_userid IN (" . join (',', $following ) . ") OR post_name IN (" . join (',', $following ) . ") ) AND post_public = 1";
 		} else {
 			$following = '';
 		}
@@ -94,7 +94,7 @@ if ( $search_enabled && $search ) {
 
 	if ( $this_area == 'all' ) {
 		$use_this++;
-		$where_by = "WHERE post_parent = 0 ";
+		$where_by = "WHERE post_parent = 0 AND post_public = 1";
 		$order_by = "post_date DESC";
 	}	
 	
@@ -110,10 +110,14 @@ if ( $search_enabled && $search ) {
 	}		
 	if ( $this_thread && !$this_user ) {
 		$use_this++;
-		$where_by = "WHERE post_id = $this_thread AND post_parent = 0";
+		if ( $is_moderator ) {
+			$where_by = "WHERE post_id = $this_thread";
+		} else {
+			$where_by = "WHERE post_id = $this_thread AND post_public = 1";
+		}
 		if ( $search_enabled && $search ) {
 			$countParentReplies = "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE ( post_email = '$search' OR post_comment LIKE '%$search%' OR post_title LIKE '%$search%' OR post_url LIKE '%$search%' ) AND post_parent = $this_thread";
-		} else {					
+		} else {
 			$countParentReplies = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_parent = %d", $this_thread ) );
 		}
 	}

@@ -91,10 +91,7 @@ if ( $userisbanned ) {
 					}
 					if ( $LOCKED == 0){
 					$correct = 0;
-					if ( !$user_exists ) { 
-						echo '<p class="information">Click the button labeled <em>Click to start posting</em>.</p>';
-					} else {
-
+							if ( $this_area != 'editpost' ) {
 							echo '<div id="reply" class="reply">';
 							$data               = '';
 							$current_page_class = '';
@@ -107,7 +104,7 @@ if ( $userisbanned ) {
 							if ( $the_board && !$this_thread ) {
 								$current_page_class = 'omitted' . htmlentities ( $the_board );
 							}
-							if ( $this_area ) {
+							if ( $this_area && !$the_board && !$this_thread ) {
 								$current_page_class = 'omitted' . $this_area;
 							}
 							if ( $nothing_is_here ) {
@@ -143,6 +140,14 @@ if ( $userisbanned ) {
 							if ( $this_area == 'messages' && !$_GET['message'] ) {
 								echo '<label for="user_id">send to</label><input type="text" id="user_id" name="user_id" />';
 							}
+							if ( !$user_exists ) {
+								echo '<label>Posting as <em>guest</em> (all posts require approval)</label>';
+							} else {
+								if ( strtolower ( $profile_name ) == 'null' ) {
+									$profile_name = 'anonymous';
+								}
+								echo '<label>Posting as ' . $profile_name . '</label>';
+							}
 							
 							if ( $imgurid ) { 
 								if ( $this_area != 'messages' ) {
@@ -151,10 +156,14 @@ if ( $userisbanned ) {
 								}
 							}
 							$board_post_to = '';
-							if ( $the_board && !$this_thread ) {
+							$tag_post_to   = '';
+							if ( $the_board && !$this_thread && !$the_tag ) {
 								$board_post_to = '[[' . $the_board . ']] ';
 							}
-							echo '<textarea id="COMMENT" name="COMMENT">' . $board_post_to . '</textarea>';
+							if ( $the_tag && !$this_thread ) {
+								$tag_post_to = '#' . $the_tag . ' ';
+							}
+							echo '<textarea id="COMMENT" name="COMMENT">' . $board_post_to . $tag_post_to . '</textarea>';
 							if ( $this_area != 'messages' ) {
 								echo '<small>[[board]] [[title: my new post!]] ++http://url.tld++ *Example format.* || **new line!** |||| paragraph. #tag</small>';
 							}

@@ -21,43 +21,45 @@ if ( $is_moderator ) {
 	$checkPass = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_password = %s AND post_id = %d", $profilepassword, $this_thread ) );
 }
 if ( count ( $checkPass ) > 0 ) {
-	foreach($checkPass as $EDITTHREAD){
-		$EDITTHREAD->post_comment = str_replace(array("\\r\\n", "\\r", "\\n", "\\"), array ( " || ", " || ", " || ", "" ), $EDITTHREAD->post_comment );
-		if ( $formatting ) {
-			$editComment = $EDITTHREAD->post_comment;
-		} else {
-			$editComment = $EDITTHREAD->post_comment;
+	foreach($checkPass as $edit){
+		$edit->post_comment = str_replace(array("\\r\\n", "\\r", "\\n", "\\"), array ( " || ", " || ", " || ", "" ), $edit->post_comment );
+		
+		if ( preg_match ( '/\[\[title\:(.*)\]\]/', $edit->post_comment, $match ) ) {
+			$edit->post_title   = '[[title:' . $match[1] . ']]';
+			$edit->post_comment = str_replace ( '[[title:' . $match[1] . ']]', '', $edit->post_comment );
+		} elseif ( $edit->post_title ) {
+			$edit->post_title = '[[title: ' . $edit->post_title . ']]';
 		}
-		$editSubject = str_replace ( '\\', '', $EDITTHREAD->post_title );
+		if ( preg_match ( '/\[\[(.*?)\]\]/', $edit->post_comment, $match ) ) {
+			$edit->post_board   = '[[' . $match[1] . ']]';
+			$edit->post_comment = str_replace ( '[[' . $match[1] . ']]', '', $edit->post_comment );
+		} elseif ( $edit->post_board ) {
+			$edit->post_board = '[[' . $edit->post_board . ']]';
+		}
+		if ( preg_match ( '/\+\+(.*)\+\+/', $edit->post_comment, $match ) ) {
+			$edit->post_url    = '++' . $match[1] . '++';
+			$edit->post_comment = str_replace ( '++' . $match[1] . '++', '', $edit->post_comment );
+		} elseif ( $edit->post_url ) {
+			if ( $edit->post_type == 'youtube' ) {
+				$edit->post_url  = '++//youtube.com/watch?v=' . $edit->post_url . '++';
+			} else {
+				$edit->post_url  = '++' . $edit->post_url . '++';
+			}
+		}
+		
+		$editSubject = str_replace ( '\\', '', $edit->post_title );
 		echo '<div id="reply" class="reply">
-			<p class="information">Editing mode</p>
 			<form enctype="multipart/form-data" name="editform" method="post" action="' . $current_page . '?a=post">';
 			wp_nonce_field ( 'editform' );
-			echo '<input type="hidden" name="password" value="' . $EDITTHREAD->post_password . '" />
+			echo '<input type="hidden" name="password" value="' . $edit->post_password . '" />
 			<input type="hidden" value="' . $the_board . '" NAME="board" />
 			<input type="hidden" value="" name="LINK" />
 			<input type="hidden" value="" name="PAGE" />
 			<input type="hidden" value="" name="LOGIN" />
 			<input type="hidden" value="" name="USERNAME" />
 			<input type="hidden" value="' . $this_thread . '" id="editthisthread" name="editthisthread" />
-			<small>[[board]] [[title: my new post!]] ++http://url.tld++ *Example format.* || **new line!** |||| paragraph. #tag</small>
-			<textarea id="COMMENT" name="COMMENT">' . $editComment . '</textarea>';
-			
-			if ( !$EDITTHREAD->post_comment ) {
-				if ( $EDITTHREAD->post_url ) { 
-					echo '<label for="URL">url</label><input type="text" id="URL" maxlength="' . $max_text . '" value="';
-					if ( $EDITTHREAD->post_type == 'youtube' ) {
-						echo '//youtube.com/watch?v=' . $EDITTHREAD->post_url; 
-					} else { 
-						echo $EDITTHREAD->post_url; 
-					} 
-					echo '" name="URL" placeholder=".jpg,gif,png/youtube/http" />';
-				}
-				if ( $imgurid ) { 
-					echo '<label for="img">upload</label><input name="img" class="right" size="35" type="file"/>';
-				}
-			}
-			echo '<input type="submit" value="Edit" name="FORMSUBMIT" id="FORMSUBMIT" />
+			<textarea id="COMMENT" name="COMMENT">' . $edit->post_board . $edit->post_title . $edit->post_url . $edit->post_comment . '</textarea>
+			<input type="submit" value="Edit" name="FORMSUBMIT" id="FORMSUBMIT" />
 			</form>
 		</div>';
 		$correct = 3;

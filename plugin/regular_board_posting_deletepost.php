@@ -26,13 +26,22 @@ if ( $this_area == 'ban' ) {
 		echo '<form class="regularboard_form" method="post" name="form" action="' . $current_page . '?a=ban&t=' . $this_thread . '">';
 		wp_nonce_field('form');
 		echo '<label>Reason for ban</label><input type="text" name="reason" placeholder="Reason for ban">';
+		echo '<label>Length of ban (permanent for permanent)</label><input type="text" name="length" placeholder="Length of ban">';
 		echo '</select><input type="submit" name="confirm" value="Reason" /></form>';
 
 		if ( isset ( $_POST['confirm'] ) ) {
+			if ( $_REQUEST['length'] ) {
+				$ban_length_minutes = sanitize_text_field ( $_REQUEST['length'] );
+			}
 			$get_id      = $wpdb->get_var( "SELECT post_userid FROM $regular_board_posts WHERE post_id = $this_thread" );
+			$get_guest   = $wpdb->get_var( "SELECT post_guestip FROM $regular_board_posts WHERE post_id = $this_thread" );
 			$get_id      = intval ( $get_id );
 			$get_ip      = $wpdb->get_var( "SELECT user_ip FROM $regular_board_users WHERE user_id = $get_id" );
-			$get_ip      = sanitize_text_field ( $get_ip );
+			if ( $get_guest ) {
+				$get_ip      = sanitize_text_field ( $get_guest );
+			} else {
+				$get_ip      = sanitize_text_field ( $get_ip );
+			}
 			
 			$get_content = $wpdb->get_results( "SELECT post_url, post_comment FROM $regular_board_posts WHERE post_id = $this_thread LIMIT 1" );
 			foreach ( $get_content as $posts ) {

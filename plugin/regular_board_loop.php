@@ -22,6 +22,23 @@ if ( count ( $posts ) > 0 ) {
 	$posts->post_date           = $posts->post_date;
 	$posts->post_email          = $posts->post_email;
 	$posts->post_title          = $posts->post_title;
+	if ( !$posts->post_parent ) {
+		$this_title                 = '';
+		if ( $posts->post_title ) {
+			$this_title             = htmlentities ( $posts->post_title );
+		} else {
+			$this_title             = '(Untitled)';
+		}
+	}
+	if ( strtolower ( $posts->post_guestip ) == 'null' ) {
+		$posts->post_guestip = '';
+	}
+	if ( $posts->post_guestip ) {
+		$guest_post             = 1;
+	} else {
+		$guest_post             = 0;
+	}
+	
 	$raw_comment                = str_replace ( array ( '\\n', '\\r', '\\' ), array ( '<br /><br />', '<br /><br />', '' ), $posts->post_comment );
 	$posts->post_comment        = $posts->post_comment;
 	if ( $protocol == 'tags' ) {
@@ -73,7 +90,7 @@ if ( count ( $posts ) > 0 ) {
 			$this_is_protected = 1;
 		}
 	}
-	if ( $posts->post_comment == '[deleted]' && $posts->post_title == '[deleted]' && $posts->post_name == 'null' ) {
+	if ( $posts->post_comment == '[deleted]' && $posts->post_title == '[deleted]' && strtolower ( $posts->post_name ) == 'null' ) {
 		if ( $protocol == 'boards' ) {
 			if ( $posts->post_board ) {
 				$post_count = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_board = '$posts->post_board'" );
@@ -342,21 +359,51 @@ if ( count ( $posts ) > 0 ) {
 					
 					if ( $style == 'tiny' ) {
 						if ( $this_area != 'media' ) {
-							// Load button for non-thread views to load comments or media (if video or image).
-							if ( !$this_thread && $posts->post_comment || $posts->post_url && $posts->post_type == 'youtube' || $posts->post_url && $posts->post_type == 'image' || $posts->post_url && $posts->post_type == 'URL' && strpos ( $posts->post_url, '//imgur.com/a/' ) !== false || $posts->post_url && $posts->post_type == 'URL' && strpos ( $posts->post_url, '//vimeo.com/' ) !== false) { 
-								echo '<i id="' . $posts->post_id . '" ';
-								if ( $posts->post_type == 'youtube' || $posts->post_type == 'image' || $posts->post_url && $posts->post_type == 'URL' && strpos ( $posts->post_url, '//imgur.com/a/' ) !== false || $posts->post_url && $posts->post_type == 'URL' && strpos ( $posts->post_url, '//vimeo.com/' ) !== false) { 
-									echo ' grab="media" ';
-								}
-								if ( $posts->post_comment ) { 
-									echo ' grab="comment" ';
-								}
-								echo 'class="fa fa-plus-square loadme" data="'.$current_page.'?t=';
-									if ( $posts->post_parent == 0 ) { echo $posts->post_id; } 
-									if ( $posts->post_parent > 0 ) { echo $posts->post_parent; }
-								echo '&amp;a=media"></i><i id="' . $posts->post_id . '" class="fa fa-minus-square hideme hidden"></i>'; 
+							$media_present = 0;
+							if ( $posts->post_type == 'youtube' || $posts->post_type == 'image' ) {
+								$media_present = 1;
 							}
-						}
+							if ( $posts->post_url && $posts->post_type == 'URL' && strpos ( $posts->post_url, '//imgur.com/a/' ) !== false ) {								
+								$media_present = 1;
+							}
+							if ( $posts->post_url && $posts->post_type == 'URL' && strpos ( $posts->post_url, '//vimeo.com/' ) !== false ) {
+								$media_present = 1;
+							}
+							if ( $posts->post_comment ) {
+								$check = $posts->post_comment;
+								$check = trim($check);
+								$check = preg_replace( '/\s+/', ' ', $check );
+								if ( preg_match ( '/\[\[title\:(.*)\]\]/', $posts->post_comment, $match ) ) {
+									$check = str_replace ( '[[title:' . $match[1] . ']]', '', $check );
+								}
+								if ( preg_match ( '/\[\[(.*?)\]\]/', $posts->post_comment, $match ) ) {
+									$check = str_replace ( '[[' . $match[1] . ']]', '', $check );
+								}
+								if ( preg_match ( '/\+\+(.*)\+\+/', $posts->post_comment, $match ) ) {
+									$check = str_replace ( '++' . $match[1] . '++', '', $check );
+								}
+							}
+
+							if ( $check ) {
+								$comment_present = 1;
+							}
+							
+							// Load button for non-thread views to load comments or media (if video or image).
+							if ( $media_present || $comment_present && !$posts->post_parent && !$this_thread ) { 
+									echo '<i id="' . $posts->post_id . '" ';
+									if (  $media_present  ) { 
+										echo ' grab="media" ';
+									}
+									if ( $comment_present ) { 
+										echo ' grab="comment" ';
+									}
+									echo 'class="fa fa-plus-square loadme" data="'.$current_page.'?t=';
+										if ( $posts->post_parent == 0 ) { echo $posts->post_id; } 
+										if ( $posts->post_parent > 0 ) { echo $posts->post_parent; }
+									echo '&amp;a=media"></i><i id="' . $posts->post_id . '" class="fa fa-minus-square hideme hidden"></i>'; 
+								}
+							}
+						
 					}
 
 					
@@ -377,12 +424,18 @@ if ( count ( $posts ) > 0 ) {
 					
 					if ( $style == 'tiny' ) {
 						echo ' submitted <span title="' . $posts->post_date . '">' . regular_board_timesince( $posts->post_date ) . '</span> by ';
-						if ( $posts->post_name == 'null' ) {
-							echo 'anonymous'; 
-						}				
-						if ( $posts->post_name != 'null' ) { 
-							echo '<a class="load_link" href="' . $current_page . '?u=' . $posts->post_name . '">' . $posts->post_name . '</a>'; 
+						if ( $guest_post == 1 ) {
+							echo 'guest';
 						}
+						if ( $guest_post == 0 ) {
+							if ( strtolower ( $posts->post_name ) == 'null' ) {
+								echo 'anonymous'; 
+							}
+							if ( strtolower ( $posts->post_name ) != 'null' ) { 
+								echo '<a class="load_link" href="' . $current_page . '?u=' . $posts->post_name . '">' . $posts->post_name . '</a>'; 
+							}
+						}
+						
 						if ( $id_display ) {
 							if ( $posts->post_userid ) {
 								echo '<em> <strong class="user_hash">id ##: ' . $posts->post_userid . '</strong> </em>';
@@ -398,10 +451,10 @@ if ( count ( $posts ) > 0 ) {
 						}						
 					}
 					if ( $style == 'expanded' ) {
-						if ( $posts->post_name == 'null' ) {
+						if ( strtolower ( $posts->post_name ) == 'null' ) {
 							echo 'anonymous'; 
 						}				
-						if ( $posts->post_name != 'null' ) { 
+						if ( strtolower ( $posts->post_name ) != 'null' ) { 
 							echo '<a class="load_link" href="' . $current_page . '?u=' . $posts->post_name . '">' . $posts->post_name . '</a>'; 
 						}
 						if ( $id_display ) {
@@ -432,7 +485,7 @@ if ( count ( $posts ) > 0 ) {
 					echo '<br />';
 					
 					if ( !$posts->post_parent ) {
-						echo '<a href="https://twitter.com/intent/tweet?url=' . $current_page . '?t=' . $this_thread . '&text=' . $posts->post_title . ' + http:' . $current_page . '?t=' . $posts->post_id . '"><i class="fa fa-twitter-square"></i></a> | ';
+						echo '<a href="https://twitter.com/intent/tweet?url=' . $current_page . '?t=' . $this_thread . '&amp;text=' . $posts->post_title . ' + http:' . $current_page . '?t=' . $posts->post_id . '"><i class="fa fa-twitter-square"></i></a> | ';
 					}
 				
 					
@@ -457,29 +510,24 @@ if ( count ( $posts ) > 0 ) {
 						}
 					}
 					
-					if ( $thread_reply_count > 0 ) {
-						echo ' ( <span title="' . $posts->post_last . '">' . regular_board_timesince( $posts->post_last ) . '</span> ) ';
+					if ( !$posts->post_parent ) {
+						if ( $thread_reply_count > 0 ) {
+							echo ' ( <span title="' . $posts->post_last . '">' . regular_board_timesince( $posts->post_last ) . '</span> ) ';
+						}
 					}
-					if ( $tlast ) {
-						echo '<small>(you)</small>';
-					}
-
 					if ( $style == 'tiny' ) {
 						echo ' &mdash; [#' . $posts->post_id . '] <br /> ';
 					}
 					
 					// Post actions ( edit, delete, spam, lock, sticky, ban, move, report )
-					if ( $posts->post_userid ) {
-						if ( $user_exists ) {
-							if ( $profile_name == $posts->post_name && $profilepassword == $posts->post_password || $is_moderator || $is_user_mod || $is_user_janitor ) { 
-								echo ' <a class="load_link" href="' . $current_page . '?a=editpost&amp;t=' . $posts->post_id . '">edit</a> '; 
-							}
+					if ( $user_exists ) {
+						if ( $profile_name == $posts->post_name && $profilepassword == $posts->post_password || $is_moderator || $is_user_mod || $is_user_janitor ) { 
+							echo ' <a class="load_link" href="' . $current_page . '?a=editpost&amp;t=' . $posts->post_id . '">edit</a> '; 
 						}
 					}
 				
 					echo '<span class="post_action">';
-					if ( $user_exists ) {
-							if ( $posts->post_userid ) {
+					if ( $is_moderator || $user_exists ) {
 							if ( $profile_name == $posts->post_name && $profilepassword == $posts->post_password || $is_moderator || $is_user_mod || $is_user_janitor ) { 
 								if ( $posts->post_public == 3 ) {
 									echo '<a data="' . $posts->post_id . '" href="' . $current_page . '?a=undelete&amp;t=' . $posts->post_id . '">undelete</a>
@@ -488,7 +536,8 @@ if ( count ( $posts ) > 0 ) {
 								} else {					
 									echo '<a data="' . $posts->post_id . '" href="' . $current_page . '?a=delete&amp;t=' . $posts->post_id . '">delete</a>';
 								}
-								if ( $is_moderator || $is_user_mod ) {
+
+								if ( $is_moderator == 1 || $is_user_mod ) {
 									if ( $posts->post_public == 666 ) {
 										echo ' <a data="' . $posts->post_id . '" href="' . $current_page . '?a=approve&amp;t=' . $posts->post_id . '">approve</a> ';
 									}
@@ -525,7 +574,6 @@ if ( count ( $posts ) > 0 ) {
 							if ( $profileid != $posts->post_userid ) { 
 								echo ' <a data="' . $posts->post_id . '" href="'. $current_page . '?a=report&amp;t=' . $posts->post_id . '">report</a>'; 
 							}
-						}
 					}
 	
 					// Source button (if post has an attached comment)
@@ -560,7 +608,7 @@ if ( count ( $posts ) > 0 ) {
 					echo '<div class="clear media' . $posts->post_id . '"><iframe src="//player.vimeo.com/video/' . substr ( $posts->post_url, 17 ) . '?title=0&amp;byline=0&amp;portrait=0&amp;color=d6cece" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>'; 
 				} elseif ( $posts->post_type == 'youtube' && $posts->post_url ) { 
 					// ( 03 ) Youtube embedding
-					echo '<div class="clear media' . $posts->post_id . '"><iframe width="420" height="315" src="//www.youtube.com/embed/' . $posts->post_url . '" frameborder="0" allowfullscreen></iframe></div>'; 
+					echo '<div class="clear media' . $posts->post_id . '"><iframe width="600" height="338" src="//www.youtube.com/embed/' . $posts->post_url . '" frameborder="0" allowfullscreen></iframe></div>'; 
 				} elseif ( $posts->post_type == 'image' && $posts->post_url ) { 
 					// ( 04 ) Image embedding
 					echo '<div class="clear media' . $posts->post_id . '"><a href="' . $posts->post_url . '"><img class="';
@@ -573,15 +621,11 @@ if ( count ( $posts ) > 0 ) {
 				}
 			}
 			
-			if ( $this_thread ) { 
+			if ( $this_thread || $this_area == 'history' || $this_area == 'replies' || $this_user ) { 
 
-				if ( $posts->post_comment && $this_thread ) {
+				if ( $posts->post_comment && $this_thread || $this_area == 'history' || $this_area == 'replies' || $this_user ) {
 					// Comment
 
-					if ( !$this_thread ) {
-						$posts->post_comment = substr ( $posts->post_comment, 0, 500 );
-					}
-					
 					if ( $auto_url ) {
 						$urls = wp_extract_urls ( strip_tags ( sanitize_text_field ( $posts->post_comment ) ) );
 						$n    = 0;
@@ -671,15 +715,17 @@ if ( count ( $posts ) > 0 ) {
 			$post_parent = $posts->post_parent;
 			$post_id     = $posts->post_id;
 			
-			if ( count ( $threaded ) > 0 ) {
-				foreach ( $threaded as $posts ) {
-					if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
-						include ( ABSPATH . '/regular_board_child/regular_board_loop.php' );
-					} else {
-						include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
+			if ( $this_thread ) {
+				if ( count ( $threaded ) > 0 ) {
+					foreach ( $threaded as $posts ) {
+						if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
+							include ( ABSPATH . '/regular_board_child/regular_board_loop.php' );
+						} else {
+							include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
+						}
 					}
-				}
-			}		
+				}		
+			}
 		
 		echo '</div>';
 		

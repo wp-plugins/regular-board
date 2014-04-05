@@ -105,4 +105,18 @@ if ( $board_short ) {
 	$board_current = '<div class="board_header"><a href="' . $current_page . '?b=' . $board_short . '">' . $board_short . $board_name_current . '</a></div>';
 }
 
-$navigation   =  '<div class="navi' . $board_present_class. '">' . $board_current . $topics_link . $gallery_link . $video_link . $stuff_link . $history_link . $reports_link . $deleted_link . $queue_link . $logout_link . $options_link . '</div>';
+$navigation   =  '<div class="navi' . $board_present_class. '">'
+	. $board_current 
+	. $topics_link 
+	. $gallery_link 
+	. $video_link 
+	. '<span class="nav-right">'
+	. $history_link 
+	. $stuff_link 
+	. $reports_link 
+	. $deleted_link 
+	. $queue_link 
+	. $options_link 
+	. $logout_link 
+	. '</span>'
+	. '</div>';

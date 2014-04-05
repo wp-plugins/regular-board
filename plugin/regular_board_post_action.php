@@ -13,6 +13,25 @@ if ( !defined ( 'regular_board_plugin' ) || isset ( $_POST['FORMSUBMIT']) && !$_
 	die();
 }
 
+if ($user_exists ) {
+	if ( $is_moderator ) {
+		$mod_code = 1;
+	} elseif ( $is_user_mod ) {
+		$mod_code = 2;
+	} elseif ( $is_user ) {
+		$mod_code = 0;
+	} else {
+		$mod_code = 0;
+	}
+	$poster_ip = '';
+} else {
+	$mod_code     = 0;
+	$post_public  = 666;
+	$post_email   = 'heaven';
+	$profile_name = 'null';
+	$poster_ip    = $user_ip;
+}
+
 if ( $userisbanned ) {
 
 } else {
@@ -270,8 +289,9 @@ if ( $userisbanned ) {
 								// If URLs are enabled, prepare the entered URL
 
 
-									if ( preg_match ( '/\+\+(.*)\+\+/', $check_comment, $match ) ) {
+									if ( preg_match ( '/\+\+(.*?)\+\+/', $check_comment, $match ) ) {
 										if ( $match[1] ) {
+											$match[1] = sanitize_text_field ( $match[1] );
 											$clean_url = $match[1];
 										}
 									} elseif ( $URL ) {
@@ -292,6 +312,7 @@ if ( $userisbanned ) {
 										$path_info = pathinfo ( $clean_url );
 										if ( preg_match ('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $clean_url, $match ) ) {
 											// Youtube
+											$match[1] = sanitize_text_field ( $match[1] );
 											$video_id  = $match[1];
 											$post_type = 'youtube';
 											$post_url  = $video_id;
@@ -328,21 +349,18 @@ if ( $userisbanned ) {
 								} else {
 									$post_comment = '';
 								}
-								
 								// Subject
 								if ( $_REQUEST['SUBJECT'] ) {
 									$post_subject = substr ( $_REQUEST['SUBJECT'], 0, $max_text );
 								} else {
 									$post_subject = '';
 								}
-								
 								// Password (if profile password is not present, a random password will be generated for this post
 								if ( $profilepassword ) {
 									$post_password = $profilepassword;
 								} else {
 									$post_password = wp_hash ( $random_password );
 								}
-								
 								// Previously, we WERE dismissing duplicates if editing
 								// but if we are editing, then it shouldn't be duplicate content, anyway
 								// and disabling duplicate check just allowed for abuse
@@ -355,34 +373,18 @@ if ( $userisbanned ) {
 								if ( $post_comment && $post_url ) {
 									$get_duplicate = $wpdb->get_row( $wpdb->prepare( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE (post_comment = %s AND post_url = %s)", $post_comment, $post_url ) );
 								}
-								
 								$duplicate_count = 0;
 								if ( !isset ( $_REQUEST['password'] ) ) {
 									if ( count ( $get_duplicate ) > 0 ) {
 										$duplicate_count++;
 									}
 								}
-
-								
 								if ( $duplicate_count == 0 ) {
 									// If posting options are enabled
-									if ( $_REQUEST['EMAIL'] == 'roll' ) {
-										$roll       = explode ( ',', $roll );
-										$post_email = wp_rand ( $roll[0], $roll[1] );
-									} elseif ( $_REQUEST['EMAIL'] == strtolower ( 'heaven' ) ) {
-										$post_email   = 'heaven';
-										$profile_name = 'null';
-									} elseif ( $_REQUEST['EMAIL'] == strtolower ( 'sage' ) ) {
-										$post_email   = 'sage';
-									} else {
-										$post_email       = '';
-									}
-									
 									if ( $profileheaven ) {
 										$post_email   = 'heaven';
 										$profile_name = 'null';
 									}
-									
 									$sage_this        = '';
 									if ( strpos ( $check_comment, '!sage' ) !== false ) {
 										$sage_this    = 1;
@@ -391,14 +393,19 @@ if ( $userisbanned ) {
 										$post_email   = 'heaven';
 										$profile_name = 'null';
 									}
-									if ( preg_match ( '/\[\[title\:(.*)\]\]/', $check_comment, $match ) ) {
+									if ( preg_match ( '/\[\[title\:(.*?)\]\]/', $check_comment, $match ) ) {
+										$match_count++;
 										if ( $match[1] ) {
+											$match[1] = sanitize_text_field ( $match[1] );
 											$post_subject = $match[1];
+										} else {
+											$match[$match_count] = '';
 										}
 									}
 									if ( $post_parent == 0 ) {
 										if ( preg_match ( '/\[\[(.*?)\]\]/', $check_comment, $match ) ) {
 											if ( $match[1] ) {
+												$match[1] = sanitize_text_field ( $match[1] );
 												$checkboard = $wpdb->get_results ( "SELECT board_shortname FROM $regular_board_boards WHERE board_shortname = '$match[1]' " );
 												if ( count ( $checkboard ) > 0 ) {
 													$the_board    = esc_sql ( $match[1] );
@@ -408,24 +415,12 @@ if ( $userisbanned ) {
 												}
 											}
 										}
-									} else {
-										if ( preg_match ( '/\^(.*?)\^/', $check_comment, $parent_comment ) ) {
-											if ( $parent_comment[1] ) {
-												$post_comment_parent = intval ( $parent_comment[1] );
-											} 
-										}
 									}
-									
-									
-									if ( $is_moderator ) {
-										$mod_code = 1;
-									} elseif ( $is_user_mod ) {
-										$mod_code = 2;
-									} elseif ( $is_user ) {
-										$mod_code = 0;
-									} else {
-										$mod_code = 0;
-									}
+									if ( preg_match ( '/\^(.*?)\^/', $check_comment, $parent_comment ) ) {
+										if ( $parent_comment[1] ) {
+											$post_comment_parent = intval ( $parent_comment[1] );
+										} 
+									}									
 									
 									// Password was sent with form, we're editing something
 									if ( isset ( $_REQUEST['password'] ) ) {
@@ -452,10 +447,11 @@ if ( $userisbanned ) {
 													$wpdb->update (
 														$regular_board_posts,
 														array ( 
-															'post_title'   => $post_subject,
-															'post_comment' => $post_comment,
-															'post_url'     => $post_url,
-															'post_type'    => $post_type
+															'post_title'          => $post_subject,
+															'post_comment'        => $post_comment,
+															'post_url'            => $post_url,
+															'post_type'           => $post_type,
+															'post_comment_parent' => $post_comment_parent,
 														),
 														array ( 
 															'post_id'      => $check_id
@@ -465,6 +461,7 @@ if ( $userisbanned ) {
 															'%s', 
 															'%s', 
 															'%s', 
+															'%d',
 															'%d'
 														)
 													);
@@ -518,7 +515,8 @@ if ( $userisbanned ) {
 													post_public, 
 													post_report, 
 													post_reportcount,
-													post_reply_count
+													post_reply_count,
+													post_guestip
 												)
 												VALUES ( 
 													%d, 
@@ -541,7 +539,8 @@ if ( $userisbanned ) {
 													%d, 
 													%s, 
 													%d,
-													%d
+													%d,
+													%s
 												)",
 												'', 
 												$post_parent, 
@@ -563,7 +562,8 @@ if ( $userisbanned ) {
 												$post_public, 
 												'', 
 												0,
-												0
+												0,
+												$poster_ip
 											)
 										);
 										

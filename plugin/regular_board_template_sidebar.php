@@ -20,7 +20,36 @@ if ( $board_banner != '' ) {
 }
 echo $banner;
 
+echo '<div class="piece_form"><div class="form_form">';
+if ( $this_area == 'editpost' && $user_exists && $this_thread ) { 
+	include ( plugin_dir_path(__FILE__) . '/regular_board_post_edit.php'    ); 
+} else {
+	if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_post_form.php' ) ) {
+		include ( ABSPATH . '/regular_board_child/regular_board_post_form.php' );
+	} else {
+		include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
+	}	
+}
+echo '</div>';
+						if ( $this_thread && $threadexists == 1 ) {
+							echo '<p class="nav_tools">';
+							if ( $thisboard ) {
+								echo '<a class="load_link" href="' . $current_page . '">Return</a>';
+							} elseif ( $the_board ) {
+								echo '<a class="load_link" href="' . $current_page . '?b=' . $the_board . '">Return</a>';
+							} elseif ( $thread_board ) {
+								echo '<a class="load_link" href="' . $current_page . '?b=' . $thread_board . '">Return</a>';
+							} else {
+								echo '<a class="load_link" href="' . $current_page . '">Return</a>';
+							}								
+							echo '<a href="#top">Top</a><a class="reload" xdata="' . $this_thread .'" data="' . $current_page . '?t=' . $this_thread . '">Refresh thread</a>
+							</p>';
+						}
+echo '</div>';
+
+
 if ( $this_area == 'history' && $user_exists || $this_user ) {
+	echo '<div class="piece">';
 	echo '<strong>';
 		if ( $the_profile_name ) { 
 			echo $the_profile_name;
@@ -30,64 +59,61 @@ if ( $this_area == 'history' && $user_exists || $this_user ) {
 	echo '</strong>';
 	echo $the_profile_avatar . $the_profile_slogan . $the_profile_details . $connect_with;
 	echo '<hr />';
-	
-			if ( count ( $my_friends ) > 0 ) {
-				echo 'Connections: ';
-				foreach ( $my_friends as $friends ) {
-					if ( $friends->friends_connector != $the_profile_name ) {
-						$friend_name = sanitize_text_field ( $friends->friends_connector );
-					}
-					if ( $friends->friends_connectee != $the_profile_name ) {
-						$friend_name = sanitize_text_field ( $friends->friends_connectee );
-					}
-					echo ' <a class="load_link" href="' . $this_page . '?u=' . $friend_name . '">' . $friend_name . '</a> ';
-				}
-				echo '<hr />';
+	if ( count ( $my_friends ) > 0 ) {
+		echo 'Connections: ';
+		foreach ( $my_friends as $friends ) {
+			if ( $friends->friends_connector != $the_profile_name ) {
+				$friend_name = sanitize_text_field ( $friends->friends_connector );
 			}
-			
-			$check_friend = 0;
-			$check_friend = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_friends WHERE ( friends_connector = '$profile_name' AND friends_connectee = '$the_profile_name' OR friends_connector = '$the_profile_name' AND friends_connectee = '$profile_name')" );
-				if ( $user_exists) {
-				if ( $the_profile_name ) {
-					if ( $profile_name != $the_profile_name ) {
-						if ( $check_friend == 0 ) {
-							if ( strtolower ( $_REQUEST['request_id'] ) != strtolower ( $profile_name ) ) {
-								if ( isset ( $_POST['request_friendship'] ) ) {
-									$wpdb->query ( 
-										$wpdb->prepare ( 
-											"INSERT INTO $regular_board_friends 
-											( 
-												friends_id, 
-												friends_connector, 
-												friends_connectee, 
-												friends_mutual
-											) VALUES ( 
-												%d,
-												%s,
-												%s,
-												%d
-											)", 
-											'', 
-											$profile_name,
-											$the_profile_name,
-											0
-										) 
-									);
-								}
-							}
-							if ( $the_profile_name ) {
-								$connect_with = '
-								<form method="post" name="friend_request" class="friendship" action="' . $current_page . '?u=' . $the_profile_name . '">'
-								. wp_nonce_field( 'friend_request' ) . 
-								'<section><input type="submit" name="request_friendship" id="request_friendship" value="Connect with this user" /></section>
-								</form>';
-							}
+			if ( $friends->friends_connectee != $the_profile_name ) {
+				$friend_name = sanitize_text_field ( $friends->friends_connectee );
+			}
+			echo ' <a class="load_link" href="' . $this_page . '?u=' . $friend_name . '">' . $friend_name . '</a> ';
+		}
+		echo '<hr />';
+	}
+	$check_friend = 0;
+	$check_friend = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_friends WHERE ( friends_connector = '$profile_name' AND friends_connectee = '$the_profile_name' OR friends_connector = '$the_profile_name' AND friends_connectee = '$profile_name')" );
+	if ( $user_exists) {
+		if ( $the_profile_name ) {
+			if ( $profile_name != $the_profile_name ) {
+				if ( $check_friend == 0 ) {
+					if ( strtolower ( $_REQUEST['request_id'] ) != strtolower ( $profile_name ) ) {
+						if ( isset ( $_POST['request_friendship'] ) ) {
+							$wpdb->query ( 
+								$wpdb->prepare ( 
+									"INSERT INTO $regular_board_friends 
+									( 
+										friends_id, 
+										friends_connector, 
+										friends_connectee, 
+										friends_mutual
+									) VALUES ( 
+										%d,
+										%s,
+										%s,
+										%d
+									)", 
+									'', 
+									$profile_name,
+									$the_profile_name,
+									0
+								) 
+							);
 						}
 					}
+					if ( $the_profile_name ) {
+						$connect_with = '
+						<form method="post" name="friend_request" class="friendship" action="' . $current_page . '?u=' . $the_profile_name . '">'
+						. wp_nonce_field( 'friend_request' ) . 
+						'<section><input type="submit" name="request_friendship" id="request_friendship" value="Connect with this user" /></section>
+						</form>';
+					}
 				}
 			}
-
-	
+		}
+	}
+	echo '</div>';
 }
 
 $url_data = '';
@@ -95,16 +121,6 @@ if     ( $the_board && !$this_thread  ) { $url_data = $current_page . '?b=' . $t
 elseif ( $this_thread ) { $url_data = $current_page . '?t=' . $this_thread; }
 elseif ( $this_area ) { $url_data = $current_page . '?a=' . $this_area; }
 else   {                  $url_data = $current_page; }
-
-echo '<div class="piece"><div class="form_form">';
-if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_post_form.php' ) ) {
-	include ( ABSPATH . '/regular_board_child/regular_board_post_form.php' );
-} else {
-	include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
-}	
-echo '</div></div>';
-
-
 if ( $user_exists ) {
 	if ( isset ( $_POST['daymode_activate'] ) ) {
 		$wpdb->query ( "UPDATE $regular_board_users SET user_colormode = 1 WHERE user_id = $profileid" );

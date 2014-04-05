@@ -123,6 +123,7 @@ function regular_board_installation(){
 		post_report TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
 		post_reportcount BIGINT(20) NOT NULL ,
 		post_reply_count BIGINT(20) NOT NULL ,
+		post_guestip TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
 		PRIMARY KEY  (post_id)
 	);";
 	$users = "CREATE TABLE $regular_board_users(
