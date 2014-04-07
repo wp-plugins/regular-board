@@ -46,6 +46,14 @@ if ( count ( $checkPass ) > 0 ) {
 				$edit->post_url  = '++' . $edit->post_url . '++';
 			}
 		}
+		$post_comment_parent = '';
+		if ( preg_match ( '/\^(.*)\^/', $edit->post_comment, $match ) ) {
+			$post_comment_parent = '';
+		} else {
+			if ( $edit->post_comment_parent ) {
+				$post_comment_parent = '^' . $edit->post_comment_parent . '^ ';
+			}
+		}
 		
 		$editSubject = str_replace ( '\\', '', $edit->post_title );
 		echo '<div id="reply" class="reply">
@@ -58,7 +66,7 @@ if ( count ( $checkPass ) > 0 ) {
 			<input type="hidden" value="" name="LOGIN" />
 			<input type="hidden" value="" name="USERNAME" />
 			<input type="hidden" value="' . $this_thread . '" id="editthisthread" name="editthisthread" />
-			<textarea id="COMMENT" name="COMMENT">' . $edit->post_board . $edit->post_title . $edit->post_url . $edit->post_comment . '</textarea>
+			<textarea id="COMMENT" name="COMMENT">' . $post_comment_parent . $edit->post_board . $edit->post_title . $edit->post_url . $edit->post_comment . '</textarea>
 			<input type="submit" value="Edit" name="FORMSUBMIT" id="FORMSUBMIT" />
 			</form>
 		</div>';

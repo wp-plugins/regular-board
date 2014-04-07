@@ -120,6 +120,12 @@ if ( $search_enabled && $search ) {
 		} else {
 			$countParentReplies = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_parent = %d", $this_thread ) );
 		}
+		$this_title = $wpdb->get_var ( "SELECT post_title FROM $regular_board_posts WHERE post_id = $this_thread LIMIT 1" );
+		if ( $this_title ) {
+			$this_title = htmlentities ( $this_title );
+		} else {
+			$this_title = '(Untitled)';
+		}
 	}
 	if ( $this_area == 'history' ) {
 		$use_this++;

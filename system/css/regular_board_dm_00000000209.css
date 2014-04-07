@@ -1002,7 +1002,7 @@
  .boardAll .thread .thread {
 	margin: 5px;
  }
- .boardAll .thread:hover {
+ .boardAll #omitted .thread:hover {
 	background-color: #f6f6f6!important;
  }
   
@@ -1033,7 +1033,7 @@
 	display: block;
 	margin: 0 0 5px 0;
 	padding: 5px;
-	width: 100%;
+	width: 98%;
  }
  .boardAll #omitted {
 	background-color: #eef4ff;
@@ -1044,9 +1044,10 @@
 	width: 100%; 
  }
  .boardAll #omitted .thread {
-	margin: 5px 0;
+	margin: 5px auto 10px;
 	color: rgba(0,0,0,.8);
-	margin: 5px 0;
+	border-left: 1px solid #000;
+	padding: 5px;
  }
  /**
   *

@@ -52,7 +52,7 @@ if ( $userisbanned ) {
 		} else {
 			if ( $check_friends > 0 ) {
 				$message_subject = sanitize_text_field ( $_REQUEST['SUBJECT'] );
-				$message_content = esc_sql ( wp_strip_all_tags ( wpautop ( $_REQUEST['COMMENT'] ) ) );
+				$message_content = esc_sql ( wp_strip_all_tags ( $_REQUEST['COMMENT'] ) );
 				$wpdb->query (
 					$wpdb->prepare (
 						"INSERT INTO $regular_board_messages 
@@ -98,9 +98,8 @@ if ( $userisbanned ) {
 		$_REQUEST['SUBJECT'] = sanitize_text_field ( $_REQUEST['SUBJECT'] );
 		$_REQUEST['URL']     = sanitize_text_field ( $_REQUEST['URL'] );
 		$_REQUEST['EMAIL']   = sanitize_text_field ( $_REQUEST['EMAIL'] );
-		$_REQUEST['COMMENT'] = sanitize_text_field ( $_REQUEST['COMMENT'] );
+		$_REQUEST['COMMENT'] = esc_sql ( str_replace ( array ( '\\n', '\\r', '\\r\\n' ), '||', $_REQUEST['COMMENT'] ) );
 		$check_comment       = $_REQUEST['COMMENT'];
-
 
 		if ( !$_REQUEST['board'] ) {
 			$the_board = '';
@@ -342,10 +341,33 @@ if ( $userisbanned ) {
 										$post_url  = '';
 									}
 								
+								if ( !$enable_url && !$post_parent || !$enable_rep && $post_parent ) {
+									$post_type = 'post';
+									$post_url  = '';
+								}
+								
 								
 								// Comment
 								if ( $_REQUEST['COMMENT'] ) {
 									$post_comment = substr ( $_REQUEST['COMMENT'], 0, $max_body );
+									
+									$test_comment       = str_replace ( array('!heaven','!sage'), '', $post_comment );
+									if ( preg_match ( '#\+\+(.*)\+\+#', $post_comment, $match ) ) {
+										$test_comment    = str_replace ( '++' . $match[1] . '++', '', $post_comment );
+									}
+									if ( preg_match ( '#\[\[title:(.*)\]\]#', $post_comment, $match ) ) {
+										$test_comment    = str_replace ( '[[title:' . $match[1] . ']]', '', $post_comment );
+									}
+									if ( preg_match ( '#\[\[(.*?)\]\]#', $post_comment, $match ) ) {
+										$test_comment    = str_replace ( '[[' . $match[1] . ']]', '', $post_comment );
+									}
+									if ( preg_match ( '#\^(.*?)\^#', $post_comment, $match ) ) {
+										$test_comment    = str_replace ( '^' . $match[1] . '^', '', $post_comment );
+									}
+									if ( !$test_comment ) {
+										$post_comment = '';
+									}
+									
 								} else {
 									$post_comment = '';
 								}
@@ -416,10 +438,17 @@ if ( $userisbanned ) {
 											}
 										}
 									}
-									if ( preg_match ( '/\^(.*?)\^/', $check_comment, $parent_comment ) ) {
-										if ( $parent_comment[1] ) {
-											$post_comment_parent = intval ( $parent_comment[1] );
-										} 
+									if ( $_REQUEST['COMMENTPARENT'] ) {
+										$post_comment_parent = sanitize_text_field ( intval ( $_REQUEST['COMMENTPARENT'] ) );
+									} else {
+										if ( preg_match ( '/\^(.*?)\^/', $check_comment, $parent_comment ) ) {
+											if ( $parent_comment[1] ) {
+												$post_comment_parent = intval ( $parent_comment[1] );
+											} 
+										}									
+									}
+									if ( $post_parent == $post_comment_parent ) {
+										$post_comment_parent = 0;
 									}									
 									
 									// Password was sent with form, we're editing something
@@ -447,6 +476,7 @@ if ( $userisbanned ) {
 													$wpdb->update (
 														$regular_board_posts,
 														array ( 
+															'post_name'           => $profile_name,
 															'post_title'          => $post_subject,
 															'post_comment'        => $post_comment,
 															'post_url'            => $post_url,
@@ -457,6 +487,7 @@ if ( $userisbanned ) {
 															'post_id'      => $check_id
 														),
 														array ( 
+															'%s',
 															'%s', 
 															'%s', 
 															'%s', 
@@ -650,7 +681,7 @@ if ( $userisbanned ) {
 									$wpdb->delete ( 
 										$regular_board_posts, 
 										array(
-											'post_comment' => '', 'post_type' => '', 'post_url' =>''
+											'post_comment' => ''
 										),
 										array(
 											'%s'

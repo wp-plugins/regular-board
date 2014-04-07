@@ -16,16 +16,33 @@ function regular_board_head ( $atts ) {
 			$post, 
 			$wpdb, 
 			$regular_board_posts_select;
-	
+
+	$noindexboards        = '';
 	$content              = $post->post_content;
 	$regular_board_posts  = $wpdb->prefix . 'regular_board_posts';
-	$regular_board_boards = $wpdb->prefix . 'regular_board_boards';
+	$regular_board_boards = $wpdb->prefix . 'regular_board_boards';			
+	
+	if ( isset ( $_GET['b'] ) ) {
+		$the_board         = sanitize_text_field ( $_GET['b'] );
+	}	
+	if ( isset ( $_GET['t'] ) ) {
+		$this_thread      = intval ( $_GET['t'] );
+		if ( $this_thread ) {
+			$the_board        = $wpdb->get_var ( "SELECT post_board FROM $regular_board_posts WHERE post_id = $this_thread LIMIT 1" );
+		}
+	}
 	
 	if ( has_shortcode ( $content, 'regular_board' ) ) {
 		include ( plugin_dir_path(__FILE__) . '/regular_board_meta.php' );
 		if ( get_option ( 'regular_board_robots' ) ) {
 			echo '<meta name="robots" content="noindex,nofollow"/>';
 		}
+		if ( $the_board ) {
+			$noindexboards        = explode   ( ',', get_option ( 'regular_board_noindexboards' ) );
+			if ( in_array ( $the_board, $noindexboards ) ) {
+				echo '<meta name="robots" content="noindex,nofollow"/>';
+			}
+		}		
 	}
 }
 
@@ -102,7 +119,7 @@ function regular_board_shortcode ( $content = null ) {
 		echo '<div class="right-half">';
 		
 		if ( $nothing_is_here ) {
-			echo '<div class="omitted">';
+			echo '<div id="threadthread">';
 			if ( $getposts ) {
 				echo '<div class="thread_container">';
 					if ( count ( $getposts ) > 0 ) {
@@ -350,22 +367,22 @@ function regular_board_shortcode ( $content = null ) {
   ** Page title
   ** (1) Set the title of the page using javascript
   **/
-  if ( $the_board ) { 
-	$page_title = $the_board; 
-  }
-  if ( $the_tag ) { 
-	$page_title = $the_tag; 
-  }
-  if ( $this_area ) { 
-	$page_title = $this_area; 
-  }
-  if ( $this_user ) { 
-	$page_title = $this_user; 
-  }
   if ( $this_thread ) { 
 	$page_title = $this_title; 
   }
-  if ( $post_title ) {
+  elseif ( $the_board ) { 
+	$page_title = $the_board; 
+  }
+  elseif ( $the_tag ) { 
+	$page_title = $the_tag; 
+  }
+  elseif ( $this_area ) { 
+	$page_title = $this_area; 
+  }
+  elseif ( $this_user ) { 
+	$page_title = $this_user; 
+  }
+  elseif ( $post_title ) {
 	$page_title = $post_title;
   }
   if ( $page_title ) {

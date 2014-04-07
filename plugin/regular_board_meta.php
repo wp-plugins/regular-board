@@ -64,6 +64,7 @@ if ( $query ) {
 				if ( !$title ) {
 					$title   = 'No subject';
 				}
+
 				$published   = $meta->post_date;
 				$last        = $meta->post_last;
 				$type        = $meta->post_type;

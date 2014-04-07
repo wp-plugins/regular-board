@@ -14,6 +14,7 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
 
 function regular_board_installation(){
+	add_option ( 'regular_board_noindexboards' );
 	add_option ( 'regular_board_usercreate', 0 );
 	add_option ( 'regular_board_useboards', 'boards' );
 	add_option ( 'regular_board_totaluserallowed' );

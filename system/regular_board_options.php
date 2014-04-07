@@ -496,6 +496,7 @@ if( current_user_can( 'manage_options' )) {
 							update_option ( 'regular_board_accountsper', str_replace ( '\\', '', $_REQUEST['accountsper'] ) );
 							update_option ( 'regular_board_totaluserallowed', str_replace ( '\\', '', $_REQUEST['accountstotal'] ) );
 							update_option ( 'regular_board_useboards', str_replace ( '\\', '', $_REQUEST['useboards'] ) );
+							update_option ( 'regular_board_noindexboards', str_replace ( '\\', '', $_REQUEST['noindexboards'] ) );
 						}
 						function regular_board_useboards_option() {
 							echo '<option value="tags"'; if ( get_option ( 'regular_board_useboards' ) == 'tags' ) { echo ' selected="selected"'; } echo '>tags</option>';
@@ -605,6 +606,7 @@ if( current_user_can( 'manage_options' )) {
 								<section><label>21:: URL to your <em>custom</em> stylesheet (<strong>optional</strong>):</label><input type="text" id="cssurl" name="cssurl" value="' . get_option ( 'regular_board_css_url' ) . '" /></section>
 								<section><label>22:: Maximum amount of links allowed:</label><input type="text" name="maxlinks" id="maxlinks" value="' . get_option ( 'regular_board_maxlinks' ) . '" /></section>
 								<section><label>23:: Enable no index, no follow:</label><select name="robots" id="robots">'; regular_board_robots_option(); echo '</select></section>
+								<section><label>23:: Enable no index, no follow for specific boards (comma separated list of board short names):</label><textarea name="noindexboards" id="noindexboards">' . get_option ( 'regular_board_noindexboards' ) . '</textarea></section>
 								<section><label>24:: Enable Lazy Load:</label><select name="lazyload" id="lazyload">'; regular_board_lazyload_option(); echo '</select></section>
 								<section><label>25:: Category id for board announcements:</label><input type="text" id="announcements" name="announcements" value="' . get_option ( 'regular_board_announcements' ) . '" /></section>
 								<section><label>26:: Hide announcements from the front page of the blog:</label><select name="hideannouncements" id="hideannouncements">'; regular_board_hideannouncements_option(); echo '</select></section>

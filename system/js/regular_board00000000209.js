@@ -38,7 +38,7 @@ $(window).scroll(function(){
 		$(document).on('click','.reload',function(){
 			var regbo_relurl = $(this).attr('data');
 			var regbo_relid  = $(this).attr('xdata');
-			$('.omitted' + regbo_relid + '').load(regbo_relurl + ' .omitted'+ regbo_relid + ' > *');
+			$('#thread' + regbo_relid + '').load(regbo_relurl + ' #thread'+ regbo_relid + ' > *');
 		});
 		$(document).on('click','.rb_yt',function(e){
 			e.preventDefault();
@@ -101,11 +101,12 @@ $(window).scroll(function(){
 		
 		
 		$('.regularboard_form').ajaxForm(function() { 
-			var data = $('.regularboard_form').attr('data');
-			var xdata = $('.regularboard_form').attr('xdata'); 
-			$('.' + xdata + '').load(data + ' .' + xdata + '');
+			var data   = $('.regularboard_form').attr('data');
+			var xdata  = $('.regularboard_form').attr('xdata'); 
+			var defdat = $('.regularboard_form').attr('defdat');
+			$('#thread' + xdata + '').load(data + ' #thread'+ xdata + ' > *');
 			history.pushState('data', '', data);
-			$('.regularboard_form #COMMENT').val('');
+			$('.regularboard_form #COMMENT').val('' + defdat + '');
 		}); 
 	
 		

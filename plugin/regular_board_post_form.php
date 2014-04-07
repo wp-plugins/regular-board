@@ -99,25 +99,33 @@ if ( $userisbanned ) {
 							elseif ( $this_thread ) { $data = $current_page . '?t=' . $this_thread; }
 							else   {                  $data = $current_page; }
 							if ( $this_thread ) {
-								$current_page_class = 'omitted' . $this_thread;
+								$current_page_class = $this_thread;
 							}
 							if ( $the_board && !$this_thread ) {
-								$current_page_class = 'omitted' . htmlentities ( $the_board );
+								$current_page_class = htmlentities ( $the_board );
 							}
 							if ( $this_area && !$the_board && !$this_thread ) {
-								$current_page_class = 'omitted' . $this_area;
+								$current_page_class = $this_area;
 							}
 							if ( $nothing_is_here ) {
-								$current_page_class = 'omitted';
-							}
-							echo '<form enctype="multipart/form-data" xdata="' . $current_page_class . '" data="' . $data . '" name="regularboard" class="regularboard_form" method="post" action="' . $current_page . '?a=post">';
-							wp_nonce_field('regularboard');
-							if ( $protocol == 'boards' && $the_board ) {
-								echo '<input type="hidden" value="' . $the_board . '" NAME="board" />';
+								$current_page_class = 'thread';
 							}
 							
+							if ( $the_board && !$this_thread ) {
+								$default_data = '[[' . $the_board . ']]';
+							}
+							if ( $this_thread ) {
+								$default_data = '';
+							}
+							
+							echo '<form enctype="multipart/form-data" defdat="' . $default_data . '" xdata="' . $current_page_class . '" data="' . $data . '" name="regularboard" class="regularboard_form" method="post" action="' . $current_page . '?a=post">';
+							wp_nonce_field('regularboard');
+							
 							if ( $this_thread ) { 
-								echo '<input type="hidden" name="PARENT" value="' . $this_thread . '" />';
+								echo '<input type="hidden" name="PARENT" value="' . $reply_to . '" />';
+								if ( $comment_parent ) {
+									echo '<input type="hidden" name="COMMENTPARENT" value="' . $this_thread . '" />';
+								}
 							}
 							echo '<input type="hidden" value="" name="LINK" />
 							<input type="hidden" value="" name="PAGE" />
@@ -163,9 +171,15 @@ if ( $userisbanned ) {
 							if ( $the_tag && !$this_thread ) {
 								$tag_post_to = '#' . $the_tag . ' ';
 							}
-							echo '<textarea id="COMMENT" name="COMMENT">' . $board_post_to . $tag_post_to . '</textarea>';
+							echo '<textarea  id="COMMENT" name="COMMENT" maxlength="' . $max_body . '">' . $board_post_to . $tag_post_to . '</textarea>';
 							if ( $this_area != 'messages' ) {
-								echo '<small>[[board]] [[title: my new post!]] ++http://url.tld++ *Example format.* || **new line!** |||| paragraph. #tag</small>';
+								echo '<small>[[board]] [[title: my new post!]] ';
+								
+								if ( $enable_rep && $this_thread || $enable_url && !$this_thread ) {
+									echo '++http://url.tld++ ';
+								} 
+								
+								echo '*Example format.* || **new line!** |||| paragraph. #tag</small>';
 							}
 							echo '<input type="submit" data="' . $current_page . '?a=post" data="' . $current_page . '?a=post" name="FORMSUBMIT" id="FORMSUBMIT" value="';
 							if ( $this_thread ) {
