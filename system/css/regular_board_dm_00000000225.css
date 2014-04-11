@@ -15,15 +15,36 @@
   * Containers
   * Responsive
   */
+  
+
+
+ .boardAll #COMMENT {
+	float: left !important;
+	width: 100%;
+	height: 142px !important;
+ }
+
+  
+  
  /**
   * Typography
   *
   * Typographical specifications
   */
-  .boardAll span.frontinfo,
+ .boardAll span.frontinfo,
  .boardAll h1{
 	clear: none !important;
  }
+.boardAll .nav_tools {
+	color: #000;
+	background-color: #fff;
+	margin: 5px 0 5px 0 !important;
+	padding: 5px;
+	position: relative;
+	width: 100%; 
+	text-align: center;
+	z-index: 99;
+ } 
  .boardAll .top_nav {
 	background-color: rgba(0,0,0,.8);
 	border-bottom: 1px solid rgba(0,0,0,.1);
@@ -311,11 +332,12 @@
  .boardAll .banner {
 	display: block;
 	height: 100px;
-	margin: 5px 0 -8px -8px;
+	margin: 5px auto;
 	padding: 0;
 	position: relative;
-	width: 300px;
+	width: 100%;
 	z-index: 1;
+	overflow: hidden;
  }
  .boardAll .banner img {
 	display: block;
@@ -572,7 +594,7 @@
 	overflow: hidden;
 	padding: 5px;
 	margin: 0;
-	width: 95%!important;
+	width: 100%!important;
  }
  #regular_board_search {
 	box-shadow: none;
@@ -646,7 +668,7 @@
 	padding: 8px 5px;
 	text-align: left;
 	visibility: visible;
-	width: 98%;
+	width: 100%;
  }
  .boardAll #reply form label:hover {
 	color: rgba(0,0,0,.7);
@@ -706,16 +728,17 @@
   * Containers for threads, replies, and boards.
   */
  .boardAll .form_form {
+	
 	clear: both; 
 	display: block; 
-	margin: 5px 0 5px -5px !important;
+	margin: -10px 0 5px -10px !important;
 	overflow: hidden;
 	position: relative;
 	width: 100%; 
+	
  }
-
  .boardAll .form_form form {
-	margin: -8px 0 0 0 !important;
+	margin: -8px 0 0 20px !important;
  }
  .boardAll .form_form form input[type="submit"]{
 	margin: 5px 0 0 0!important;
@@ -739,11 +762,7 @@
 	content: "";
 	display: table;
  }
- body {
-	background-color: #fff !important; 
- } 
  .boardAll {
-	border: 1px solid #bed2ed;
 	display: block;
 	font-family: Arial, Verdana;
 	font-size: 12px;
@@ -754,7 +773,7 @@
 	overflow-x: hidden;
 	position: relative;
 	text-shadow: none!important;
-	width: 920px;
+	width: 100%;
  }
  .boardAll .thread_container:after,
  .boardAll .lastthree span:after,
@@ -804,12 +823,23 @@
 	width: 100%;
  }
  
+ .boardAll .right-half {
+	background-color: #f7fcff;
+	float: left;
+	margin: 5px -35px 5px 5px;
+	padding: 5px 10px 5px 0;
+	width: 50%;
+ }
  .boardAll .left-half {
+	color: #000;
+	background-color: #eef4ff;
 	position: relative;
 	float:right;
 	display: block;
-	padding: 2px 5px 2px 2px;
-	width: 285px;
+	margin: 5px;
+	padding: 2px;
+	width: 45%;
+	overflow: hidden;
 	z-index: 2;
  }
  .boardAll .left-half .piece_form {
@@ -818,8 +848,7 @@
  .boardAll .left-half .piece_form,
  .boardAll .left-half .piece {
 	background-color: #f5f9ff;
-	border-radius: 5px;
-	margin: 5px auto;
+	margin: 0 0 5px 0;
 	padding: 5px;
 	position: relative;
  } 
@@ -829,15 +858,8 @@
 	margin: 5px auto;
 	width: 100%;
  }
- .boardAll .right-half {
-	float: left;
-	margin: 5px -35px 5px 10px;
-	padding: 5px 10px 5px 0;
-	width: calc(100% - 335px);
- } 
- 
  .boardAll .spacer {
-	background-color: #fff;
+	background-color: #fbfeff;
 	display: block;
 	height: auto;
 	margin: 0 0 10px 0;
@@ -1058,4 +1080,19 @@
 	.boardAll .navi a span {
 		display: none;
 	}
-}  
+	.boardAll .banner {
+		margin: auto;
+	}
+	.boardAll .left-half {
+		text-align: center;
+	}
+	.boardAll .left-half,
+	.boardAll .navi,
+	.boardAll .right-half {
+		display: block !important;
+		width: 100% !important;
+		clear: both !important;  
+		float: none !important;
+		margin: auto !important;
+	}
+}

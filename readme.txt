@@ -3,7 +3,7 @@ Contributors: boyevul
 Tags: anonymous, bbs, bulletin board system, forum
 Requires at least: 3.8
 Tested up to: 3.8
-Stable tag: 1.13.6
+Stable tag: 1.13.7
 
 == Description ==
 Regular Board is a text-based anonymous message board to which anyone may post without the need for account registration.  
@@ -46,6 +46,11 @@ and not be offset by the current theme's style.
 7. Done.
 
 == Changelog ==
+* 1.13.7.0  Board Width is a little more generous, with a maximum width of 800px that scales down appropriately.
+* 1.13.7.0  Regular Board Widget added to allow the easy inclusion of elements in the sidebar via widget.
+* 1.13.7.0  No longer takes control of the body background color of the page that it's on.
+* 1.13.7.0  Canonical linking wasn't behaving like it should have; this has been fixed.
+* 1.13.7.0  Floating the reply form was doing more harm than good for users with smaller screens.
 * 1.13.6.0  Thread branching/threaded comments (minor fix) Soundcloud embedding via URL (addition)
 * 1.13.6.0  No index, no follow can now be applied to only specific boards
 * 1.13.6.0  Form, if posting to a board, will retain the default board [[tag]] for ease of usability

@@ -118,6 +118,22 @@ function regular_board_shortcode ( $content = null ) {
 		
 		echo '<div class="right-half">';
 		
+
+		if ( !$this_thread ) {
+			echo '<div class="piece_form"><div class="form_form">';
+			if ( $this_area == 'editpost' && $user_exists && $this_thread ) { 
+				include ( plugin_dir_path(__FILE__) . '/regular_board_post_edit.php'    ); 
+			} else {
+				if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_post_form.php' ) ) {
+					include ( ABSPATH . '/regular_board_child/regular_board_post_form.php' );
+				} else {
+					include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
+				}	
+			}
+			echo '</div>';
+		}	
+		
+		
 		if ( $nothing_is_here ) {
 			echo '<div id="threadthread">';
 			if ( $getposts ) {
@@ -351,11 +367,28 @@ function regular_board_shortcode ( $content = null ) {
 		elseif ( $this_area == 'messages' && $user_exists ) { include ( plugin_dir_path(__FILE__) . '/regular_board_messages.php'   ); } 
 		elseif ( $this_area == 'logout' && $user_exists   ) { include ( plugin_dir_path(__FILE__) . '/regular_board_logout.php'     ); }
 
-
+		if ( $this_thread ) {
+			echo '<div class="piece_form"><div class="form_form">';
+			if ( $this_area == 'editpost' && $user_exists && $this_thread ) { 
+				include ( plugin_dir_path(__FILE__) . '/regular_board_post_edit.php'    ); 
+			} else {
+				if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_post_form.php' ) ) {
+					include ( ABSPATH . '/regular_board_child/regular_board_post_form.php' );
+				} else {
+					include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
+				}	
+			}
+			echo '</div>';
+		}
+		echo '</div>';
 
 	echo '</div>';
 	include ( plugin_dir_path(__FILE__) . '/regular_board_template_sidebar.php' );
 	echo '</div>';
+	
+	
+	
+	
 	if ( $regular_board_footer ) {
 		echo '<footer>' . $regular_board_footer . '</footer>';
 	}

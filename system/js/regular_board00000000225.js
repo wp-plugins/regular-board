@@ -1,27 +1,24 @@
 	jQuery(document).ready(function($){
-	
-		//var pathname = window.location.pathname;	
-		//$('.boardAll').get(pathname + ' .boardAll > *');
-		//window.onpopstate = function(event) {
-		//	if(event && event.state) {
-		//		location.reload();
-		//	}
-		//}		
-
-var rb_formdiv = $('.piece_form');
-var elpos_original = rb_formdiv.offset().top;
-$(window).scroll(function(){
-    var elpos = rb_formdiv.offset().top;
-    var windowpos = $(window).scrollTop();
-    var finaldestination = windowpos;
-    if(windowpos<elpos_original) {
-        finaldestination = elpos_original;
-        rb_formdiv.stop().css({'top':0});
-    } else {
-        rb_formdiv.stop().animate({'top':finaldestination-elpos_original+0},0);
-    }
-});
-		
+		var pathname = window.location.pathname;	
+		$('.boardAll').get(pathname + ' .boardAll > *');
+		window.onpopstate = function(event) {
+			if(event && event.state) {
+				location.reload();
+			}
+		}
+		//var rb_formdiv = $('.nav_tools');
+		//var elpos_original = rb_formdiv.offset().top;
+		//$(window).scroll(function(){
+		//    var elpos = rb_formdiv.offset().top;
+		//    var windowpos = $(window).scrollTop();
+		//    var finaldestination = windowpos;
+		//    if(windowpos<elpos_original) {
+		//        finaldestination = elpos_original;
+		//        rb_formdiv.stop().css({'top':0});
+		//    } else {
+		//        rb_formdiv.stop().animate({'top':finaldestination-elpos_original+0},0);
+		//    }
+		//});
 		var hash = window.location.hash.substr(1);
 		if(hash != false && hash != 'undefined'){
 			$('#thread'+hash+'').addClass('current');
@@ -98,8 +95,6 @@ $(window).scroll(function(){
 			e.preventDefault();
 			$(this).toggleClass('imageEXPAND');
 		});
-		
-		
 		$('.regularboard_form').ajaxForm(function() { 
 			var data   = $('.regularboard_form').attr('data');
 			var xdata  = $('.regularboard_form').attr('xdata'); 
@@ -107,7 +102,5 @@ $(window).scroll(function(){
 			$('#thread' + xdata + '').load(data + ' #thread'+ xdata + ' > *');
 			history.pushState('data', '', data);
 			$('.regularboard_form #COMMENT').val('' + defdat + '');
-		}); 
-	
-		
+		}); 	
 	});	

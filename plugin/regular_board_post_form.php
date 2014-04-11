@@ -57,139 +57,137 @@ if ( $userisbanned ) {
 			echo '<p>This thread has been archived.  It can no longer be replied to.</p>';
 		}
 	} else {
-		if ( $thisboard ) {
-			$the_board = $thisboard;
-		} else {
-			$the_board = $the_board;
-		}
-		
-		if ( filter_var ( $check_this_ip, FILTER_VALIDATE_IP ) ) { 
-			$IPPASS = true; 
-		} elseif ( filter_var ( $check_this_ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) { 
-			$IPPASS = true; 
-		} else { 
-			$IPPASS = false; 
-		}
-		if ( $timegateactive ) {
-			echo '<p>' . (10 - $timegate) . ' seconds until you can post again.</p>';
-		} else {
-			if ( $posting != 1 ) { echo '<p>Read-Only Mode</p>';
-			} elseif ( $posting == 1 && !$IPPASS ) { 
-				echo '<p>You are not permitted to post.</p>';
-			} elseif ( $posting == 1 && $IPPASS ) {	
-				if($this_thread && $currentCountNomber >= $max_replies){
-				}else{
-					$LOCKED    = 0;
-					if ( $this_thread ) { 
-						$checkLOCK = $wpdb->get_results ( $wpdb->prepare ( "SELECT post_id FROM $regular_board_posts WHERE post_locked = %d AND post_id = %d AND post_public = %d LIMIT 1", 1, $this_thread, 1 ) );
-						if ( count ( $checkLOCK ) == 1 ) { 
-							$LOCKED = 1;
+			if ( $the_board || $this_thread || $this_area == 'messages' || $nothing_is_here ) {
+			if ( $thisboard ) {
+				$the_board = $thisboard;
+			} else {
+				$the_board = $the_board;
+			}
+			
+			if ( filter_var ( $check_this_ip, FILTER_VALIDATE_IP ) ) { 
+				$IPPASS = true; 
+			} elseif ( filter_var ( $check_this_ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) { 
+				$IPPASS = true; 
+			} else { 
+				$IPPASS = false; 
+			}
+			if ( $timegateactive ) {
+				echo '<p>' . (10 - $timegate) . ' seconds until you can post again.</p>';
+			} else {
+				if ( $posting != 1 ) { echo '<p>Read-Only Mode</p>';
+				} elseif ( $posting == 1 && !$IPPASS ) { 
+					echo '<p>You are not permitted to post.</p>';
+				} elseif ( $posting == 1 && $IPPASS ) {	
+					if($this_thread && $currentCountNomber >= $max_replies){
+					}else{
+						$LOCKED    = 0;
+						if ( $this_thread ) { 
+							$checkLOCK = $wpdb->get_results ( $wpdb->prepare ( "SELECT post_id FROM $regular_board_posts WHERE post_locked = %d AND post_id = %d AND post_public = %d LIMIT 1", 1, $this_thread, 1 ) );
+							if ( count ( $checkLOCK ) == 1 ) { 
+								$LOCKED = 1;
+							}
 						}
-					}
-					if ( $LOCKED == 1 ) { 
-						echo '<p>Thread locked.</p>';
-					}
-					if ( $LOCKED == 0){
-					$correct = 0;
-							if ( $this_area != 'editpost' ) {
-							echo '<div id="reply" class="reply">';
-							$data               = '';
-							$current_page_class = '';
-							if     ( $the_board  && !$this_thread ) { $data = $current_page . '?b=' . $the_board; }
-							elseif ( $this_thread ) { $data = $current_page . '?t=' . $this_thread; }
-							else   {                  $data = $current_page; }
-							if ( $this_thread ) {
-								$current_page_class = $this_thread;
-							}
-							if ( $the_board && !$this_thread ) {
-								$current_page_class = htmlentities ( $the_board );
-							}
-							if ( $this_area && !$the_board && !$this_thread ) {
-								$current_page_class = $this_area;
-							}
-							if ( $nothing_is_here ) {
-								$current_page_class = 'thread';
-							}
-							
-							if ( $the_board && !$this_thread ) {
-								$default_data = '[[' . $the_board . ']]';
-							}
-							if ( $this_thread ) {
-								$default_data = '';
-							}
-							
-							echo '<form enctype="multipart/form-data" defdat="' . $default_data . '" xdata="' . $current_page_class . '" data="' . $data . '" name="regularboard" class="regularboard_form" method="post" action="' . $current_page . '?a=post">';
-							wp_nonce_field('regularboard');
-							
-							if ( $this_thread ) { 
-								echo '<input type="hidden" name="PARENT" value="' . $reply_to . '" />';
-								if ( $comment_parent ) {
-									echo '<input type="hidden" name="COMMENTPARENT" value="' . $this_thread . '" />';
+						if ( $LOCKED == 1 ) { 
+							echo '<p>Thread locked.</p>';
+						}
+						if ( $LOCKED == 0){
+						$correct = 0;
+								if ( $this_area != 'editpost' ) {
+								echo '<div id="reply" class="reply">';
+								$data               = '';
+								$current_page_class = '';
+								if     ( $the_board  && !$this_thread ) { $data = $current_page . '?b=' . $the_board; }
+								elseif ( $this_thread ) { $data = $current_page . '?t=' . $this_thread; }
+								else   {                  $data = $current_page; }
+								if ( $this_thread ) {
+									$current_page_class = $this_thread;
 								}
-							}
-							echo '<input type="hidden" value="" name="LINK" />
-							<input type="hidden" value="" name="PAGE" />
-							<input type="hidden" value="" name="LOGIN" />
-							<input type="hidden" value="" name="USERNAME" />';
-							
-							if ( !$profilepassword ) { 
-								if ( $this_area != 'messages' ) {
-									$profilepassword = $rand;
+								if ( $the_board && !$this_thread ) {
+									$current_page_class = htmlentities ( $the_board );
 								}
-							}
-							if ( $this_area == 'messages' ) {
-								if ( $_GET['message'] ) {
-									if ( $message_to && $message_from ) {
-										echo '<input type="hidden" value="' . $message_to . '" name="message_to" />
-										<input type="hidden" value="' . $message_from . '" name="message_from" />';
+								if ( $this_area && !$the_board && !$this_thread ) {
+									$current_page_class = $this_area;
+								}
+								if ( $nothing_is_here ) {
+									$current_page_class = 'thread';
+								}
+								
+								if ( $this_thread ) {
+									$default_data = '';
+								}
+								
+								echo '<form enctype="multipart/form-data" defdat="' . $default_data . '" xdata="' . $current_page_class . '" data="' . $data . '" name="regularboard" class="regularboard_form" method="post" action="' . $current_page . '?a=post">';
+								wp_nonce_field('regularboard');
+								
+								if ( $this_thread ) { 
+									echo '<input type="hidden" name="PARENT" value="' . $reply_to . '" />';
+									if ( $comment_parent ) {
+										echo '<input type="hidden" name="COMMENTPARENT" value="' . $this_thread . '" />';
 									}
 								}
-							}
-							if ( $this_area == 'messages' && !$_GET['message'] ) {
-								echo '<label for="user_id">send to</label><input type="text" id="user_id" name="user_id" />';
-							}
-							if ( !$user_exists ) {
-								echo '<label>Posting as <em>guest</em> (all posts require approval)</label>';
-							} else {
-								if ( strtolower ( $profile_name ) == 'null' ) {
-									$profile_name = 'anonymous';
+								echo '<input type="hidden" value="" name="LINK" />
+								<input type="hidden" value="" name="PAGE" />
+								<input type="hidden" value="" name="LOGIN" />
+								<input type="hidden" value="" name="USERNAME" />';
+								
+								if ( !$profilepassword ) { 
+									if ( $this_area != 'messages' ) {
+										$profilepassword = $rand;
+									}
 								}
-								echo '<label>Posting as ' . $profile_name . '</label>';
-							}
-							
-							if ( $imgurid ) { 
+								if ( $this_area == 'messages' ) {
+									if ( $_GET['message'] ) {
+										if ( $message_to && $message_from ) {
+											echo '<input type="hidden" value="' . $message_to . '" name="message_to" />
+											<input type="hidden" value="' . $message_from . '" name="message_from" />';
+										}
+									}
+								}
+
 								if ( $this_area != 'messages' ) {
-									echo '<label for="img">or upload (replaces URL)</label>
-									<input id="img" name="img" size="35" type="file"/>';
+									echo '<label for="SUBJECT">Subject</label><input type="text" id="SUBJECT" name="SUBJECT" placeholder="Subject" />';
+								}								
+								
+								if ( !$user_exists ) {
+									echo '<label for="COMMENT">Posting as <em>guest</em> / posts require approval</label>';
+								} else {
+									if ( strtolower ( $profile_name ) == 'null' ) {
+										$profile_name = 'anonymous';
+									}
+									echo '<label for="COMMENT">Posting as ' . $profile_name . '</label>';
 								}
-							}
-							$board_post_to = '';
-							$tag_post_to   = '';
-							if ( $the_board && !$this_thread && !$the_tag ) {
-								$board_post_to = '[[' . $the_board . ']] ';
-							}
-							if ( $the_tag && !$this_thread ) {
-								$tag_post_to = '#' . $the_tag . ' ';
-							}
-							echo '<textarea  id="COMMENT" name="COMMENT" maxlength="' . $max_body . '">' . $board_post_to . $tag_post_to . '</textarea>';
-							if ( $this_area != 'messages' ) {
-								echo '<small>[[board]] [[title: my new post!]] ';
+								echo '<textarea  id="COMMENT" name="COMMENT" maxlength="' . $max_body . '">' . $tag_post_to . '</textarea>';
 								
-								if ( $enable_rep && $this_thread || $enable_url && !$this_thread ) {
-									echo '++http://url.tld++ ';
-								} 
-								
-								echo '*Example format.* || **new line!** |||| paragraph. #tag</small>';
+								if ( $imgurid ) { 
+									if ( $this_area != 'messages' ) {
+										echo '<label for="img">or upload (replaces URL)</label>
+										<input id="img" name="img" size="35" type="file"/>';
+									}
+								}
+								$board_post_to = '';
+								$tag_post_to   = '';
+								if ( $the_tag && !$this_thread ) {
+									$tag_post_to = '#' . $the_tag . ' ';
+								}
+								if ( $this_area != 'messages' ) {
+									if ( !$this_thread ) {
+										echo '<label for="board">Post to</label><input type="text" id="board" name="board" placeholder="Board" value="' . $the_board . '" />';
+									}
+								}
+								if ( $this_area == 'messages' && !$_GET['message'] ) {
+									echo '<label for="user_id">send to</label><input type="text" id="user_id" name="user_id" />';
+								}
+
+								echo '<input type="submit" data="' . $current_page . '?a=post" data="' . $current_page . '?a=post" name="FORMSUBMIT" id="FORMSUBMIT" value="';
+								if ( $this_thread ) {
+									echo 'Reply';
+								} else { 
+									echo 'Post';
+								}
+								echo '"/>';									
+								echo '</form>
+								</div>';
 							}
-							echo '<input type="submit" data="' . $current_page . '?a=post" data="' . $current_page . '?a=post" name="FORMSUBMIT" id="FORMSUBMIT" value="';
-							if ( $this_thread ) {
-								echo 'Reply';
-							} else { 
-								echo 'Post';
-							}
-							echo '"/>';									
-							echo '</form>
-							</div>';
 						}
 					}
 				}

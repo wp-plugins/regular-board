@@ -46,23 +46,19 @@ if($paging > 0){
 	echo '<p class="nav clear">';
 	if($results > 1){
 		if ( $nothing_is_here ) {
-			echo ' [ <a class="load_link" href="' . $latest . '">Latest</a> ] ';
+			echo '<a class="load_link" href="' . $latest . '"><i class="fa fa-arrow-circle-right right"> latest</i></a>';
 		} else { 
-			echo ' [ <a class="load_link" href="' . $latest . '">Latest</a> ] ';
+			echo '<a class="load_link" href="' . $latest . '"><i class="fa fa-arrow-circle-right right"> latest</i></a>';
 		}
 	}
 	if($results > 2){
-		echo ' [ <a class="load_link" href="' . $locale . ($results - 1) . '">Newer</a> ] ';
+		echo '<a class="load_link" href="' . $locale . ($results - 1) . '"><i class="fa fa-arrow-circle-o-right right"> newer</i></a>';
 	}
 	if($paging > 1 && $results < $paging && !$results ){
-		echo ' [ <a class="load_link" href="' . $locale . '2">Older</a> ] ';
+		echo '<a class="load_link" href="' . $locale . '2"><i class="fa fa-arrow-circle-o-left left"> older</i></a>';
 	}
 	if($results < $paging && $results ){
-		echo ' [ <a class="load_link" href="' . $locale . ( $results + 1 ) . '">Older</a> ]  ';
-	}
-	
-	if ( $results ) {
-		echo ' [ Page ' . $results . ' ]';
+		echo '<a class="load_link" href="' . $locale . ( $results + 1 ) . '"><i class="fa fa-arrow-circle-o-left left"> older</i></a>';
 	}
 	
 	echo '</p>';

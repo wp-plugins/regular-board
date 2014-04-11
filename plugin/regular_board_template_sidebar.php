@@ -13,41 +13,32 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 }
 
 echo '<div class="left-half">';
-
 $banner             = '';
 if ( $board_banner != '' ) {
 	$banner  = '<div class="banner"><img src="' . $board_banner . '" alt="Banner" /></div>';
 }
 echo $banner;
 
-echo '<div class="piece_form"><div class="form_form">';
-if ( $this_area == 'editpost' && $user_exists && $this_thread ) { 
-	include ( plugin_dir_path(__FILE__) . '/regular_board_post_edit.php'    ); 
-} else {
-	if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_post_form.php' ) ) {
-		include ( ABSPATH . '/regular_board_child/regular_board_post_form.php' );
+if ( $this_thread && $threadexists == 1 ) {
+	echo '<p class="nav_tools">';
+	if ( $thisboard ) {
+		echo '<a class="load_link" href="' . $current_page . '">Return</a>';
+	} elseif ( $the_board ) {
+		echo '<a class="load_link" href="' . $current_page . '?b=' . $the_board . '">Return</a>';
+	} elseif ( $thread_board ) {
+		echo '<a class="load_link" href="' . $current_page . '?b=' . $thread_board . '">Return</a>';
 	} else {
-		include ( plugin_dir_path(__FILE__) . '/regular_board_post_form.php' );
-	}	
+		echo '<a class="load_link" href="' . $current_page . '">Return</a>';
+	}								
+	echo '<a href="#top">Top</a><a class="reload" xdata="' . $this_thread .'" data="' . $current_page . '?t=' . $this_thread . '">Refresh thread</a>
+	</p>';
+} else {
+	echo '<p class="nav_tools hidden"></p>';
 }
-echo '</div>';
-						if ( $this_thread && $threadexists == 1 ) {
-							echo '<p class="nav_tools">';
-							if ( $thisboard ) {
-								echo '<a class="load_link" href="' . $current_page . '">Return</a>';
-							} elseif ( $the_board ) {
-								echo '<a class="load_link" href="' . $current_page . '?b=' . $the_board . '">Return</a>';
-							} elseif ( $thread_board ) {
-								echo '<a class="load_link" href="' . $current_page . '?b=' . $thread_board . '">Return</a>';
-							} else {
-								echo '<a class="load_link" href="' . $current_page . '">Return</a>';
-							}								
-							echo '<a href="#top">Top</a><a class="reload" xdata="' . $this_thread .'" data="' . $current_page . '?t=' . $this_thread . '">Refresh thread</a>
-							</p>';
-						}
-echo '</div>';
 
-
+if ( !$user_exists && !$userisbanned ) {
+	include ( plugin_dir_path(__FILE__) . '/regular_board_loginorregister.php' );
+}
 if ( $this_area == 'history' && $user_exists || $this_user ) {
 	echo '<div class="piece">';
 	echo '<strong>';
@@ -164,9 +155,7 @@ if ( $search_enabled ) {
 	</form></div>';
 }
 
-if ( !$user_exists && !$userisbanned ) {
-	include ( plugin_dir_path(__FILE__) . '/regular_board_loginorregister.php' );
-} else { 
+if ( $user_exists && !$userisbanned ) { 
 	if ( $user_create == 1 ) {
 		echo '<span><a href="' . $current_page . '?a=create">[ <i class="fa fa-book"></i> ] Create a new board</a></span>';
 	}
@@ -210,4 +199,7 @@ if ( $protocol == 'boards' ) {
 
 echo '<span><a href="' . $current_page . '?a=replies"'; if ( $this_area == 'replies' ) { echo ' class="active"'; } echo '>all replies</a></span>';
 echo '</div></div>';
+
+if ( dynamic_sidebar('Regular Board Widget') ) : else : endif;
+
 echo '</div>';

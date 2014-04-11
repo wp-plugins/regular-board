@@ -1,5 +1,4 @@
 <?php 
-
 /**
  * Regular Board Functions
  *
@@ -12,8 +11,7 @@ if ( !defined('regular_board_plugin' ) ) {
 	die();
 }
 
-
-
+/** Announcements category for Regular Board **/
 if ( get_option ( 'regular_board_announcements' ) && get_option ( 'regular_board_hideannouncements' ) ) {
 	add_action ( 'pre_get_posts', 'regular_board_exclude_announcements' );
 	function regular_board_exclude_announcements ( $query ) {
@@ -33,17 +31,22 @@ if ( get_option ( 'regular_board_announcements' ) && get_option ( 'regular_board
 	}
 }
 
-
-function regular_board_percent($num_amount, $num_total) {
-	$count1 = $num_amount / $num_total;
-	$count2 = $count1 * 100;
-	$count = number_format($count2, 0);
-	return $count;
+/** Widget for Regular Board sidebar **/
+function regular_board_widget() {
+	$widget = array(
+		'id' => 'Regular Board Widget',
+		'name' => __( 'Regular Board Widget', 'regular_board' ),
+		'description' => __( 'Regular Board Widget', 'regular_board' ),
+		'before_title' => '<div class="piece"><h2 class="widgettitle">',
+		'after_title' => '</h2>',
+		'before_widget' => '<div id="%1$s" class="widget %2$s">',
+		'after_widget' => '</div></div>',
+	);
+	register_sidebar( $widget );
 }
+add_action( 'widgets_init', 'regular_board_widget' );
 
-/**
- * Enqueue scripts and styles if post content contains the shortcode
- */
+/** Enqueue scripts and styles if post content contains the shortcode **/
 function regular_board_style(){
 	global $wpdb, $wp, $post, $regular_board_version, $ipaddress;
 	$content = $post->post_content;
@@ -53,26 +56,26 @@ function regular_board_style(){
 		wp_register_script   ( 'regular_board-form', protocol_relative_url_dangit ( $form_submit ), array( 'jquery' ), '', null, false);
 		wp_enqueue_script    ( 'regular_board-form');
 
-		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board00000000209.js?' . $regular_board_version;
+		$regularboard   = plugins_url() . '/regular-board/system/js/regular_board00000000225.js?' . $regular_board_version;
 		if ( get_option ( 'regular_board_css_url' ) ) {
 			$css_file   = get_option ( 'regular_board_css_url' );
 		} else { 
 			$regular_board_users = $wpdb->prefix . 'regular_board_users';
 			$css_choice = '';
 			$user_ip = sanitize_text_field ( wp_hash ( $ipaddress ) );
-			$css_choice = $wpdb->get_var( "SELECT user_colormode FROM $regular_board_users WHERE user_ip = '$user_ip'" );
+			$css_choice = $wpdb->get_var( "SELECT user_colormode FROM $regular_board_users WHERE user_logged_in_from = '$user_ip'" );
 			if ( $css_choice ) {
 				if ( $css_choice == 1 ) {
-					$css_file   = plugins_url() . '/regular-board/system/css/regular_board_dm_00000000209.css';
+					$css_file   = plugins_url() . '/regular-board/system/css/regular_board_dm_00000000225.css';
 				}
 				if ( $css_choice == 2 ) {
-					$css_file   = plugins_url() . '/regular-board/system/css/regular_board_nm_00000000209.css';
+					$css_file   = plugins_url() . '/regular-board/system/css/regular_board_nm_00000000225.css';
 				}
 			} else {
 				if ( date ( 'H' ) >= 7 && date ( 'H' ) <= 19 ) {
-					$css_file   = plugins_url() . '/regular-board/system/css/regular_board_nm_00000000209.css';
+					$css_file   = plugins_url() . '/regular-board/system/css/regular_board_nm_00000000225.css';
 				} else {
-					$css_file   = plugins_url() . '/regular-board/system/css/regular_board_dm_00000000209.css';
+					$css_file   = plugins_url() . '/regular-board/system/css/regular_board_dm_00000000225.css';
 				}
 			}
 		}
@@ -100,32 +103,32 @@ function regular_board_style(){
 	}
 }
 
-/**
- * Automatically remove http from links 
- */
+/** Automatically remove http from links (forces compatability with https:// **/
 function protocol_relative_url_dangit ( $u ) {
 	return str_replace ( 'http:', '', esc_url ( $u ) );
 }
 
 
-/**
- * Automatically apply quotes to a group of items for SQL use
- */
+/** Automatically apply quotes to a group of items for SQL use **/
 function regular_board_apply_quotes($i){
 	return "'" . mysql_real_escape_string($i) . "'";
 }
 
-/**
- * Generate a random password
- */
+/** Percentages **/
+function regular_board_percent($num_amount, $num_total) {
+	$count1 = $num_amount / $num_total;
+	$count2 = $count1 * 100;
+	$count = number_format($count2, 0);
+	return $count;
+}
+
+/** Generate a random password **/
 $seedlet = str_split ( 'abcdefghijklmnopqrstuvwxyz' . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' . '0123456789!@#$%^&*()' );
 shuffle ( $seedlet );
 $random_password = '';
 foreach (array_rand($seedlet, 10) as $p) $random_password .= $seedlet[ $p ];
 
-/**
- * Calcuate time between (date) and (date)
- */
+/** Calcuate time between (date) and (date) **/
 function regular_board_timesince ( $date, $granularity=2 ) {
 	$retval = '';
 	$date = strtotime ( $date );
@@ -138,7 +141,6 @@ function regular_board_timesince ( $date, $granularity=2 ) {
 		' hours' => 3600, 
 		' minutes' => 60, 
 		' seconds' => 1 );
-
 	foreach ( $periods as $key => $value ) {
 		if ( $difference >= $value ) {
 			$time = floor ( $difference/$value );
@@ -211,12 +213,9 @@ function regular_board_auto_tags($text){
 	}
 	$text = str_replace ('@', '', $text );
 	return $text;
-	
 }
 
-/** 
- * Get the domain of a URL
- */
+/** Get the domain of a URL **/
 function regular_board_get_domain ( $url ) {
 	$pieces = parse_url ( $url );
 	$domain = isset ( $pieces['host'] ) ? $pieces['host'] : '';
@@ -226,49 +225,11 @@ function regular_board_get_domain ( $url ) {
 	return false;
 }
 
+/** Fix canonical URLs to work with Regular Board queries **/
 function regular_board_canonical(){
-	global $wp,$post;
-	$BOARD       = '';
-	$THREAD      = '';
-	$the_board   = '';
-	$this_thread = '';
-	$query  = sanitize_text_field ( $_SERVER['QUERY_STRING'] );
-	if ( $query ) {
-		if ( isset ( $_GET['b'] ) ) {
-			$the_board             = sanitize_text_field ( strtolower( $_GET['b'] ) );
-		}
-		if ( isset ( $_GET['t'] ) ) {
-			$this_thread           = intval ( $_GET['t'] );
-		}
-	}	
-	if ( is_page() && $the_board || 
-	     is_single() && $the_board || 
-		 is_page() && $this_thread || 
-		 is_single() && $this_thread 
-		) {
-		$THISPAGE = home_url('/');
-		if ( $_GET['b'] ) { 
-			$BOARD  = esc_sql ( strtolower ( $_GET['b'] ) );
-		}
-		if ( !$_GET['b'] ) { 
-			$BOARD  = esc_sql ( strtolower ( $post->post_name ) );
-		}
-		if ( $BOARD && $THREAD ) { 
-			$THREAD = esc_sql ( intval ( $_GET['t'] ) );
-		}
-		if ( $BOARD && $THREAD != 0 ) { 
-			$canonical = $THISPAGE.'?t='.$THREAD;
-		} elseif($BOARD && $THREAD == 0 ) { 
-			$canonical = $THISPAGE . '?b=' . $BOARD; 
-		}
-	}		
-	elseif ( is_home() ) {
-		$canonical         = $THISPAGE;
-	} else {
-		$THISPAGE          = '//'.$_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
-		$canonical         = $THISPAGE;
-	}
+	global $wp, $post, $content;
+	$canonical = sanitize_text_field ( htmlentities ( '//' . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] ) );
 	echo "\n";
-	echo '<link rel=\'canonical\' href=\'' . htmlentities ( $canonical ) . '\' />';
+	echo '<link rel=\'canonical\' href=\'' . $canonical . '\' />';
 	echo "\n";
 }
