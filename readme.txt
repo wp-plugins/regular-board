@@ -33,7 +33,7 @@ formatting commands to set things like link embedding, titles, and so-forth.
 * :: [[title: your title]] will name your thread or reply
 * :: #tag will create a hyperlink to a tag page with results related to that tag
 * :: ||, |||| are a new line or a new paragraph (carriage returns are converted to ||s upon submission)
-* :: **bold**, *italic*, ***bold and italic***, ~~strikethrough~~, `code`, [spoiler]spoiler![/spoiler]
+* :: &#42;&#42;bold&#42;&#42;, &#42;italic&#42;, &#42;&#42;&#42;bold and italic&#42;&#42;&#42;, ~~strikethrough~~, &#96;code&#96;, [spoiler]spoiler![/spoiler]
 * :: ---- (horizontal line)
 
 = Embeds from = 
