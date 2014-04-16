@@ -90,7 +90,7 @@ if ( $userisbanned ) {
 					}else{
 						$LOCKED    = 0;
 						if ( $this_thread ) { 
-							$checkLOCK = $wpdb->get_results ( $wpdb->prepare ( "SELECT post_id FROM $regular_board_posts WHERE post_locked = %d AND post_id = %d AND post_public = %d LIMIT 1", 1, $this_thread, 1 ) );
+							$checkLOCK = $wpdb->get_results ( $wpdb->prepare ( "SELECT post_id FROM $regular_board_posts WHERE post_locked = %d AND post_id = %d LIMIT 1", 1, $this_thread ) );
 							if ( count ( $checkLOCK ) == 1 ) { 
 								$LOCKED = 1;
 							}
@@ -124,7 +124,7 @@ if ( $userisbanned ) {
 									$default_data = '';
 								}
 								if ( $the_board && !$this_thread ) {
-									$default_data = $the_board;
+									$default_data = '[[' . $the_board . ']] ';
 								}
 								
 								echo '<form enctype="multipart/form-data" defdat="' . $default_data . '" xdata="' . $current_page_class . '" data="' . $data . '" name="regularboard" class="regularboard_form" method="post" action="' . $current_page . '?a=post">';

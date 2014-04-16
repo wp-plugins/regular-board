@@ -651,7 +651,7 @@ if ( $userisbanned ) {
 										}
 									}
 									// Delete posts that somehow got through with no data
-									$wpdb->delete ( 
+									$wpdb->delete (
 										$regular_board_posts, 
 										array(
 											'post_comment' => ''
@@ -660,6 +660,7 @@ if ( $userisbanned ) {
 											'%s'
 										)
 									);
+
 								} else {
 									if ( $duplicate_count > 0 ) {
 										$auto_mute = $wpdb->get_results ( "SELECT $regular_board_bans_select FROM $regular_board_bans WHERE banned_ip = '$user_ip' AND banned_message = 'unoriginal' LIMIT 1 " );

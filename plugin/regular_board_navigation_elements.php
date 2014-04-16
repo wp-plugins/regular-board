@@ -92,24 +92,9 @@ if ( $user_exists ) {
 	$options_link = '<a id="settings-link" title="my personal account settings" href="' . $current_page . '?a=options"' . $options_link_class . '>settings</a>';
 }
 
-$board_current = '';
-$board_present = '';
-if ( $board_short ) {
-	if ( $board_name ) {
-		$board_name_current = $board_name;
-	}
-	$board_present = 1;
-	if ( $board_present ) {
-		$board_present_class = ' board_head';
-	}
-	$board_current = '<div class="board_header"><a href="' . $current_page . '?b=' . $board_short . '">' . $board_name_current . '</a></div>';
-} else {
-	$board_present_class = ' board_head';
-	$board_current = '<div class="board_header"><a href="' . $current_page . '">' . $blog_title . '</a></div>';
-}
-
-$navigation   =  '<div class="navi' . $board_present_class. '">'
+$navigation   =  '<div class="navi">'
 	. $board_current 
+	. '<div class="navigation">'
 	. $topics_link 
 	. $gallery_link 
 	. $video_link 
@@ -121,5 +106,5 @@ $navigation   =  '<div class="navi' . $board_present_class. '">'
 	. $queue_link 
 	. $options_link 
 	. $logout_link 
-	. '</span>'
+	. '</span></div>'
 	. '</div>';

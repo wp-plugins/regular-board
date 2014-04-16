@@ -70,7 +70,7 @@
 	border-bottom: 1px solid rgba(0,0,0,.1);
 	display: block; 
 	font-size: 10px;
-	height: 65px;
+	height: 25px;
 	margin: 0;
 	overflow: hidden; 
 	padding: 5px;
@@ -86,8 +86,8 @@
 	margin: 2px 0 0 2px;
 	padding: 3px;
 	text-decoration: none !important;
-	height: 50px;
-	line-height: 35px;
+	height: 20px;
+	line-height: 15px;
  }
  .regular_board_board_all .top_nav a:hover {
 	background-color: #5e85ba;
@@ -1025,8 +1025,8 @@
 	clear: both;
 	display: block;
 	font-size: 10px;
-	height: 17px;
-	margin: 0 auto 0 auto;
+	height: 25px;
+	margin: 0 auto;
 	overflow: hidden;
 	padding: 5px;
 	position: relative;

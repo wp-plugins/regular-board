@@ -203,7 +203,7 @@ if ( $this_area == 'destroy' ) {
 				'post_name' => 'null',
 				'post_comment' => '[deleted]',
 				'post_userid' => 0,
-				'post_public' => 1,
+				'post_public' => 0,
 				'post_type'   => 'post',
 				'post_url'    => '',
 				'post_locked' => 1,
