@@ -11,7 +11,7 @@
 if ( !defined ( 'regular_board_plugin' ) ) {
 	die();
 }
-echo '<div class="thread">';
+echo '<div class="threadcontainer"><div class="thread">';
 foreach ( $getuser as $banneddetails ) {
 	$LENGTH = $banneddetails->banned_length;
 	$FILED = $banneddetails->banned_date;
@@ -48,11 +48,10 @@ foreach ( $getuser as $banneddetails ) {
 		$banLifted = 0;
 	}
 	
-	echo '<div class="profile_deets">';
 	if ( $banned_image ) {
 		echo '<img src="' . $banned_image . '" alt="Banned" class="imageFULL" />';
 	}
-	echo '<h1>BANNED</h1>';
+	echo '<p>You are banned.</p>';
 	foreach ( $getuser as $gotUser ) {
 		$BANID   = intval ( $gotUser->banned_id );
 		$BANNED  = intval ( $gotUser->banned_banned );
@@ -68,18 +67,18 @@ foreach ( $getuser as $banneddetails ) {
 		
 		
 		if ( $LENGTH != 'permanent' ) {
-			echo '<h3>Ban length: ' . $LENGTH . '</h3> ' . $unbanned . ' seconds until unbanned.<hr />';
+			echo '<p>Ban length: ' . $LENGTH . ' &mdash; ' . $unbanned . ' seconds until unbanned.</p>';
 		} else {
-			echo '<h3>Ban length: PERMANENT</h3>';
+			echo '<p>Ban length: PERMANENT</p>';
 		}
-
-		echo '<p>Reason: ' . $MESSAGE . '</p>
-		</div>';
+		echo $MESSAGE . '</div>';
 	}
+	
 	if ( $LENGTH != 'permanent' ) {
 		if ( $unbanned <= 0 ) {
 			$wpdb->delete ( $regular_board_bans, array('banned_id' => $BANID ), array ( '%d' ) );
 		}
 	}
+	
+	echo '</div>';
 }
-echo '</div>';

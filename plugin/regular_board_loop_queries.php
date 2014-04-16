@@ -14,6 +14,7 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 
 $total_posts = $wpdb->get_var ( "SELECT SUM(board_postcount) FROM $regular_board_boards" );
 $getuser     = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_bans_select FROM $regular_board_bans WHERE banned_ip = %s LIMIT 1", $user_ip  ) );
+$recentposts = $wpdb->get_results( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_public = 1 ORDER BY post_date DESC LIMIT 10" );
 
 if ( count ( $getuser ) > 0 ) {
 	$userisbanned = 1;
@@ -159,6 +160,6 @@ if ( $use_this > 0 ) {
 		} else {
 			$start = 0;
 		}
-		$getposts = $wpdb->get_results( "SELECT $regular_board_posts_select FROM $regular_board_posts $where_by ORDER BY $order_by LIMIT $start,$posts_per_page" );
+		$getposts    = $wpdb->get_results( "SELECT $regular_board_posts_select FROM $regular_board_posts $where_by ORDER BY $order_by LIMIT $start,$posts_per_page" );
 	}
 }

@@ -1,9 +1,9 @@
 === Regular Board ===
 Contributors: boyevul
 Tags: anonymous, bbs, bulletin board system, forum
-Requires at least: 3.8
-Tested up to: 3.8
-Stable tag: 1.13.7
+Requires at least: 3.8.2
+Tested up to: 3.8.2
+Stable tag: 1.13.8.0
 
 == Description ==
 Regular Board is a text-based anonymous message board to which anyone may post without the need for account registration.  
@@ -22,19 +22,39 @@ same respect, passwords are also stored in their hashed format.
 All Javascript should degrade gracefully, and the board itself should fit into the width of any container, 
 and not be offset by the current theme's style.
 
+= One Form To Rule Them All = 
+Regular Board uses a non-standard approach to the traditional submission form in that accepts specialized 
+formatting commands to set things like link embedding, titles, and so-forth.
+
+* :: ++URL++ embeds a URL (if URLs are activated on your installation)
+* :: !sage and !heaven will reply without bumping and post anonymously
+* :: ^#^ will allow you to reply to a particular comment without opening the branch
+* :: [[board_name]] will post your new thread to that particular board
+* :: [[title: your title]] will name your thread or reply
+* :: #tag will create a hyperlink to a tag page with results related to that tag
+* :: ||, |||| are a new line or a new paragraph (carriage returns are converted to ||s upon submission)
+* :: **bold**, *italic*, ***bold and italic***, ~~strikethrough~~, `code`, [spoiler]spoiler![/spoiler]
+* :: ---- (horizontal line)
+
+= Embeds from = 
+* Automatically converts links from these sources into embeds:
+* :: Imgur (and image links)
+* :: Soundcloud
+* :: Vimeo
+* :: Youtube
+* :: gfycat
+
 = Features = 
-* DNSBL and Akismet integration
-* Thread and reply edit capabilities
-* Appoint WordPress users as janitors and moderators
-* Appoint Regular Board users as janitors and moderators
-* Wipe (any) board on the installation on a regular basis with a timed interval
-* Open-graph and meta integration for board and threads
-* Upload-to-Imgur capabilities
-* Easy-to-use admin interface 
-* Easily deployed via shortcode ([regular_board])
-* User IDs used cross-board
-* User IPs are stored in a single location and hashed (not stored as plain text or long).
-* Templating allows the admin to copy certain files to a separate directory and alter the way Regular Board can be interacted with.
+* Out-of-the-box and running with:
+* :: integrated with DNSBL and Akismet
+* :: editing capabilities for users with passwords/usernames
+* :: (optional) ability to appoint janitors and moderators
+* :: (optional) board wiper that deletes threads/boards on a timed response system
+* :: open-graph integration for threads and boards for social shares
+* :: (optional) imgur uploader form
+* :: (optional) user IDs
+* :: wp_hashed (anything sensitive) so user data is a tad more secure
+* :: all replies can be branched into their own threads, allowing for deeper conversation
 
 == Installation ==
 1. Place the contents of /regular-board/ into your plugins folder.
@@ -46,6 +66,8 @@ and not be offset by the current theme's style.
 7. Done.
 
 == Changelog ==
+* 1.13.8.0  CSS cleanup.  Function wrappers.  gfycat embedding.  guest posts counted for unique posters.
+* 1.13.8.0  akismet class removed as latest akismet update interfered with it.
 * 1.13.7.0  Board Width is a little more generous, with a maximum width of 800px that scales down appropriately.
 * 1.13.7.0  Regular Board Widget added to allow the easy inclusion of elements in the sidebar via widget.
 * 1.13.7.0  No longer takes control of the body background color of the page that it's on.

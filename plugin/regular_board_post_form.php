@@ -57,7 +57,15 @@ if ( $userisbanned ) {
 			echo '<p>This thread has been archived.  It can no longer be replied to.</p>';
 		}
 	} else {
-			if ( $the_board || $this_thread || $this_area == 'messages' || $nothing_is_here ) {
+			
+			if ( $this_area == 'gallery' || $this_area == 'videos' ) { 
+				$not_here = 0;
+			} else {
+				$not_here = 1;
+			}
+			
+			
+			if ( $the_board && $not_here || $this_thread || $this_area == 'messages' || $nothing_is_here ) {
 			if ( $thisboard ) {
 				$the_board = $thisboard;
 			} else {
@@ -115,6 +123,9 @@ if ( $userisbanned ) {
 								if ( $this_thread ) {
 									$default_data = '';
 								}
+								if ( $the_board && !$this_thread ) {
+									$default_data = $the_board;
+								}
 								
 								echo '<form enctype="multipart/form-data" defdat="' . $default_data . '" xdata="' . $current_page_class . '" data="' . $data . '" name="regularboard" class="regularboard_form" method="post" action="' . $current_page . '?a=post">';
 								wp_nonce_field('regularboard');
@@ -143,11 +154,6 @@ if ( $userisbanned ) {
 										}
 									}
 								}
-
-								if ( $this_area != 'messages' ) {
-									echo '<label for="SUBJECT">Subject</label><input type="text" id="SUBJECT" name="SUBJECT" placeholder="Subject" />';
-								}								
-								
 								if ( !$user_exists ) {
 									echo '<label for="COMMENT">Posting as <em>guest</em> / posts require approval</label>';
 								} else {
@@ -156,7 +162,15 @@ if ( $userisbanned ) {
 									}
 									echo '<label for="COMMENT">Posting as ' . $profile_name . '</label>';
 								}
-								echo '<textarea  id="COMMENT" name="COMMENT" maxlength="' . $max_body . '">' . $tag_post_to . '</textarea>';
+								$board_post_to = '';
+								$tag_post_to   = '';
+								if ( $the_tag && !$this_thread ) {
+									$tag_post_to = '#' . $the_tag . ' ';
+								}
+								if ( $the_board && !$this_thread ) {
+									$board_post_to = '[[' . $the_board . ']] ';
+								}
+								echo '<textarea  id="COMMENT" name="COMMENT" maxlength="' . $max_body . '">' . $board_post_to . $tag_post_to . '</textarea>';
 								
 								if ( $imgurid ) { 
 									if ( $this_area != 'messages' ) {
@@ -164,20 +178,9 @@ if ( $userisbanned ) {
 										<input id="img" name="img" size="35" type="file"/>';
 									}
 								}
-								$board_post_to = '';
-								$tag_post_to   = '';
-								if ( $the_tag && !$this_thread ) {
-									$tag_post_to = '#' . $the_tag . ' ';
-								}
-								if ( $this_area != 'messages' ) {
-									if ( !$this_thread ) {
-										echo '<label for="board">Post to</label><input type="text" id="board" name="board" placeholder="Board" value="' . $the_board . '" />';
-									}
-								}
 								if ( $this_area == 'messages' && !$_GET['message'] ) {
 									echo '<label for="user_id">send to</label><input type="text" id="user_id" name="user_id" />';
 								}
-
 								echo '<input type="submit" data="' . $current_page . '?a=post" data="' . $current_page . '?a=post" name="FORMSUBMIT" id="FORMSUBMIT" value="';
 								if ( $this_thread ) {
 									echo 'Reply';

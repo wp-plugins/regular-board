@@ -15,21 +15,24 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 if( $lock == 1 ) {
 	echo '<p>This board is currently locked.</p>';
 }
-
-if ( $the_board && !$this_thread ) {
-	echo '<div id="thread' . htmlentities($the_board) . '">';
+if ( $this_area != 'gallery' ) {
+	if ( $the_board && !$this_thread ) {
+		echo '<div id="thread' . htmlentities($the_board) . '">';
+	}
 }
 foreach ( $getposts as $posts ) {
-	echo '<div class="';
-	if ( $comment_parent ) {
-		echo 'thread' . $this_thread;
-	} else {
-		echo 'thread';
-		if ( $posts->post_comment_parent ) {
-			echo ' child';
+	if ( $this_area != 'gallery' ) {
+		echo '<div class="';
+		if ( $comment_parent ) {
+			echo 'thread' . $this_thread;
+		} else {
+			echo 'thread';
+			if ( $posts->post_comment_parent ) {
+				echo ' child';
+			}
 		}
+		echo '" id="thread' . $posts->post_id . '">';
 	}
-	echo '" id="thread' . $posts->post_id . '">';
 	if ( $search_enabled && $search && $this_thread ) {
 		$gotReplies = $wpdb->get_results( "SELECT $regular_board_posts_select FROM $regular_board_posts WHERE ( post_email = '$search' OR post_comment LIKE '%$search%' OR post_title LIKE '%$search%' OR post_url LIKE '%$search%' ) AND post_parent = $posts->post_id ORDER BY post_last ASC" );
 	} 
@@ -45,9 +48,11 @@ foreach ( $getposts as $posts ) {
 	} else {
 		include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
 	}
-	if ( !$posts->post_parent ) { 
-		$parent_present = 1;
-		echo '<div class="omitted' . $posts->post_id . '"'; if ( $this_thread ) { echo ' id="omitted"'; } echo '>';
+	if ( $this_area != 'gallery' ) {
+		if ( !$posts->post_parent ) { 
+			$parent_present = 1;
+			echo '<div class="omitted' . $posts->post_id . '"'; if ( $this_thread ) { echo ' id="omitted"'; } echo '>';
+		}
 	}
 
 	
@@ -63,14 +68,17 @@ foreach ( $getposts as $posts ) {
 			}
 		}
 	}
-
-	if ( $parent_present ) { 
+	if ( $this_area != 'gallery' ) {
+		if ( $parent_present ) { 
+			echo '</div>';
+		}
 		echo '</div>';
 	}
-	echo '</div>';
 }
-if ( $the_board && !$this_thread ) {
-	echo '</div>';
+if ( $this_area != 'gallery' ) {
+	if ( $the_board && !$this_thread ) {
+		echo '</div>';
+	}
 }
 
 if( $the_board && !$this_thread ) {

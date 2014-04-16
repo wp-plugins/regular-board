@@ -91,32 +91,10 @@ if ( $userisbanned ) {
 	
 	} else {
 		
-		$archived       = 0;
-		$edited         = 0;
+		$archived      = 0;
+		$edited        = 0;
+		$check_comment = $_REQUEST['COMMENT'] = esc_sql ( str_replace ( array ( '\\n', '\\r', '\\r\\n' ), '||', $_REQUEST['COMMENT'] ) );
 
-		$_REQUEST['board']   = sanitize_text_field ( $_REQUEST['board'] );
-		$_REQUEST['SUBJECT'] = sanitize_text_field ( $_REQUEST['SUBJECT'] );
-		$_REQUEST['URL']     = sanitize_text_field ( $_REQUEST['URL'] );
-		$_REQUEST['EMAIL']   = sanitize_text_field ( $_REQUEST['EMAIL'] );
-		$_REQUEST['COMMENT'] = esc_sql ( str_replace ( array ( '\\n', '\\r', '\\r\\n' ), '||', $_REQUEST['COMMENT'] ) );
-		$check_comment       = $_REQUEST['COMMENT'];
-
-		if ( !$_REQUEST['board'] ) {
-			$the_board = '';
-		} else {
-			// Check if board exists before making a post 
-			if ( $thisboard ) {
-				// board exists, set the board for post creation
-				$the_board  = $thisboard;
-			} else {
-				$the_board  = $_REQUEST['board'];
-				$checkboard = $wpdb->get_results ( "SELECT board_shortname FROM $regular_board_boards WHERE board_shortname = '$the_board' " );
-				if ( count ( $checkboard ) == 0 ) {
-					// board doesn't exist, don't post anything
-					$timegateactive = true;
-				}
-			}
-		}
 		if ( isset ( $_REQUEST['password'] ) ) {
 			if ( $_REQUEST['password'] ) {
 				// Most likely editing a post - we don't need flood protection.
@@ -124,11 +102,10 @@ if ( $userisbanned ) {
 			}
 		}
 
-
-		// Are we making a reply or a new thread?
 		if ( isset ( $_REQUEST['PARENT'] ) ) {
+			
+			/* Check existence of parent (for reply) */
 			if ( $_REQUEST['PARENT'] ) {
-				// If parent exists in the form, let's check and make sure it exists in the database
 				$post_parent        = $_REQUEST['PARENT'];
 				$check_parent       = $wpdb->get_results (
 										$wpdb->prepare ( 
@@ -157,7 +134,10 @@ if ( $userisbanned ) {
 					}
 				}
 			}
-		} elseif ( !$this_thread ) {
+			/* */
+			
+		} else {
+			//** No parent exists, create a new thread. **//
 			$post_parent   = 0;
 		}
 
@@ -167,39 +147,32 @@ if ( $userisbanned ) {
 					if ( $this_area == 'post' ) {
 						$IS_IT_SPAM = 0;
 						
-						// Check for spam
+						//** Akismet **//
 						if ( function_exists ( 'akismet_admin_init' ) ) {
 							$APIKey = get_option ( 'wordpress_api_key' );
-							if ( $the_board && !$this_thread ) {
-								$website_url = $current_page . '?b=' . $the_board;
-							}
-							if ( $the_board && $this_thread ) {
-								$website_url = $current_page . '?b=' . $the_board . '&amp;t=' . $this_thread;
-							}
-							if ( !$the_board ) {
-								$website_url = $current_page;
-							}
-							
 							$akismet = new Akismet ( $website_url, $APIKey );
 							if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
 								$akismet = new Akismet ( $website_url, $APIKey );
-								$akismet->setCommentAuthorEmail ( $_REQUEST['EMAIL'] );
-								$akismet->setCommentAuthorURL   ( $_REQUEST['URL'] );
+								$akismet->setCommentAuthorEmail ( '' );
+								$akismet->setCommentAuthorURL   ( '' );
 								$akismet->setCommentContent     ( $_REQUEST['COMMENT'] );
-								$akismet->setPermalink          ( $website_url );
+								$akismet->setPermalink          ( $this_page );
 								if ( $akismet->isCommentSpam() ) {
 									$IS_IT_SPAM = 1;
 								}
 							}
 						}
 					
-						$IS_IT_SPAM = 0;
 						$empty      = 0;
 						
 						if ( !$_REQUEST['COMMENT'] && !$URL ) {
 							$empty  = 1;
 						} elseif ( $_REQUEST['LINK'] || $_REQUEST['PAGE'] || $_REQUEST['LOGIN'] || $_REQUEST['USERNAME'] ) {
-							// Hidden fields have been filled.
+							
+							/** Check hidden fields.
+							 **	Hidden fields have been filled out; probably by a bot. 
+							 ** Ban the sucker.
+							 */
 							$wpdb->query (
 								$wpdb->prepare (
 									"INSERT INTO $regular_board_bans
@@ -227,14 +200,16 @@ if ( $userisbanned ) {
 									0
 								)
 							);
-							
+							/** What did the bot fill out?
+							 ** Take the content of the hidden fields and insert that content 
+							 ** (sanitized) into the database.
+							 ** And of course permanently ban the bot.
+							 */
 							$_REQUEST['LINK']     = sanitize_text_field( $_REQUEST['LINK'] );
 							$_REQUEST['PAGE']     = sanitize_text_field( $_REQUEST['PAGE'] );
 							$_REQUEST['LOGIN']    = sanitize_text_field( $_REQUEST['LOGIN'] );
 							$_REQUEST['USERNAME'] = sanitize_text_field( $_REQUEST['USERNAME'] );
-							
-							$bot_content = $_REQUEST['LINK'] . $_REQUEST['PAGE'] . $_REQUEST['LOGIN'] . $_REQUEST['USERNAME'];
-							
+							$bot_content          = $_REQUEST['LINK'] . $_REQUEST['PAGE'] . $_REQUEST['LOGIN'] . $_REQUEST['USERNAME'];
 							$wpdb->query (
 								$wpdb->prepare (
 									"INSERT INTO $regular_board_logs 
@@ -249,7 +224,11 @@ if ( $userisbanned ) {
 							);
 							
 						} elseif ( $IS_IT_SPAM == 1 ) {
-							// Spam detected
+							
+							/**
+							 ** Akismet spam detection
+							 ** Permanently ban the IP.
+							 */
 							$wpdb->query (
 								$wpdb->prepare (
 									"INSERT INTO $regular_board_bans
@@ -277,7 +256,9 @@ if ( $userisbanned ) {
 									0
 								)
 							);
+							
 						} else {
+						
 							if ( !$IS_IT_SPAM && !$tlast ) {
 								
 								/**
@@ -286,61 +267,59 @@ if ( $userisbanned ) {
 								 */
 								
 								// If URLs are enabled, prepare the entered URL
-
-
-									if ( preg_match ( '/\+\+(.*?)\+\+/', $check_comment, $match ) ) {
-										if ( $match[1] ) {
-											$match[1] = sanitize_text_field ( $match[1] );
-											$clean_url = $match[1];
-										}
-									} elseif ( $URL ) {
-										$clean_url = $URL;
+								if ( preg_match ( '/\+\+(.*?)\+\+/', $check_comment, $match ) ) {
+									if ( $match[1] ) {
+										$match[1] = sanitize_text_field ( $match[1] );
+										$clean_url = $match[1];
 									}
-									$ch   = curl_init();
-									$opts = array (
-										CURLOPT_RETURNTRANSFER => true,
-										CURLOPT_URL            => $clean_url,
-										CURLOPT_NOBODY         => true,
-										CURLOPT_TIMEOUT        => 10
-									);
-									curl_setopt_array ( $ch, $opts );
-									curl_exec ( $ch );
-									$status = curl_getinfo ( $ch, CURLINFO_HTTP_CODE );
-									curl_close ( $ch );
-									if ( $clean_url ) {
-										$path_info = pathinfo ( $clean_url );
-										if ( preg_match ('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $clean_url, $match ) ) {
-											// Youtube
-											$match[1] = sanitize_text_field ( $match[1] );
-											$video_id  = $match[1];
-											$post_type = 'youtube';
-											$post_url  = $video_id;
-										} elseif ( $status == '200' && getimagesize ( $clean_url ) !== false ) {
-											// image
-											if ( 
-												$path_info['extension'] == 'jpg'  || 
-												$path_info['extension'] == 'gif'  || 
-												$path_info['extension'] == 'jpeg' || 
-												$path_info['extension'] == 'png'
-											) {
-												$post_type = 'image';
-												$post_url  = $clean_url;
-											}
-										} else {
-											// link
-											$post_type = 'URL';
-											if ( false === strpos ( $clean_url, '://' ) ) {
-												$post_url = '//' . $clean_url;
-											} else {
-												$post_url = esc_url ( $clean_url );
-											}
+								} elseif ( $URL ) {
+									$clean_url = $URL;
+								}
+								$ch   = curl_init();
+								$opts = array (
+									CURLOPT_RETURNTRANSFER => true,
+									CURLOPT_URL            => $clean_url,
+									CURLOPT_NOBODY         => true,
+									CURLOPT_TIMEOUT        => 10
+								);
+								curl_setopt_array ( $ch, $opts );
+								curl_exec ( $ch );
+								$status = curl_getinfo ( $ch, CURLINFO_HTTP_CODE );
+								curl_close ( $ch );
+								if ( $clean_url ) {
+									$path_info = pathinfo ( $clean_url );
+									if ( preg_match ('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $clean_url, $match ) ) {
+										// Youtube
+										$match[1] = sanitize_text_field ( $match[1] );
+										$video_id  = $match[1];
+										$post_type = 'youtube';
+										$post_url  = $video_id;
+									} elseif ( $status == '200' && getimagesize ( $clean_url ) !== false ) {
+										// image
+										if ( 
+											$path_info['extension'] == 'jpg'  || 
+											$path_info['extension'] == 'gif'  || 
+											$path_info['extension'] == 'jpeg' || 
+											$path_info['extension'] == 'png'
+										) {
+											$post_type = 'image';
+											$post_url  = $clean_url;
 										}
 									} else {
-										// none of the above link types
-										$post_type = 'post';
-										$post_url  = '';
+										// link
+										$post_type = 'URL';
+										if ( false === strpos ( $clean_url, '://' ) ) {
+											$post_url = '//' . $clean_url;
+										} else {
+											$post_url = esc_url ( $clean_url );
+										}
 									}
-								
+								} else {
+									// none of the above link types
+									$post_type = 'post';
+									$post_url  = '';
+								}
+							
 								if ( !$enable_url && !$post_parent || !$enable_rep && $post_parent ) {
 									$post_type = 'post';
 									$post_url  = '';
@@ -350,7 +329,6 @@ if ( $userisbanned ) {
 								// Comment
 								if ( $_REQUEST['COMMENT'] ) {
 									$post_comment = substr ( $_REQUEST['COMMENT'], 0, $max_body );
-									
 									$test_comment       = str_replace ( array('!heaven','!sage'), '', $post_comment );
 									if ( preg_match ( '#\+\+(.*)\+\+#', $post_comment, $match ) ) {
 										$test_comment    = str_replace ( '++' . $match[1] . '++', '', $post_comment );
@@ -367,22 +345,17 @@ if ( $userisbanned ) {
 									if ( !$test_comment ) {
 										$post_comment = '';
 									}
-									
 								} else {
 									$post_comment = '';
 								}
-								// Subject
-								if ( $_REQUEST['SUBJECT'] ) {
-									$post_subject = substr ( $_REQUEST['SUBJECT'], 0, $max_text );
-								} else {
-									$post_subject = '';
-								}
+
 								// Password (if profile password is not present, a random password will be generated for this post
 								if ( $profilepassword ) {
 									$post_password = $profilepassword;
 								} else {
 									$post_password = wp_hash ( $random_password );
 								}
+								
 								// Previously, we WERE dismissing duplicates if editing
 								// but if we are editing, then it shouldn't be duplicate content, anyway
 								// and disabling duplicate check just allowed for abuse

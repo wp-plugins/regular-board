@@ -21,20 +21,22 @@ if ( inet_pton ( $_SERVER['REMOTE_ADDR'] ) !== false ) {
 	$ipaddress = esc_attr ( $_SERVER['REMOTE_ADDR'] );
 }
 
-function regular_board_check_dnsbl($ipaddress){
-	$dnsbl_lookup=array(
-			get_option('regular_board_dnsbl')
-		);
-	if ( $ipaddress ) {
-		$reverse_ip = implode ( ".", array_reverse ( explode ( ".", $ipaddress ) ) );
-		foreach ( $dnsbl_lookup as $host ) {
-			if ( checkdnsrr ( $reverse_ip . "." . $host . ".", "A" ) ) {
-				$listed.= $reverse_ip . '.' . $host;
+if ( !function_exists ( 'regular_board_check_dnsbl' ) ) {
+	function regular_board_check_dnsbl($ipaddress){
+		$dnsbl_lookup=array(
+				get_option('regular_board_dnsbl')
+			);
+		if ( $ipaddress ) {
+			$reverse_ip = implode ( ".", array_reverse ( explode ( ".", $ipaddress ) ) );
+			foreach ( $dnsbl_lookup as $host ) {
+				if ( checkdnsrr ( $reverse_ip . "." . $host . ".", "A" ) ) {
+					$listed.= $reverse_ip . '.' . $host;
+				}
 			}
 		}
+		if ( $listed ) {
+			$ipaddress === false;
+		}
+		regular_board_check_dnsbl ( $ipaddress );
 	}
-	if ( $listed ) {
-		$ipaddress === false;
-	}
-	regular_board_check_dnsbl ( $ipaddress );
 }

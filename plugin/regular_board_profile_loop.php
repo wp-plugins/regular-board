@@ -37,12 +37,12 @@ if ( count ( $usprofile ) > 0 ) {
 			}
 			if ( $theprofile->user_slogan ) {
 				if ( $theprofile->user_slogan != 'NULL' ) {
-					$the_profile_slogan = '<p><em>' . str_replace ( '\\', '', $theprofile->user_slogan ) . '</em></p>';
+					$the_profile_slogan = '<div class="text"><p><em>' . str_replace ( '\\', '', $theprofile->user_slogan ) . '</em></p></div>';
 				}
 			}
-			$the_profile_details = '<p>level ' . $theprofile->user_level . '<br />active posts: ' . $totalpages . ' /
+			$the_profile_details = '<div class="text"><p>level ' . $theprofile->user_level . '<br />active posts: ' . $totalpages . ' /
 			total posts: ' . $theprofile->user_posts . ' <br />
-			 member for ' . str_replace ( 'ago', '', regular_board_timesince ( $theprofile->user_date ) ) . ' </p>';
+			 member for ' . str_replace ( 'ago', '', regular_board_timesince ( $theprofile->user_date ) ) . ' </p></div>';
 			
 			
 		if ( $totalpages ) {

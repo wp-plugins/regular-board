@@ -1,4 +1,5 @@
  /**
+ /**
   * Regular Board CSS
   *
   * CSS to style Regular Board (February 10th, 2014)
@@ -15,76 +16,101 @@
   * Containers
   * Responsive
   */ 
-  
- 
-
-   
-  
  /**
   * Typography
   *
   * Typographical specifications
   */
- .boardAll span.frontinfo,
- .boardAll h1{
+ .regular_board_board_all,
+ .regular_board_board_all * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;    
+  -ms-box-sizing: border-box;
+  -o-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  text-transform: none;
+  text-shadow: none;
+  box-shadown: none;
+  text-decoration: none;
+  text-align: left;
+  color: #fff;
+ }
+ .regular_board_board_all .form_form p {
+	margin: 5px !important;
+	padding: 10px 0 !important;
+ } 
+ .regular_board_board_all code {
+	background: transparent !important; 
+ }
+
+ .regular_board_board_all span.frontinfo,
+ .regular_board_board_all h1{
 	clear: none !important;
  }
- .boardAll .nav_tools {
+ .regular_board_board_all .nav_tools {
 	color: #fff;
 	background-color: #000;
-	margin: 5px 0 5px 0 !important;
+	margin: 0 0 5px 0 !important;
 	padding: 5px;
 	position: relative;
 	width: 100%; 
 	text-align: center;
-	z-index: 99;
+	z-index: 3;
  }
- .boardAll blockquote {
+ .regular_board_board_all blockquote {
 	background-color: #101c22 !important;
 	color: #ceeeff !important;
  }
- .boardAll .top_nav {
+ .regular_board_board_all .top_nav {
 	background-color: #0f1112;
 	border-bottom: 1px solid rgba(0,0,0,.1);
 	display: block; 
 	font-size: 10px;
-	height: 15px;
-	margin: -8px 0 0 0;
+	height: 65px;
+	margin: 0;
 	overflow: hidden; 
 	padding: 5px;
 	text-transform: uppercase;
 	width: 100%;
+	z-index: 2;
+	position: relative;
  }
- .boardAll .top_nav a,
- .boardAll .top_nav span {
+ .regular_board_board_all .top_nav a,
+ .regular_board_board_all .top_nav span {
 	color: #1f96b7 !important;
 	float: left; 
 	margin: 2px 0 0 2px;
 	padding: 3px;
 	text-decoration: none !important;
+	height: 50px;
+	line-height: 35px;
  }
- .boardAll .top_nav a:hover {
+ .regular_board_board_all .top_nav a:hover {
+	background-color: #5e85ba;
 	color: #fff !important;
-	text-decoration: underline !important;
  }
- .boardAll .nav-right {
+ .regular_board_board_all .nav-right {
 	float: right;
 	margin: 0 5px 0 0;
  }
- .boardAll .profile-section i {
+ .regular_board_board_all .profile-section i {
 	color: #fff;
 	cursor: default;
 	float: right; 
 	font-size: 72px;
  }
-  .boardAll .small-left { 
+  .regular_board_board_all .small-left { 
 	background-color: transparent !important;
 	font-size: 10px;
 	line-height: 15px;
 	float: left;
 	width: 350px !important;
  } 
- .boardAll .smallstats {
+ .regular_board_board_all .smallstats {
 	background-color: #1f2a3e;
 	color: #edf3ff;
 	display: block; 
@@ -93,63 +119,63 @@
 	text-align: center;
 	width: 100%:
  }
- .boardAll .clear {
+ .regular_board_board_all .clear {
 	clear: both; 
 	display: block;
  }
- .boardAll .clear:after {
+ .regular_board_board_all .clear:after {
 	clear: both; 
 	content: "";
 	display: table;
  }
- .boardAll .prunedate {
+ .regular_board_board_all .prunedate {
 	background-color: #1f2a3e;
 	color: #edf3ff;
 	border-radius: 2px;
 	padding: 2px;
  }
- .boardAll h1 {
-	margin: 0;
+ .regular_board_board_all h1 {
+	margin: 5px;
 	font-size: 30px;
-	line-height: 35px;
+	line-height: 45px;
  }
- .boardAll h2 {
+ .regular_board_board_all h2 {
 	margin: 0;
 	font-size: 25px;
 	line-height: 30px;
  }
- .boardAll h3 {
+ .regular_board_board_all h3 {
 	margin: 0;
 	font-size: 20px;
 	line-height: 25px;
  } 
  
- .boardAll .left-half span {
+ .regular_board_board_all .left-half span {
 	display: block;
 	width: 100%;
  }
- .boardAll .left-half span:after {
+ .regular_board_board_all .left-half span:after {
 	clear: both; 
 	content: "";
 	display: table;
  }
  
- .boardAll .left-half .tag_cloud {
+ .regular_board_board_all .left-half .tag_cloud {
 	width: 100%;
 	margin: 5px auto;
  }
- .boardAll .left-half .tag_cloud:after {
+ .regular_board_board_all .left-half .tag_cloud:after {
 	clear: both; 
 	content: "";
 	display: table;
  }
- .boardAll .left-half .tag_cloud .nothing {
+ .regular_board_board_all .left-half .tag_cloud .nothing {
 	opacity: .5;
  }
- .boardAll .left-half .tag_cloud .nothing:hover{
+ .regular_board_board_all .left-half .tag_cloud .nothing:hover{
 	opacity: 1!important;
  }
- .boardAll .left-half .tag_cloud span {
+ .regular_board_board_all .left-half .tag_cloud span {
 	clear: none; 
 	display: block;
 	float: left; 
@@ -157,16 +183,16 @@
 	position: relative;
 	width: auto; 
  }
- .boardAll .left-half .tag_cloud span a.active {
+ .regular_board_board_all .left-half .tag_cloud span a.active {
 	border: none!important;
 	background-color: #1f2a3e;
 	color: #edf3ff;
  }
- .boardAll .left-half .tag_cloud span a:hover {
-	color: #000 !important;
+ .regular_board_board_all .left-half .tag_cloud span a:hover {
+	color: #fff !important;
  }
- 
- .boardAll .left-half span a {
+ .regular_board_board_all .text,
+ .regular_board_board_all .left-half span a {
 	background-color: #1f2a3e;
 	color: #edf3ff;
 	display: block; 
@@ -175,27 +201,32 @@
 	text-decoration: none!important;
  }
  
- .boardAll ul {
+ .regular_board_board_all ul {
 	display: block;
  }
- .boardAll .powerlevel {
+ .regular_board_board_all li {
+	display: block;
+	margin: 5px;
+	padding: 5px;
+ }
+ .regular_board_board_all .powerlevel {
 	background-color: #1f2a3e;
 	color: #edf3ff;
 	border-radius: 2px;
 	margin: 5px;
 	padding: 5px;
  }
- .boardAll .left {
+ .regular_board_board_all .left {
 	float: left; 
 	padding: 5px;
 	text-align: left; 
  }
- .boardAll .right {
+ .regular_board_board_all .right {
 	float: right; 
 	padding: 5px;
 	text-align: right;
  }
- .boardAll span.frontinfo {
+ .regular_board_board_all span.frontinfo {
 	background-color: #1f2a3e;
 	color: #edf3ff;
 	display: block; 
@@ -205,7 +236,7 @@
 	padding: 5px;
 	
  }
- .boardAll a.boardlink {
+ .regular_board_board_all a.boardlink {
 	display: block; 
 	float: left;
 	margin: 5px;
@@ -213,23 +244,16 @@
 	text-align: center;
 	width: 20%;
  }
- .boardAll .profile_deets {
-	clear: both; 
-	display: block; 
-	padding: 5px;
-	text-align: center;
-	
- }
- .boardAll .countdown {
+ .regular_board_board_all .countdown {
 	display: block; 
 	padding: 5px;
 	text-align: center;
  }
- .boardAll .countdown span {
+ .regular_board_board_all .countdown span {
  	background-color: #000;
 	color: #fff;
  }
- .boardAll .announcement {
+ .regular_board_board_all .announcement {
 	background-color: #1f2a3e;
 	color: #edf3ff;
 	clear: both;
@@ -238,22 +262,22 @@
 	padding: 5px;
 	width: 100%;
  }
- .boardAll .announcement a {
+ .regular_board_board_all .announcement a {
 	background-color: #1f2a3e;
 	color: #edf3ff;
 	padding: 2px;
  }
- .boardAll form .fa-fw {
+ .regular_board_board_all form .fa-fw {
 	color: rgba(255,255,255,.5);
 	margin: 32px 0 0 3px;
 	position: absolute;
 	z-index: 2;
  }
- .boardAll .searchresult {
+ .regular_board_board_all .searchresult {
 	font-weight: 900;
 	text-decoration: underline;
  }
- .boardAll .urls a {
+ .regular_board_board_all .urls a {
 	background-color: #1f2a3e;
 	color: #edf3ff;
 	border-radius: 2px;
@@ -261,12 +285,12 @@
 	line-height: 18px; 
 	padding: 2px;
  }
- .boardAll .reply h1,
- .boardAll .reply h3 {
+ .regular_board_board_all .reply h1,
+ .regular_board_board_all .reply h3 {
 	color: rgba(255,255,255,.5)!important;
 	text-align: center;
  }
- .boardAll .fa-play {
+ .regular_board_board_all .fa-play {
 	position: relative;
 	font-size: 20px;
 	margin: 0;
@@ -277,40 +301,40 @@
  .user_hash {
 	color: #7ab550;
  }
- .boardAll small{
+ .regular_board_board_all small{
 	cursor: default!important;
 	font-size: 10px;
 	padding: 1px!important;
  }
- .boardAll a {
+ .regular_board_board_all a {
 	border: none!important;
 	color: #1f96d8 !important;
 	text-decoration: underline!important;
 	margin: 0 3px 0 0;
  }
- .boardAll a:hover {
+ .regular_board_board_all a:hover {
 	color: #fff !important;
  }
- .boardAll p{
+ .regular_board_board_all p{
 	height: auto!important;
 	margin: 0!important;
 	padding: 5px!important;
 	width: auto!important;
 	word-wrap: break-word!important;
  }
- .boardAll span.spoiler{
+ .regular_board_board_all span.spoiler{
 	color: #000;
 	background-color: #000;
 	
  }
- .boardAll span.spoiler:hover{
+ .regular_board_board_all span.spoiler:hover{
 	color: #fff;
 	background-color: #000;
  }
-.boardAll span.quotes{
+.regular_board_board_all span.quotes{
 	
  }
- .boardAll .strike {
+ .regular_board_board_all .strike {
 	text-decoration: line-through;
  }
  a.newtopic,
@@ -331,7 +355,7 @@
 	width: 73px;
  }
  
- .boardAll .banner {
+ .regular_board_board_all .banner {
 	display: block;
 	height: 100px;
 	margin: 5px auto;
@@ -341,32 +365,14 @@
 	z-index: 1;
 	overflow: hidden;
  }
- .boardAll .banner img {
+ .regular_board_board_all .banner img {
 	display: block;
 	margin: 2px auto;
  }
- .boardAll .gallery {
-	clear: none;
-	display: block; 
-	float: left;
-	font-size: 10px;
-	margin: 5px;
-	padding: 2px;
-	overflow: hidden;
-	text-align: center;
-	min-height: 150px;
-	width: 180px;
- }
- .boardAll .gallery span {
-	clear: both;
-	display: block;
-	height: 150px;
-	overflow: hidden;
- }
- .boardAll .thread .imgs img {
+ .regular_board_board_all .thread .imgs img {
 	width: 25%;
  }
- .boardAll .thread .imgs .imageEXPAND{
+ .regular_board_board_all .thread .imgs .imageEXPAND{
 	height: auto;
 	width: 100%!important;
 	margin: 5px 5px 5px -5px;
@@ -380,7 +386,14 @@
 	width: 100%;
 	height: 315px;
  }
- .boardAll .imageFULL{
+ .regular_board_board_all img.galleryIMAGE {
+	float: left;
+	margin: 0;
+	width: 25% !important;
+	padding: 0 !important;
+	display: table;
+ }
+ .regular_board_board_all .imageFULL{
 	clear: both;
 	height: auto;
 	margin: 5px 5px 5px -1px;
@@ -389,7 +402,7 @@
 	display: table;
 	max-width: 100%;
  } 
- .boardAll .imageOP{
+ .regular_board_board_all .imageOP{
 	height: auto;
 	max-width: 250px;
 	margin: 5px 5px 5px -1px;
@@ -398,7 +411,7 @@
 	float: left;
 	display: table;
  }
- .boardAll .imageEXPAND{
+ .regular_board_board_all .imageEXPAND{
 	height: auto;
 	max-width: 100%;
 	margin: 5px 5px 5px -5px;
@@ -406,7 +419,7 @@
 	padding: 5px;
 	float: left;
  }
- .boardAll .thread .thumbnail {
+ .regular_board_board_all .thread .thumbnail {
 	border-radius: 3px;
 	display: table;
 	float: left; 
@@ -421,18 +434,20 @@
   * Action buttons for various things like toggles
   */
   
- .boardAll .srchideme,
- .boardAll .srcme{
+ .regular_board_board_all .srchideme,
+ .regular_board_board_all .srcme{
 	cursor: pointer;
  }	
- .boardAll .thread .loadme,
- .boardAll .thread .hideme {
+ .regular_board_board_all .thread .loadme,
+ .regular_board_board_all .thread .hideme {
 	cursor: pointer;
 	display: block;
 	float: left;
+	font-size: 15px !important;
+	margin: 8px 5px 0 !important;
  }
- .boardAll .thread i.fa-plus-square,
- .boardAll .thread i.fa-minus-square {
+ .regular_board_board_all .thread i.fa-plus-square,
+ .regular_board_board_all .thread i.fa-minus-square {
 	font-size: 100%;
 	line-height: 105%;
 	margin: 5px;
@@ -443,23 +458,23 @@
   *
   * All elements that are related to forms
   */
-  .boardAll form.modes {
+  .regular_board_board_all form.modes {
 	margin: 5px;
   }
- .boardAll input[type="submit"] {
+ .regular_board_board_all input[type="submit"] {
 	border: none !important;
-	border-radius: 2px;
+	background-color: #21314f; 
+	border: none !important;
+	color: #f0e4e4;
+	cursor: pointer;
 	display: block;
-	font-size : 14px;
-	color : #f0e4e4;
-	height: 30px;
-	padding : 3px 3px;
-	margin: 5px 0 0 -2px;
-	background-color : #21314f; 
-	width: 100%;
+	font-size: 100%;
+	margin: 5px auto;
+	padding: 1% !important;
+	width: 100% !important;
  }
   
- .boardAll .profile-section {
+ .regular_board_board_all .profile-section {
 	
 	display: block;
 	margin: 5px 0;
@@ -467,40 +482,40 @@
 	padding: 15px 0;
 	width: 100%;
  }
- .boardAll .profile-section:hover {
+ .regular_board_board_all .profile-section:hover {
 	background-color: #0c0c0c!important;
  }
- .boardAll .profile-section input,
- .boardAll .profile-section select {
+ .regular_board_board_all .profile-section input,
+ .regular_board_board_all .profile-section select {
 	margin: 5px 0;
  }
- .boardAll .friend_request {
+ .regular_board_board_all .friend_request {
 	display: block; 
 	float: left; 
 	padding: 5px;
 	width: 25%; 
  }
- .boardAll .friend_request label {
+ .regular_board_board_all .friend_request label {
 	height: auto;
  }
- .boardAll form.right {
+ .regular_board_board_all form.right {
 	display: block; 
 	float: right;
 	padding: 5px;
 	width: 70px; 
  }
- .boardAll .user-options {
+ .regular_board_board_all .user-options {
 	display: block; 
 	width: 100%;
 	margin: auto;
  } 
- .boardAll .user-options span {
+ .regular_board_board_all .user-options span {
 	display: none;
 	visibility: hidden; 
 	height: 0;
  } 
- .boardAll .user-options select,
- .boardAll .user-options input {
+ .regular_board_board_all .user-options select,
+ .regular_board_board_all .user-options input {
 	background-color: #1f2a3e;
 	color: #edf3ff;
 	border: none!important;
@@ -514,8 +529,8 @@
 	margin: 0!important;
 	width: 70%!important;
  }
- .boardAll .user-options input[type="text"]:focus ~ span,
- .boardAll .user-options input[type="password"]:focus ~ span {
+ .regular_board_board_all .user-options input[type="text"]:focus ~ span,
+ .regular_board_board_all .user-options input[type="password"]:focus ~ span {
 	clear: both;
 	color: #fff;
 	display: block;
@@ -524,7 +539,7 @@
 	padding: 5px;
 	visibility: visible;
  }
- .boardAll .user-options label {
+ .regular_board_board_all .user-options label {
 	border: none!important;
 	clear: none!important;
 	display: block!important; 
@@ -534,33 +549,33 @@
 	text-align: left!important;
 	width: 25%!important;
  } 
- .boardAll .user-options h3 {
+ .regular_board_board_all .user-options h3 {
 	color: rgba(255,255,255,.9);
 	display: block;
 	text-align: center;
  }
- .boardAll .user-options section {
+ .regular_board_board_all .user-options section {
 	clear: both; 
 	display: block;
 	margin: 0;
 	width: 100%;
  }
- .boardAll .user-options section:after {
+ .regular_board_board_all .user-options section:after {
 	clear: both; 
 	content: "";
 	display: table;
  }
   
- .boardAll .registration {
+ .regular_board_board_all .registration {
 	display: block;
 	width: 100%;
  }
- .boardAll .registration:after {
+ .regular_board_board_all .registration:after {
 	clear: both; 
 	content: "";
 	display: table;
  }
- .boardAll .registration form {
+ .regular_board_board_all .registration form {
 	background-color: #1f2a3e;
 	color: #edf3ff;
 	border-radius: 5px;
@@ -571,31 +586,31 @@
 	padding: 5px; 
 	width: 100%; 
  }
- .boardAll .registration form label,
- .boardAll .registration form input{
+ .regular_board_board_all .registration form label,
+ .regular_board_board_all .registration form input{
 	clear: both;
 	display: block; 
 	font-size: 10px;
 	width: 100%;
  }
- .boardAll p.information {
+ .regular_board_board_all p.information {
 	color: rgba(255,255,255,.3);	
 	cursor: default;
 	font-size: 25px;
 	line-height: 27px;
 	padding: 5px;
  }
- .boardAll form p {
+ .regular_board_board_all form p {
 	background-color: #1f2a3e;
 	color: #edf3ff;
 	clear: both; 
 	display: block;
 	padding: 5px;
  }
- .boardAll #FORMSUBMIT {
+ .regular_board_board_all #FORMSUBMIT {
 	cursor: pointer;
  }
- .boardAll .reply {
+ .regular_board_board_all .reply {
 	color: rgba(255,255,255,.8);
 	overflow: hidden;
 	padding: 5px;
@@ -607,12 +622,14 @@
 	border: 1px solid rgba(0,0,0,.1);
 	border-radius: 2px;
 	clear: both;
+	color: #000;
 	display: block;
 	font-size: 25px;
 	margin: 0 auto;
 	position: relative;
+	padding: 5px;
 	visibility: visible;
-	width: 100%;
+	width: auto;
  }
  .imgur {
 	clear: both;
@@ -621,45 +638,45 @@
 	margin: 0 0 5px 0!important;
 	position: relative;
  }
- .boardAll .noborder #reply {
+ .regular_board_board_all .noborder #reply {
 	margin: 0 0 0 -5px !important;
  }
- .boardAll #reply {
+ .regular_board_board_all #reply {
 	margin: 0 auto 0 auto;
 	width: 100%;
  }
- .boardAll .right-half #reply {
+ .regular_board_board_all .right-half #reply {
 	margin: 0 auto -2px 0;
  }
- .boardAll #reply section {
+ .regular_board_board_all #reply section {
 	clear: both;
  	color: rgba(255,255,255,.5);
 	display: block;
 	line-height: 25px;
  }
- .boardAll #reply section:after {
+ .regular_board_board_all #reply section:after {
 	border: 1px solid rgba(255,255,255,.1);
 	content: "";
 	clear: both;
 	display: table;
  }
- .boardAll #reply form {
+ .regular_board_board_all #reply form {
 	display: block;
-	margin: 5px 5px 5px 0;
-	padding: 5px 10px 5px 5px;
-	width: 100%;
+	margin: 5px auto;
+	padding: 5px;
+	width: auto;;
  }
- .boardAll #reply form textarea {
+ .regular_board_board_all #reply form textarea {
 	height: 200px;
  }
- .boardAll #reply form select {
+ .regular_board_board_all #reply form select {
 	margin: 0 0 5px 0 !important;
  } 
- .boardAll #reply form textarea,
- .boardAll #reply form select,
- .boardAll #reply form input[type="text"],
- .boardAll #reply form input[type="password"],
- .boardAll #reply form input[type="file"]{
+ .regular_board_board_all #reply form textarea,
+ .regular_board_board_all #reply form select,
+ .regular_board_board_all #reply form input[type="text"],
+ .regular_board_board_all #reply form input[type="password"],
+ .regular_board_board_all #reply form input[type="file"]{
 	color: #fff;
 	background-color: rgba(255,255,255,.1);
 	box-shadow: none;
@@ -668,19 +685,19 @@
 	clear: none;
 	cursor: default;
 	display: block;
-	font-family: Arial, Verdana;
+	float: left;
 	font-size: 15px;
-	margin: 5px 0 5px -2px;
-	padding: 5px;
+	margin: 5px 0 5px;
+	padding: 1%;
 	text-align: left;
 	visibility: visible;
 	width: 100%;
  }
- .boardAll #reply form label:hover {
+ .regular_board_board_all #reply form label:hover {
 	color: rgba(255,255,255,.7);
  }
- .boardAll #reply form label, 
- .boardAll form label {
+ .regular_board_board_all #reply form label, 
+ .regular_board_board_all form label {
 	border-radius: 0;
 	color: #fff;
 	clear: both;
@@ -702,7 +719,7 @@
   * Mainly used on the stats page.
   */
   
- .boardAll table {
+ .regular_board_board_all table {
 	
 	clear: both;
 	display: block;
@@ -711,19 +728,19 @@
 	width: 95%;
 	width: calc(100% - 10px);
  }
- .boardAll table tr:hover td {
+ .regular_board_board_all table tr:hover td {
 	
 	
  }
- .boardAll table td {
+ .regular_board_board_all table td {
 	
 	padding: 5px;
  }
- .boardAll table td:nth-child(even) {
+ .regular_board_board_all table td:nth-child(even) {
 	margin: 2px -5px;
 	padding: 5px;
  }
- .boardAll table td:nth-child(odd) {
+ .regular_board_board_all table td:nth-child(odd) {
 	margin: 2px -5px;
 	padding: 5px;
  }
@@ -734,32 +751,31 @@
   *
   * Containers for threads, replies, and boards.
   */
- .boardAll .form_form {
+ .regular_board_board_all .form_form {
 	clear: both; 
 	display: block; 
-	margin: -10px 0 5px -10px !important;
-	overflow: hidden;
+	margin: -18px auto 5px;
 	position: relative;
-	width: 100%; 
+	width: 100% !important; 
  }
-
- .boardAll .form_form form {
-	margin: -8px 0 0 20px !important;
- }
- .boardAll .form_form small {
+ .regular_board_board_all .form_form small {
 	display: block;
 	text-align: center;
 	width: 100%;
  }
- footer {
+ .regular_board_board_all .footer {
+	background-color: #000;
 	border: none !important;
 	display: block; 
 	clear: both; 
 	width: 100%; 
-	margin: 15px auto !important;
+	margin: 15px auto 0 auto;
 	padding: 5px;
+	z-index: 2;
+	position: relative;	
+	text-align: center;
  }
- footer:after {
+ .regular_board_board_all .footer:after {
 	clear: both; 
 	content: "";
 	display: table;
@@ -768,7 +784,10 @@
  body {
 	overflow-x: hidden;
  } 
- .boardAll {
+ .regular_board_board_all {
+	background-color: #0f1112;
+	border-radius: 3px;
+	border-top: 5px solid #5175a5;
 	display: block;
 	font-family: Arial, Verdana;
 	font-size: 12px;
@@ -779,35 +798,35 @@
 	overflow-x: hidden;
 	position: relative;
 	text-shadow: none!important;
-	width: 100%;
+	width: 99%;
  }
- .boardAll .thread_container:after,
- .boardAll .lastthree span:after,
- .boardAll .lastthree:after,
- .boardAll .thread:after,
- .boardAll:after {
+ .regular_board_board_all .thread_container:after,
+ .regular_board_board_all .lastthree span:after,
+ .regular_board_board_all .lastthree:after,
+ .regular_board_board_all .thread:after,
+ .regular_board_board_all:after {
 	clear: both;
 	content: "";
 	display: table;
  }
  
- .boardAll .thread_container {
+ .regular_board_board_all .thread_container {
 	width: 100%;
 	margin: 5px;
  }
  
  
- .boardAll .noborder {
+ .regular_board_board_all .noborder {
 	border:none!important;
  }
  
- .boardAll .lastthree {
+ .regular_board_board_all .lastthree {
 	border-top: 1px solid rgba(0,0,0,.1);
 	display: block; 
 	padding: 5px;
 	width: 100%;
  }
- .boardAll .lastthree span {
+ .regular_board_board_all .lastthree span {
 	background-color: #1f2a3e;
 	color: #edf3ff;
 	display: block; 
@@ -816,48 +835,82 @@
 	padding: 5px;
 	width: 100%;
  }
- .boardAll .lastthree span a {
+ .regular_board_board_all .lastthree span a {
 	color: rgba(0,0,0,.8)!important;
 	display: block;
 	height: 100%;
 	text-decoration: none!important;
 	width: 100%;
  }
- .boardAll .lastthree span img {
+ .regular_board_board_all .lastthree span img {
 	clear: both;
 	display: block; 
 	width: 100%;
  }
- .boardAll .left-half .piece_form {
+ .regular_board_board_all .left-half .piece_form {
 	z-index: 99;
  }
- .boardAll .left-half .piece_form,
- .boardAll .left-half .piece {
-	background-color: #16202e;
+ .regular_board_board_all .left-half .piece_form,
+ .regular_board_board_all .left-half .piece {
 	margin: 0 0 5px 0;
 	padding: 5px;
 	position: relative;
  }
- .boardAll .right-half {
+ 
+ .bg-left {
+	background-color: #0f1112;
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 50%;
+	z-index: 1;
+ }
+ .bg-right {
+	background-color: #1d2224;
+	position: absolute;
+	right: 0;
+	top: 0;
+	height: 100%;
+	width: 50%;	
+	z-index: 1;
+ }
+ .regular_board_board_all .right-half {
  	background-color: #0f1112;
 	float: left;
 	margin: 5px -35px 5px 5px;
 	padding: 5px 10px 5px 0;
-	width: 50%;
+	width: 48%;
+	z-index: 2;
+	position: relative;
  } 
- .boardAll .left-half {
+ .regular_board_board_all .left-half .imageFULL {
+	width: 100% !important;
+	margin: 0 0 0 -5px;
+ }
+ .regular_board_board_all .left-half-two strong,
+ .regular_board_board_all .left-half-two span {
+	clear: both; 
+	display: block; 
+	padding: 5px;
+ } 
+ .regular_board_board_all .left-half-two {
+	margin: 5px !important;
+ }
+ .regular_board_board_all .left-half-two,
+ .regular_board_board_all .left-half {
 	background-color: #1d2224;
 	position: relative;
-	float:right;
+	float: right;
 	display: block;
 	margin: 5px;
 	padding: 2px;
-	width: 45%;
+	width: 24%;
 	overflow: hidden;
 	z-index: 2;
+	position: relative;
  }
-
- .boardAll .left-half input[type="text"] {
+ .regular_board_board_all .left-half input[type="text"] {
 	cursor: default;
 	display: block;
 	margin: 5px auto;
@@ -865,7 +918,7 @@
  }
 
  
- .boardAll .spacer {
+ .regular_board_board_all .spacer {
 	background-color: #000;
 	color: #c4c9cb !important;
 	display: block;
@@ -873,19 +926,19 @@
 	margin: 0 0 10px 0;
 	width: 100%;
  }
- .boardAll .spacer:after {
+ .regular_board_board_all .spacer:after {
 	clear: both;
 	content: "";
 	display: table;
  }
- .boardAll .container_half {
+ .regular_board_board_all .container_half {
 	width: 45%;
 	margin: 5px;
 	text-align: left; 
 	float: left;
  }
  
- .boardAll ul.menu {
+ .regular_board_board_all ul.menu {
 	clear: both; 
 	display: block;
 	margin: 0 auto;
@@ -893,18 +946,18 @@
 	width: 100%;
  }
  
- .boardAll ul.menu a {
+ .regular_board_board_all ul.menu a {
 	text-decoration: none!important;
  }
- .boardAll ul.menu,
- .boardAll ul.dropit-submenu {
+ .regular_board_board_all ul.menu,
+ .regular_board_board_all ul.dropit-submenu {
 	border-radius: 2px;
 	background-color: #fff;
 	color: #000;
 	list-style: none;
 	padding: 5px; 	
  }
- .boardAll ul.dropit-submenu {
+ .regular_board_board_all ul.dropit-submenu {
  	height: 200px; 
 	overflow: auto; 
 	text-align: center;
@@ -912,41 +965,41 @@
 	margin: 5px 0 0 -10px;
 	width: 100%;
  }
- .boardAll ul.dropit-submenu li {
+ .regular_board_board_all ul.dropit-submenu li {
 	text-align: left!important;
  }
- .boardAll .imgs,
- .boardAll .urls {
+ .regular_board_board_all .imgs,
+ .regular_board_board_all .urls {
 	width: 100%;
 	background-color: #1f2a3e;
 	color: #edf3ff;
 	padding: 5px;
  } 
- .boardAll .imgs:before,
- .boardAll .urls:before,
- .boardAll .imgs:after,
- .boardAll .urls:after {
+ .regular_board_board_all .imgs:before,
+ .regular_board_board_all .urls:before,
+ .regular_board_board_all .imgs:after,
+ .regular_board_board_all .urls:after {
 	clear: both; 
 	content: "";
 	display: table;
  }
- .boardAll p.newtopic {
+ .regular_board_board_all p.newtopic {
 	margin: 25px auto;
  }
- .boardAll p.boardheader {
+ .regular_board_board_all p.boardheader {
 	clear: both; 
 	font-size: 25px;
 	line-height: 35px;
 	margin: 10px auto;
 	text-align: center;
  }
- .boardAll p.boardheader a {
+ .regular_board_board_all p.boardheader a {
 	clear: both; 
 	display: block; 
 	font-size: 35px;
 	line-height: 45px;
  }
- .boardAll span.boards {
+ .regular_board_board_all span.boards {
 	display: block; 
 	margin: -15px 0 0 -5px;
 	padding: 5px;
@@ -954,19 +1007,19 @@
 	width: 100%; 
 	z-index: 2;
  }
- .boardAll .board_head {
-	height: 60px !important;
+ .regular_board_board_all .board_head {
+	height: 70px !important;
  }
- .boardAll .board_header {
+ .regular_board_board_all .board_header {
 	font-size: 25px;
 	line-height: 35px;
 	height: 45px;
 	overflow: hidden;
  }
- .boardAll .board_header a {
+ .regular_board_board_all .board_header a {
 	text-decoration: none !important;
  }
- .boardAll .navi {
+ .regular_board_board_all .navi {
 	background-color: #16202e;
 	border-bottom: 1px solid #16202e;
 	clear: both;
@@ -981,12 +1034,12 @@
 	width: 100%;
 	z-index: 3;
  }
- .boardAll .navi:after {
+ .regular_board_board_all .navi:after {
 	clear: both; 
 	content: "";
 	display: table;
  }
- .boardAll .navi a {
+ .regular_board_board_all .navi a {
 	border: 1px solid #16202e !important;
 	border-bottom: 0 !important;
 	display: table;
@@ -996,63 +1049,63 @@
 	margin: 0 2px -6px 3px;
 	text-align: center;
  }
- .boardAll a.active {
+ .regular_board_board_all a.active {
 	color: #fff !important;
 	background-color: #0c0c0c;
  }
- .boardAll a.active i {
+ .regular_board_board_all a.active i {
 	color: red;
  }
- .boardAll .navi a span {
+ .regular_board_board_all .navi a span {
 	margin: 0 0 0 5px;
  }
- .boardAll .userbar {
+ .regular_board_board_all .userbar {
 	clear: both; 
 	display: block;
 	margin: 30px 0 0 0;
 	text-align: center;
  }
- .boardAll .thread {
+ .regular_board_board_all .thread {
 	clear: both;
 	color: #c4c9cb;
 	display: block;
-	margin: 2px 0 2px 0;
+	margin: 0;
 	overflow: hidden;
 	padding: 5px;
 	text-align: left;
 	width: 98%;
  }
 
- .boardAll .child {
+ .regular_board_board_all .child {
 	border: none!important;
 	background-color: #04121f;
  }
  
- .boardAll .thread .thread {
+ .regular_board_board_all .thread .thread {
 	margin: 5px;
  }
   
- .boardAll .hidden {
+ .regular_board_board_all .hidden {
 	display: none!important;
 	visibility: hidden!important;
 	width: 0!important;
 	height: 0!important;
  }
 
- .boardAll .src{
+ .regular_board_board_all .src{
 	display: block;
 	width: 100%;
 	height: 150px;
 	padding: 5px;
 	margin: 0;
  } 
- .boardAll .current{
+ .regular_board_board_all .current{
 	border-right: 1px dotted red;
 	border-top: 1px dotted red;
 	border-bottom: 1px dotted red;
  }
- .boardAll .stats,
- .boardAll #stats{
+ .regular_board_board_all .stats,
+ .regular_board_board_all #stats{
 	background-color: #1f2a3e;
 	color: #edf3ff;
 	border: 1px solid rgba(255,255,255,.1);
@@ -1061,7 +1114,7 @@
 	padding: 5px;
 	width: 98%;
  }
- .boardAll #omitted {
+ .regular_board_board_all #omitted {
 	background-color: #1f2a3e;
 	color: #edf3ff;
 	border: 1px solid rgba(255,255,255,.1);
@@ -1069,7 +1122,7 @@
 	margin: 3px 0 5px 0;
 	width: 100%; 
  }
- .boardAll #omitted .thread {
+ .regular_board_board_all #omitted .thread {
 	margin: 5px 0 10px;
 	color: #edf3ff;
 	border-left: 1px solid #fff;
@@ -1080,21 +1133,75 @@
   * Responsive
   *
   */
+  
+@media only screen and (max-width: 1220px) {  
+ .regular_board_board_all .left-half-two strong,
+ .regular_board_board_all .left-half-two span {
+	float: left;
+	clear: none; 
+	padding: 5px;
+	margin: -12px 0 12px 0;
+ } 
+ .regular_board_board_all .left-half {
+	background-color: #1d2224;
+	position: relative;
+	float:right;
+	display: block;
+	margin: 5px 10px;
+	padding: 2px;
+	width: 48%;
+	overflow: hidden;
+	z-index: 2;
+	position: relative;
+ }
+ .regular_board_board_all .left-half-two {
+	height: 30px;
+	overflow: hidden; 
+	color: #fff;
+	background-color: #000;
+	margin: 0 0 5px 0 !important;
+	padding: 5px;
+	position: relative;
+	width: 50%; 
+	text-align: center;
+ } 
+}
 @media only screen and (max-width: 880px) {
-	.boardAll .navi a span {
+	.regular_board_board_all .left-half-two {
+		height: 25px;
+		overflow: hidden;
+		color: #fff;
+		background-color: #000;
+		margin: 0 0 5px 0 !important;
+		padding: 5px;
+		position: relative;
+		width: 100%; 
+		text-align: center;
+	} 
+	.bg-left {
+		width: 100%;
+	}
+	.bg-right {
+		display: none;
+		visibility: hidden;
+	}
+	.regular_board_board_all .form_form {
+		margin: 0;
+	}
+	.regular_board_board_all .navi a span {
 		display: none;
 	}
-	.boardAll .banner {
+	.regular_board_board_all .banner {
 		margin: auto;
 	}
 	
-	.boardAll .left-half {
+	.regular_board_board_all .left-half {
 		text-align: center;
 	}
 	
-	.boardAll .left-half,
-	.boardAll .navi,
-	.boardAll .right-half {
+	.regular_board_board_all .left-half,
+	.regular_board_board_all .navi,
+	.regular_board_board_all .right-half {
 		display: block !important;
 		width: 100% !important;
 		clear: both !important;  

@@ -18,8 +18,9 @@ if ( count ( $posts ) > 0 ) {
 	} else {
 		$thread_urls_disabled = 0;
 	}
-
-	echo '<div class="thread'; if ( $posts->post_comment_parent ) { echo 'child'; } echo '">';
+	if ( $this_area != 'gallery' ) {
+		echo '<div class="thread'; if ( $posts->post_comment_parent ) { echo 'child'; } echo '">';
+	}
 	$posts->post_id             = absint ( $posts->post_id          );
 	$posts->post_parent         = absint ( $posts->post_parent      );
 	$posts->post_userid         = absint ( $posts->post_userid      );
@@ -51,6 +52,10 @@ if ( count ( $posts ) > 0 ) {
 		$guest_post             = 1;
 	} else {
 		$guest_post             = 0;
+	}
+	$posts_has_been_deleted     = 0;
+	if ( strtolower ( $posts->post_name ) == 'null' && strtolower ( $posts->post_email ) == 'heaven' && strtolower ( $posts->post_title ) == '[deleted]' && strtolower ( $posts->post_comment ) == '[deleted]' && intval ( $posts->post_locked ) == 1 ) {
+		$post_has_been_deleted  = 1;
 	}
 	
 	$raw_comment                = str_replace ( array ( '\\n', '\\r', '\\' ), array ( ' || ', ' || ', '' ), $posts->post_comment );
@@ -104,24 +109,7 @@ if ( count ( $posts ) > 0 ) {
 			$this_is_protected = 1;
 		}
 	}
-	if ( $posts->post_comment == '[deleted]' && $posts->post_title == '[deleted]' && strtolower ( $posts->post_name ) == 'null' ) {
-		if ( $protocol == 'boards' ) {
-			if ( $posts->post_board ) {
-				$post_count = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_board = '$posts->post_board'" );
-			}
-		}	
-		$wpdb->delete ( $regular_board_posts, array ( 'post_id' => $posts->post_id ), array ( '%d' ) );
-		$wpdb->delete ( $regular_board_posts, array ( 'post_parent' => $posts->post_id ), array ( '%d' ) );
-		if ( $protocol == 'boards' ) {
-			if ( $post_count > 0 ) {
-				$count = ( $post_count - 1 );
-			}
-			if ( $post_count == 0 ) {
-				$count = 0;
-			}
-			$wpdb->query ( "UPDATE $regular_board_boards SET board_postcount = $count WHERE board_shortname = '$posts->post_board'" );
-		}
-	}	
+	
 	
 	if ( $posts->post_parent == 0 && !$this_is_protected ) {
 		if ( $board_wipe_every && $board_wipe_every != strtolower ( 'never' ) && $board_wipe_per == strtolower ( 'thread' ) ) {
@@ -381,6 +369,9 @@ if ( count ( $posts ) > 0 ) {
 							if ( $posts->post_url && $posts->post_type == 'URL' && strpos ( $posts->post_url, '//imgur.com/a/' ) !== false ) {
 								$media_present = 1;
 							}
+							if ( $posts->post_url && $posts->post_type == 'URL' && strpos ( $posts->post_url, '//gfycat.com/' ) !== false ) {
+								$media_present = 1;
+							}
 							if ( $posts->post_url && $posts->post_type == 'URL' && strpos ( $posts->post_url, '//soundcloud.com/' ) !== false ) {
 								$media_present = 1;
 							}
@@ -407,19 +398,23 @@ if ( count ( $posts ) > 0 ) {
 							}
 							
 							// Load button for non-thread views to load comments or media (if video or image).
-							if ( !$thread_urls_disabled ) {
-								if ( $media_present || $comment_present && !$posts->post_parent && !$this_thread ) { 
-										echo '<i id="' . $posts->post_id . '" ';
-										if (  $media_present  ) { 
-											echo ' grab="media" ';
+							if ( $this_area == 'history' || $this_user ) { 
+							
+							} else {
+								if ( !$thread_urls_disabled ) {
+									if ( $media_present || $comment_present && !$posts->post_parent && !$this_thread ) { 
+											echo '<i id="' . $posts->post_id . '" ';
+											if (  $media_present  ) { 
+												echo ' grab="media" ';
+											}
+											if ( $comment_present ) { 
+												echo ' grab="comment" ';
+											}
+											echo 'class="fa fa-plus-square loadme" data="'.$current_page.'?t=';
+												if ( $posts->post_parent == 0 ) { echo $posts->post_id; } 
+												if ( $posts->post_parent > 0 ) { echo $posts->post_parent; }
+											echo '&amp;a=media"></i><i id="' . $posts->post_id . '" class="fa fa-minus-square hideme hidden"></i>'; 
 										}
-										if ( $comment_present ) { 
-											echo ' grab="comment" ';
-										}
-										echo 'class="fa fa-plus-square loadme" data="'.$current_page.'?t=';
-											if ( $posts->post_parent == 0 ) { echo $posts->post_id; } 
-											if ( $posts->post_parent > 0 ) { echo $posts->post_parent; }
-										echo '&amp;a=media"></i><i id="' . $posts->post_id . '" class="fa fa-minus-square hideme hidden"></i>'; 
 									}
 								}
 							}
@@ -444,15 +439,19 @@ if ( count ( $posts ) > 0 ) {
 					
 					if ( $style == 'tiny' ) {
 						echo ' submitted <span title="' . $posts->post_date . '">' . regular_board_timesince( $posts->post_date ) . '</span> by ';
-						if ( $guest_post == 1 ) {
-							echo 'guest';
-						}
-						if ( $guest_post == 0 ) {
-							if ( strtolower ( $posts->post_name ) == 'null' ) {
-								echo 'anonymous'; 
+						if ( $post_has_been_deleted ) { 
+							echo '[deleted]';
+						} else {
+							if ( $guest_post == 1 ) {
+								echo 'guest';
 							}
-							if ( strtolower ( $posts->post_name ) != 'null' ) { 
-								echo '<a class="load_link" href="' . $current_page . '?u=' . $posts->post_name . '">' . $posts->post_name . '</a>'; 
+							if ( $guest_post == 0 ) {
+								if ( strtolower ( $posts->post_name ) == 'null' ) {
+									echo 'anonymous'; 
+								}
+								if ( strtolower ( $posts->post_name ) != 'null' ) { 
+									echo '<a class="load_link" href="' . $current_page . '?u=' . $posts->post_name . '">' . $posts->post_name . '</a>'; 
+								}
 							}
 						}
 						
@@ -541,22 +540,28 @@ if ( count ( $posts ) > 0 ) {
 					
 					// Post actions ( edit, delete, spam, lock, sticky, ban, move, report )
 					if ( $user_exists ) {
-						if ( $profile_name == $posts->post_name && $profilepassword == $posts->post_password || $is_moderator || $is_user_mod || $is_user_janitor ) { 
-							echo ' <a class="load_link" href="' . $current_page . '?a=editpost&amp;t=' . $posts->post_id . '">edit</a> '; 
+						if ( $post_has_been_deleted ) {
+						
+						} else {
+							if ( $profile_name == $posts->post_name && $profilepassword == $posts->post_password || $is_moderator || $is_user_mod || $is_user_janitor ) { 
+								echo ' <a class="load_link" href="' . $current_page . '?a=editpost&amp;t=' . $posts->post_id . '">edit</a> '; 
+							}
 						}
 					}
 				
 					echo '<span class="post_action">';
-					if ( $is_moderator || $user_exists ) {
-							if ( $profile_name == $posts->post_name && $profilepassword == $posts->post_password || $is_moderator || $is_user_mod || $is_user_janitor ) { 
-								if ( $posts->post_public == 3 ) {
-									echo '<a data="' . $posts->post_id . '" href="' . $current_page . '?a=undelete&amp;t=' . $posts->post_id . '">undelete</a>
-									<a data="' . $posts->post_id . '" href="' . $current_page . '?a=destroy&amp;t=' . $posts->post_id . '">permanently delete</a>';
-									
-								} else {					
-									echo '<a data="' . $posts->post_id . '" href="' . $current_page . '?a=delete&amp;t=' . $posts->post_id . '">delete</a>';
-								}
+					
 
+					if ( $is_moderator || $user_exists ) {
+						if ( $profile_name == $posts->post_name && $profilepassword == $posts->post_password || $is_moderator || $is_user_mod || $is_user_janitor ) { 
+							if ( $post_has_been_deleted ) {
+							
+							} else {
+								echo '<a data="' . $posts->post_id . '" href="' . $current_page . '?a=delete&amp;t=' . $posts->post_id . '">delete</a>';
+							}
+							if ( $post_has_been_deleted ) {
+							 // post has been deleted.
+							} else {
 								if ( $is_moderator == 1 || $is_user_mod ) {
 									if ( $posts->post_public == 666 ) {
 										echo ' <a data="' . $posts->post_id . '" href="' . $current_page . '?a=approve&amp;t=' . $posts->post_id . '">approve</a> ';
@@ -591,9 +596,14 @@ if ( count ( $posts ) > 0 ) {
 									}
 								}
 							}
-							if ( $profileid != $posts->post_userid ) { 
-								echo ' <a data="' . $posts->post_id . '" href="'. $current_page . '?a=report&amp;t=' . $posts->post_id . '">report</a>'; 
+							if ( $post_has_been_deleted ) {
+							
+							} else {
+								if ( $profileid != $posts->post_userid ) { 
+									echo ' <a data="' . $posts->post_id . '" href="'. $current_page . '?a=report&amp;t=' . $posts->post_id . '">report</a>'; 
+								}
 							}
+						}
 					}
 	
 					// Source button (if post has an attached comment)
@@ -641,6 +651,10 @@ if ( count ( $posts ) > 0 ) {
 							echo 'imageFULL';
 						}
 					echo '" alt="image" src="' . $posts->post_url . '"/></a></div>';
+				} elseif ( $posts->post_url && $posts->post_type == 'URL' && strpos ( $posts->post_url, '//gfycat.com/' ) !== false ) {
+					// gfycat embedding
+					$gfy = protocol_relative_url_dangit ( str_replace ( '//gfycat.com/', '', $posts->post_url ) );
+					echo '<div class="clear media' . $posts->post_id . '"><iframe src="//gfycat.com/iframe/' . $gfy . '" frameborder="0" scrolling="no" width="592" height="320" ></iframe></div>';
 				}
 			}
 			
@@ -769,29 +783,26 @@ if ( count ( $posts ) > 0 ) {
 				$path_info['extension'] == 'jpeg' ||
 				$path_info['extension'] == 'png'
 			) {
-				echo '<div class="gallery">';
-				echo '<span><a class="load_link" href="' . $posts->post_url . '">';
+				
+				echo '<a class="load_link" href="' . $current_page . '?t=';
+				if ( $posts->post_parent == 0 ) { echo $posts->post_id; }
+				if ( $posts->post_parent != 0 ) { echo $posts->post_parent . '#' . $posts->post_id; }
+				if ( $posts->post_title == '' ) { $posts->post_title = 'No subject'; }
+				echo '">';
 				$check_subject = strtolower ( $posts->post_title );
 				if ( strpos ( $check_subject, 'nsfw' ) !== false ) {
 					echo '<strong>N S F W</strong>';
 				} else {
-					echo '<img src=" ' . $posts->post_url . '" alt="Image" />';
+					echo '<img src=" ' . $posts->post_url . '" alt="Image" class="galleryIMAGE" />';
 				}
 				echo '
-				</a></span>
-				<a class="load_link" href="' . $current_page . '?t=';
-				if ( $posts->post_parent == 0 ) { echo $posts->post_id; }
-				if ( $posts->post_parent != 0 ) { echo $posts->post_parent . '#' . $posts->post_id; }
-				if ( $posts->post_title == '' ) { $posts->post_title = 'No subject'; }
-				echo '">' . str_replace ( '\\', '', $posts->post_title ) . '</a> ';
-				if ( $posts->post_board ) {
-					echo '( <a class="load_link" href="' . $current_page . '?b=' . $posts->post_board . '">' . $posts->post_board . '</a> )';
-				}
-				echo '</div>';
+				</a>';
 			}
 		}
 	}
-	echo '</div>';
+	if ( $this_area != 'gallery' ) {
+		echo '</div>';
+	}
 } else {
 	echo '<div class="thread clear"><p><strong>Nothing to see here.</strong></p></div>';
 }

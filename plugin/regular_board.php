@@ -68,7 +68,7 @@ function regular_board_shortcode ( $content = null ) {
 		include ( plugin_dir_path(__FILE__) . '/regular_board_board_wipe.php' );
 		include ( plugin_dir_path(__FILE__) . '/regular_board_navigation_elements.php' );
 		
-		echo '<div class="boardAll">';
+		echo '<div class="regular_board_board_all">';
 		
 		if ( $protocol == 'boards' ) {
 			echo '<div class="top_nav">' .  $blog_link . ' <span>-</span> ' . $all_link . ' <span>|</span> ';
@@ -114,10 +114,32 @@ function regular_board_shortcode ( $content = null ) {
 		
 		echo '<div class="spacer">' . $banner . $navigation;
 		
-		if ( $userisbanned ) { include ( plugin_dir_path(__FILE__) . '/regular_board_posting_userbanned.php' ); }
+		if ( $this_thread ) {
+			echo '<p class="nav_tools">';
+			if ( $thisboard ) {
+				echo '<a class="load_link" href="' . $current_page . '">Return</a> | ';
+			} elseif ( $the_board ) {
+				echo '<a class="load_link" href="' . $current_page . '?b=' . $the_board . '">Return</a> | ';
+			} elseif ( $thread_board ) {
+				echo '<a class="load_link" href="' . $current_page . '?b=' . $thread_board . '">Return</a> | ';
+			} else {
+				echo '<a class="load_link" href="' . $current_page . '">Return</a> | ';
+			}
+			if ( $this_thread && $this_area != 'media' ) {
+				echo '<a href="' . $current_page . '?t=' . $this_thread . '&amp;a=media">Expand all media</a> | ';
+			} else {
+				echo '<a href="' . $current_page . '?t=' . $this_thread . '">Hide all media</a> | ';
+			}
+			echo '<a href="#top">Top</a> | <a class="reload" xdata="' . $this_thread .'" data="' . $current_page . '?t=' . $this_thread . '">Refresh thread</a>
+			</p>';
+		} else {
+			echo '<p class="nav_tools hidden"></p>';
+		}		
+		
 		
 		echo '<div class="right-half">';
 		
+		if ( $userisbanned ) { include ( plugin_dir_path(__FILE__) . '/regular_board_posting_userbanned.php' ); }
 
 		if ( !$this_thread ) {
 			echo '<div class="piece_form"><div class="form_form">';
@@ -293,10 +315,12 @@ function regular_board_shortcode ( $content = null ) {
 			if ( $the_tag || $the_board ) {
 				if ( $the_tag ) { $the_board = $the_tag; }
 				if ( $the_board ) { $the_board = $the_board; }
-				echo '<div class="omitted' . htmlentities($the_board) . '">';
+				if ( $this_area != 'gallery' ) {
+					echo '<div class="omitted' . htmlentities($the_board) . '">';
+				}
 			}
 			if ( $the_tag ) {
-				echo '<div class="thread">All posts tagged <strong> #' . $the_tag . '</strong></div>';
+				echo '<div class="thread"><p>All posts tagged <strong> #' . $the_tag . '</strong></p></div>';
 			}
 			include ( plugin_dir_path(__FILE__) . '/regular_board_posting_checkflood.php' );
 			if ( count ( $get_current_board ) > 0 && $protocol == 'boards' || $protocol == 'tags' && $the_board || $this_thread || $the_tag && $protocol == 'boards' ) {
@@ -324,14 +348,22 @@ function regular_board_shortcode ( $content = null ) {
 							if ( $totalpages > 0 ) {
 								include ( plugin_dir_path(__FILE__) . '/regular_board_board_loop.php' );
 							} else {
-								echo '<div class="thread"><p><strong>Nothing to see here.</strong></p></div>';
+								$thread_div_id = '';
+								if ( $nothing_is_here ) {
+									$thread_div_id= 'thread';
+								} elseif ( $the_board ) {
+									$thread_div_id = $the_board;
+								}
+								echo '<div id="thread' . $thread_div_id . '"><div class="thread"><p><strong>Nothing to see here.</strong></p></div></div>';
 							}
 						}
 					}
 				}
 			}
 			if ( $the_tag || $the_board ) {
-				echo '</div>';
+				if ( $this_area != 'gallery' ) {
+					echo '</div>';
+				}
 			}			
 		}
 		
@@ -390,9 +422,10 @@ function regular_board_shortcode ( $content = null ) {
 	
 	
 	if ( $regular_board_footer ) {
-		echo '<footer>' . $regular_board_footer . '</footer>';
+		echo '<div class="footer">' . $regular_board_footer . '</div>';
 	}
 	
+	echo '<div class="bg-left"></div><div class="bg-right"></div>';
 	echo '</div>';
 	}
 

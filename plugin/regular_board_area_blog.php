@@ -12,7 +12,6 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 	die();
 }
 
-echo '<h3><center>Blog</center></h3>';
 if ( isset ( $_GET['post'] ) ) {
 	$postno = intval ( $_GET['post'] );
 }
@@ -39,14 +38,15 @@ foreach($categories as $category) {
 	$posts = get_posts ( $args );
 	if ( $posts ) {
 		if ( $postno ) {
-			echo '<div class="thread"><a class="load_link" href="' . $this_page . '?a=blog">More blog entries</a></div>';
+			echo '<div class="thread clear"><p><a class="load_link" href="' . $this_page . '?a=blog">More blog entries</a></p></div>';
 		}
 		foreach($posts as $post) {
 			setup_postdata($post); 
-				echo '<div class="thread"><strong class="left">';
-				echo '<a class="load_link" href="' . $this_page . '?a=blog&amp;post=' . $post->ID . '">' . $post->post_title . '</a>';
-				echo '</strong>';
-				echo '<span class="right">' . regular_board_timesince( $post->post_date ) . '</span>';
+				echo '<div class="thread clear">
+				<strong class="left"><a class="load_link" href="' . $this_page . '?a=blog&amp;post=' . $post->ID . '">' . $post->post_title . '</a></strong>
+				<span class="right">' . regular_board_timesince( $post->post_date ) . '</span>
+				</div>
+				<div class="thread clear">';
 				if ( $postno ) { 
 					echo '<hr />' . wpautop ( $post->post_content ) . '<hr /><em>posted by</em> ';
 					the_author();

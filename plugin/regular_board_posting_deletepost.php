@@ -177,7 +177,6 @@ if ( $this_area == 'destroy' ) {
 	$comparedpass = $profilepassword;
 	$comparepassword = $wpdb->get_var( "SELECT post_password FROM $regular_board_posts WHERE post_id = $this_thread" );
 	if ( $comparepassword == $comparedpass || $is_moderator || $is_user_mod || $is_user_janitor ) {
-		
 		$grab_board = $wpdb->get_var ( "SELECT post_board FROM $regular_board_posts WHERE post_id = $this_thread" );
 		$grab_board = sanitize_text_field ( $grab_board );
 		if ( $grab_board ) {
@@ -197,7 +196,6 @@ if ( $this_area == 'destroy' ) {
 				)
 			);			
 		}
-		
 		$wpdb->update (
 			$regular_board_posts,
 			array( 
@@ -208,6 +206,7 @@ if ( $this_area == 'destroy' ) {
 				'post_public' => 1,
 				'post_type'   => 'post',
 				'post_url'    => '',
+				'post_locked' => 1,
 			),
 			array( 
 				'post_id' => $this_thread
@@ -219,12 +218,10 @@ if ( $this_area == 'destroy' ) {
 				'%d',
 				'%d',
 				'%s',
+				'%d',
 				'%d'
 			)
 		);		
-		
-		echo '<p>Post deleted.</p>';
-		
 	} else {
 		echo '<p>You can\'t do that.</p>';
 	}

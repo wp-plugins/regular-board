@@ -26,7 +26,7 @@ $two_hours       = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WH
 $twelve_hours    = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_date BETWEEN '$twelve_hours_ago' AND '$current_timestamp'" );
 $month           = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_date BETWEEN '$one_month_ago' AND '$current_timestamp'" );
 $day             = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_date BETWEEN '$one_day_ago' AND '$current_timestamp'" );
-$count_users     = $wpdb->get_var( "SELECT COUNT(Distinct user_id) FROM $regular_board_users WHERE user_posts > 0 " );
+$count_users     = ( $wpdb->get_var( "SELECT COUNT(Distinct user_id) FROM $regular_board_users WHERE user_posts > 0 " ) + $wpdb->get_var( "SELECT COUNT(Distinct post_guestip) FROM $regular_board_posts" ) );
 $count_boards    = $wpdb->get_var( "SELECT COUNT(Distinct post_board) FROM $regular_board_posts" );
 
 

@@ -12,35 +12,41 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 	die();
 }
 
+echo '<div class="left-half-two">
+<div class="piece text">
+<strong>Latest posts</strong>';
+if ( count ( $recentposts ) > 0 ) {
+	foreach ( $recentposts as $posts ) {
+		if ( !$posts->post_title ) {
+			$posts->post_title = 'No subject';
+		}
+		if ( !$posts->post_board ) {
+			$no_board = 1;
+			$posts->post_board = 'all';
+		} else {
+			$no_board = 0;
+		}
+		if ( $no_board ) {
+			echo '<span><a href="' . $this_page . '?a=all">' . $posts->post_board . '</a>: <a id="' . $posts->post_id . '" class="thread_link" href="' . $this_page . '?t=' . $posts->post_id . '">' . $posts->post_title . '</a></span>';
+		} else {
+			echo '<span><a href="' . $this_page . '?b=' . $posts->post_board . '">' . $posts->post_board . '</a>: <a id="' . $posts->post_id . '" class="thread_link" href="' . $this_page . '?t=' . $posts->post_id . '">' . $posts->post_title . '</a></span>';
+		}
+	}
+}
+echo '</div></div>';
+
 echo '<div class="left-half">';
 $banner             = '';
 if ( $board_banner != '' ) {
-	$banner  = '<div class="banner"><img src="' . $board_banner . '" alt="Banner" /></div>';
+	$banner  = '<div class="banner piece text"><img src="' . $board_banner . '" alt="Banner" /></div>';
 }
 echo $banner;
-
-if ( $this_thread && $threadexists == 1 ) {
-	echo '<p class="nav_tools">';
-	if ( $thisboard ) {
-		echo '<a class="load_link" href="' . $current_page . '">Return</a>';
-	} elseif ( $the_board ) {
-		echo '<a class="load_link" href="' . $current_page . '?b=' . $the_board . '">Return</a>';
-	} elseif ( $thread_board ) {
-		echo '<a class="load_link" href="' . $current_page . '?b=' . $thread_board . '">Return</a>';
-	} else {
-		echo '<a class="load_link" href="' . $current_page . '">Return</a>';
-	}								
-	echo '<a href="#top">Top</a><a class="reload" xdata="' . $this_thread .'" data="' . $current_page . '?t=' . $this_thread . '">Refresh thread</a>
-	</p>';
-} else {
-	echo '<p class="nav_tools hidden"></p>';
-}
 
 if ( !$user_exists && !$userisbanned ) {
 	include ( plugin_dir_path(__FILE__) . '/regular_board_loginorregister.php' );
 }
 if ( $this_area == 'history' && $user_exists || $this_user ) {
-	echo '<div class="piece">';
+	echo '<div class="piece text">';
 	echo '<strong>';
 		if ( $the_profile_name ) { 
 			echo $the_profile_name;
@@ -49,8 +55,8 @@ if ( $this_area == 'history' && $user_exists || $this_user ) {
 		}
 	echo '</strong>';
 	echo $the_profile_avatar . $the_profile_slogan . $the_profile_details . $connect_with;
-	echo '<hr />';
 	if ( count ( $my_friends ) > 0 ) {
+		echo '<div class="text"><p>';
 		echo 'Connections: ';
 		foreach ( $my_friends as $friends ) {
 			if ( $friends->friends_connector != $the_profile_name ) {
@@ -61,7 +67,7 @@ if ( $this_area == 'history' && $user_exists || $this_user ) {
 			}
 			echo ' <a class="load_link" href="' . $this_page . '?u=' . $friend_name . '">' . $friend_name . '</a> ';
 		}
-		echo '<hr />';
+		echo '</p></div>';
 	}
 	$check_friend = 0;
 	$check_friend = $wpdb->get_var ( "SELECT COUNT(*) FROM $regular_board_friends WHERE ( friends_connector = '$profile_name' AND friends_connectee = '$the_profile_name' OR friends_connector = '$the_profile_name' AND friends_connectee = '$profile_name')" );
@@ -129,7 +135,7 @@ if ( $user_exists ) {
 		$wpdb->query ( "UPDATE $regular_board_users SET user_chanmode = 2 WHERE user_id = $profileid" );
 		echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $url_data . '"></p>';
 	}
-	echo '<div class="piece"><form class="modes" name="user_mode" method="post" action="' . $current_page . '">';
+	echo '<div class="piece text"><form class="modes" name="user_mode" method="post" action="' . $current_page . '">';
 	wp_nonce_field( 'user_mode' );
 	if ( $mode == 'night' ) {
 		echo '<input type="submit" value="activate day mode" name="daymode_activate" />';
@@ -147,7 +153,7 @@ if ( $user_exists ) {
 }
 if ( $search_enabled ) {
 	$search_action = $current_page;
-	echo '<div class="piece"><form name="regular_board_search" class="modes" method="post" action="' . $search_action . '">';
+	echo '<div class="piece text"><form name="regular_board_search" class="modes" method="post" action="' . $search_action . '">';
 		wp_nonce_field('regular_board_search');
 		echo '
 		<input type="text" name="regular_board_search" id="regular_board_search" placeholder="Search" />
@@ -161,19 +167,19 @@ if ( $user_exists && !$userisbanned ) {
 	}
 }
 if ( $board_name ) {
-	echo '<div class="piece"><span class="frontinfo">/' . $board_short . '/ ' . $board_name . '</span><p><em>' . $board_description . '</em></p>';
+	echo '<div class="piece text"><div class="text">' . $board_description . '</div>';
 }
 if ( $board_rules ) {
-	echo regular_board_format ( $board_rules );
+	echo '<div class="text">' . regular_board_format ( $board_rules ) . '</div>';
 }
 if ( $board_name ) {
 	echo '</div>';
 }
 if ( get_option ( 'regular_board_frontpage' ) ) {
-	echo '<div class="piece"><span class="frontinfo">' . $blog_title . '</span>' . regular_board_format ( wpautop ( get_option ( 'regular_board_frontpage' ) ) ) . '</div>';
+	echo '<div class="piece text"><div class="text">' . regular_board_format ( wpautop ( get_option ( 'regular_board_frontpage' ) ) ) . '</div></div>';
 }
 
-echo '<div class="piece"><div class="tag_cloud"><span><a href="#">navigation</a></span>';
+echo '<div class="piece text"><div class="tag_cloud"><span><a href="#">navigation</a></span>';
 if ( $protocol == 'boards' ) {
 	foreach ( $getboards as $gotboards ) {
 		if ( $gotboards->board_postcount > 0 ) {

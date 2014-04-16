@@ -123,7 +123,7 @@ if ( isset ( $_POST['options'] ) ) {
 	 */ 
 	if ( $profile_email ) { ?>	
 	<section class="profile-section">
-		<label class="small-left" for="USERNAME">
+		<label class="small-left" for="username">
 			<u>display name</u>
 			<hr />
 			set a name that you would like to be known by.<br />
@@ -131,7 +131,7 @@ if ( isset ( $_POST['options'] ) ) {
 			you can change this name at any time.
 		</label>
 		<i class="fa fa-user"></i>
-		<input type="text" name="USERNAME" id="USERNAME" placeholder="Your memorable name" 
+		<input type="text" name="username" id="username" placeholder="Your memorable name" 
 		<?php if ( $profile_name != 'null' && $profile_name ) { ?>
 			value = "<?php echo $profile_name; ?>"
 		<?php } ?>
