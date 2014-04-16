@@ -135,11 +135,7 @@ function regular_board_shortcode ( $content = null ) {
 		} else {
 			echo '<p class="nav_tools hidden"></p>';
 		}		
-		
-		
-		echo '<div class="right-half">';
-		
-		if ( $userisbanned ) { include ( plugin_dir_path(__FILE__) . '/regular_board_posting_userbanned.php' ); }
+
 
 		if ( !$this_thread ) {
 			echo '<div class="piece_form"><div class="form_form">';
@@ -153,9 +149,12 @@ function regular_board_shortcode ( $content = null ) {
 				}	
 			}
 			echo '</div>';
-		}	
+		}		
 		
+		echo '<div class="right-half">';
 		
+		if ( $userisbanned ) { include ( plugin_dir_path(__FILE__) . '/regular_board_posting_userbanned.php' ); }
+
 		if ( $nothing_is_here ) {
 			echo '<div id="threadthread">';
 			if ( $getposts ) {

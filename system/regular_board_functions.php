@@ -61,7 +61,7 @@ if ( !function_exists ( 'regular_board_style' ) ) {
 			wp_register_script   ( 'regular_board-form', protocol_relative_url_dangit ( $form_submit ), array( 'jquery' ), '', null, false);
 			wp_enqueue_script    ( 'regular_board-form');
 
-			$regularboard   = plugins_url() . '/regular-board/system/js/regular_board00000000252.js?' . $regular_board_version;
+			$regularboard   = plugins_url() . '/regular-board/system/js/regular_board00000000257.js?' . $regular_board_version;
 			if ( get_option ( 'regular_board_css_url' ) ) {
 				$css_file   = get_option ( 'regular_board_css_url' );
 			} else { 
@@ -71,16 +71,16 @@ if ( !function_exists ( 'regular_board_style' ) ) {
 				$css_choice = $wpdb->get_var( "SELECT user_colormode FROM $regular_board_users WHERE user_logged_in_from = '$user_ip'" );
 				if ( $css_choice ) {
 					if ( $css_choice == 1 ) {
-						$css_file   = plugins_url() . '/regular-board/system/css/regular_board_dm_00000000252.css';
+						$css_file   = plugins_url() . '/regular-board/system/css/regular_board_dm_00000000257.css';
 					}
 					if ( $css_choice == 2 ) {
-						$css_file   = plugins_url() . '/regular-board/system/css/regular_board_nm_00000000252.css';
+						$css_file   = plugins_url() . '/regular-board/system/css/regular_board_nm_00000000257.css';
 					}
 				} else {
 					if ( date ( 'H' ) >= 7 && date ( 'H' ) <= 19 ) {
-						$css_file   = plugins_url() . '/regular-board/system/css/regular_board_nm_00000000252.css';
+						$css_file   = plugins_url() . '/regular-board/system/css/regular_board_nm_00000000257.css';
 					} else {
-						$css_file   = plugins_url() . '/regular-board/system/css/regular_board_dm_00000000252.css';
+						$css_file   = plugins_url() . '/regular-board/system/css/regular_board_dm_00000000257.css';
 					}
 				}
 			}
@@ -120,7 +120,7 @@ if ( !function_exists ( 'protocol_relative_url_dangit' ) ) {
 /** Automatically apply quotes to a group of items for SQL use **/
 if ( !function_exists ( 'regular_board_apply_quotes' ) ) {
 	function regular_board_apply_quotes($i){
-		return "'" . mysql_real_escape_string($i) . "'";
+		return "'" . esc_sql($i) . "'";
 	}
 }
 

@@ -146,6 +146,7 @@ if ( $user_exists ) {
 	if ( $style == 'tiny' ) {
 		echo '<input type="submit" value="activate expanded mode" name="expandedmode_activate" />';
 	}
+
 	if ( $style == 'expanded' ) {
 		echo '<input type="submit" value="activate tiny mode" name="tinymode_activate" />';
 	}

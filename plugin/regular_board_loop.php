@@ -208,7 +208,10 @@ if ( count ( $posts ) > 0 ) {
 			}
 			
 			if ( $posts->post_parent && $post_nom == 1 && $this_thread == $posts->post_id ) {
-				echo '<p><a href="?t=' . $posts->post_parent . '"><i class="fa fa-arrow-left"> This conversation has been branched &mdash; go back to the main discussion</i></a></p>';
+				$check_parent = $wpdb->get_var ( "SELECT post_public FROM $regular_board_boards WHERE post_id = $posts->post_parent " );
+				if ( $check_parent ) {
+					echo '<p><a href="?t=' . $posts->post_parent . '"><i class="fa fa-arrow-left"> This conversation has been branched &mdash; go back to the main discussion</i></a></p>';
+				}
 			}
 			
 			if ( $posts->post_comment_parent && $posts->post_userid == $profileid ) {
@@ -658,9 +661,9 @@ if ( count ( $posts ) > 0 ) {
 				}
 			}
 			
-			if ( $thread_urls_disabled || $this_thread || $this_area == 'history' || $this_area == 'replies' || $this_user ) { 
+			if ( $thread_urls_disabled || $this_thread || $this_area == 'history' || $this_area == 'replies' || $this_user || !$this_thread && $style == 'expanded') { 
 
-				if ( $thread_urls_disabled || $posts->post_comment && $this_thread || $this_area == 'history' || $this_area == 'replies' || $this_user ) {
+				if ( $thread_urls_disabled || $posts->post_comment && $this_thread || $this_area == 'history' || $this_area == 'replies' || $this_user || !$this_thread && $style == 'expanded') {
 					// Comment
 
 					if ( $auto_url ) {

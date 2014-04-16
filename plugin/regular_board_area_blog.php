@@ -15,11 +15,11 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 if ( isset ( $_GET['post'] ) ) {
 	$postno = intval ( $_GET['post'] );
 }
-$cat_args=array(
-'include' => intval ( $announcements )
+$cat_args= array (
+	'include' => intval ( $announcements )
 );
-$categories=get_categories($cat_args);
-foreach($categories as $category) {
+$categories = get_categories ( $cat_args );
+foreach ( $categories as $category ) {
 	
 	if ( $postno ) {
 		$args=array(

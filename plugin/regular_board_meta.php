@@ -78,57 +78,41 @@ if ( $query ) {
 				$description = substr ( $description,0,150 );
 				echo "\n";
 				if ( $canonical ) {
-					echo '<meta property="og:url" content="' . $canonical . '" /> ';
-					echo "\n";
+					echo '<meta property="og:url" content="' . $canonical . '" /> ' . "\n";
 				}
 				if ( $title ) {
-					echo '<meta property="og:title" content="' . $title . '" /> ';
-					echo "\n";
+					echo '<meta property="og:title" content="' . $title . '" /> ' . "\n";
 				}
 				if ( $site ) {
-					echo '<meta property="og:site_name" content="' . $site . '" /> ';
-					echo "\n";
+					echo '<meta property="og:site_name" content="' . $site . '" /> ' . "\n";
 				}
 				if ( $locale ) {
-					echo '<meta property="og:locale" content="' . $locale . '" /> ';
-					echo "\n";
+					echo '<meta property="og:locale" content="' . $locale . '" /> ' . "\n";
 				}
 				if ( $image ) {
-					echo '<meta property="og:image" content="' . $image . '" /> ';
-					echo "\n";
+					echo '<meta property="og:image" content="' . $image . '" /> ' . "\n";
 				}
 				if ( $video ) {
-					echo '<meta property="og:video" content="//www.youtube.com/v/' . $meta->post_url . '?autohide=1&amp;version=3" /> ';
-					echo "\n";
-					echo '<meta property="og:video:type" content="application/x-shockwave-flash" /> ';
-					echo "\n";
-					echo '<meta property="og:video:height" content="720" /> ';
-					echo "\n";
-					echo '<meta property="og:video:width" content="1280" /> ';
-					echo "\n";
-					echo '<meta property="og:type" content="video" /> ';
-					echo "\n";
-					echo '<meta property="og:image" content="//img.youtube.com/vi/' . $meta->post_url . '/0.jpg" /> ';
-					echo "\n";
+					echo '<meta property="og:video" content="//www.youtube.com/v/' . $meta->post_url . '?autohide=1&amp;version=3" /> ' . "\n";
+					echo '<meta property="og:video:type" content="application/x-shockwave-flash" /> ' . "\n";
+					echo '<meta property="og:video:height" content="720" /> ' . "\n";
+					echo '<meta property="og:video:width" content="1280" /> ' . "\n";
+					echo '<meta property="og:type" content="video" /> ' . "\n";
+					echo '<meta property="og:image" content="//img.youtube.com/vi/' . $meta->post_url . '/0.jpg" /> ' . "\n";
 				} else {
 					if ( $published ) {
-						echo '<meta property="og:published_time" content="' . $published . '" /> ';
-						echo "\n";
+						echo '<meta property="og:published_time" content="' . $published . '" /> ' . "\n";
 					}
 					if ( $published ) {
-						echo '<meta property="og:modified_time" content="' . $published . '" /> ';
-						echo "\n";
+						echo '<meta property="og:modified_time" content="' . $published . '" /> ' . "\n";
 					}
 					if ( $last ) {
-						echo '<meta property="og:updated" content="' . $last . '" /> ';
-						echo "\n";
+						echo '<meta property="og:updated" content="' . $last . '" /> ' . "\n";
 					}
-					echo '<meta property="og:type" content="article" /> ';
-					echo "\n";
+					echo '<meta property="og:type" content="article" /> ' . "\n";
 				}
 				if ( $description ) {
-					echo '<meta property="og:description" content="' . $description . '" /> ';
-					echo "\n\n";
+					echo '<meta property="og:description" content="' . $description . '" /> ' . "\n\n";
 				}
 			}
 		}

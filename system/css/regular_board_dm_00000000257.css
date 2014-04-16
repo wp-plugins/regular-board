@@ -1,5 +1,4 @@
  /**
- /**
   * Regular Board CSS
   *
   * CSS to style Regular Board (February 10th, 2014)
@@ -15,7 +14,7 @@
   * Tables
   * Containers
   * Responsive
-  */ 
+  */
  /**
   * Typography
   *
@@ -37,8 +36,8 @@
   box-shadown: none;
   text-decoration: none;
   text-align: left;
-  color: #fff;
- }
+  color: #000;
+ }  
  .regular_board_board_all .form_form p {
 	margin: 5px !important;
 	padding: 10px 0 !important;
@@ -46,27 +45,23 @@
  .regular_board_board_all code {
 	background: transparent !important; 
  }
-
+  
  .regular_board_board_all span.frontinfo,
  .regular_board_board_all h1{
 	clear: none !important;
  }
- .regular_board_board_all .nav_tools {
-	color: #fff;
-	background-color: #000;
+.regular_board_board_all .nav_tools {
+	color: #000;
+	background-color: #f3f8ff;
 	margin: 0 0 5px 0 !important;
 	padding: 5px;
 	position: relative;
 	width: 100%; 
 	text-align: center;
 	z-index: 3;
- }
- .regular_board_board_all blockquote {
-	background-color: #101c22 !important;
-	color: #ceeeff !important;
- }
+ } 
  .regular_board_board_all .top_nav {
-	background-color: #0f1112;
+	background-color: #000;
 	border-bottom: 1px solid rgba(0,0,0,.1);
 	display: block; 
 	font-size: 10px;
@@ -81,7 +76,7 @@
  }
  .regular_board_board_all .top_nav a,
  .regular_board_board_all .top_nav span {
-	color: #1f96b7 !important;
+	color: rgba(255,255,255,.8) !important;
 	float: left; 
 	margin: 2px 0 0 2px;
 	padding: 3px;
@@ -90,15 +85,16 @@
 	line-height: 15px;
  }
  .regular_board_board_all .top_nav a:hover {
+	color: #fff !important;
 	background-color: #5e85ba;
 	color: #fff !important;
  }
  .regular_board_board_all .nav-right {
-	float: right;
 	margin: 0 5px 0 0;
+	float: right;
  }
  .regular_board_board_all .profile-section i {
-	color: #fff;
+	color: rgba(0,0,0,.4);
 	cursor: default;
 	float: right; 
 	font-size: 72px;
@@ -111,8 +107,8 @@
 	width: 350px !important;
  } 
  .regular_board_board_all .smallstats {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	display: block; 
 	margin: 15px auto;
 	padding: 5px;
@@ -129,8 +125,8 @@
 	display: table;
  }
  .regular_board_board_all .prunedate {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	border-radius: 2px;
 	padding: 2px;
  }
@@ -185,16 +181,13 @@
  }
  .regular_board_board_all .left-half .tag_cloud span a.active {
 	border: none!important;
-	background-color: #1f2a3e;
-	color: #edf3ff;
- }
- .regular_board_board_all .left-half .tag_cloud span a:hover {
-	color: #fff !important;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
  }
  .regular_board_board_all .text,
  .regular_board_board_all .left-half span a {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	display: block; 
 	margin: 0;
 	padding: 10px;
@@ -206,12 +199,12 @@
  }
  .regular_board_board_all li {
 	display: block;
-	margin: 5px;
-	padding: 5px;
- }
+	margin: 5px 0;
+	padding: 2px;
+ } 
  .regular_board_board_all .powerlevel {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	border-radius: 2px;
 	margin: 5px;
 	padding: 5px;
@@ -227,14 +220,13 @@
 	text-align: right;
  }
  .regular_board_board_all span.frontinfo {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	display: block; 
 	font-size: 15px;
 	line-height: 20px;
 	margin: -5px 0 0 -5px;
 	padding: 5px;
-	
  }
  .regular_board_board_all a.boardlink {
 	display: block; 
@@ -244,18 +236,13 @@
 	text-align: center;
 	width: 20%;
  }
- .regular_board_board_all .countdown {
-	display: block; 
-	padding: 5px;
-	text-align: center;
- }
  .regular_board_board_all .countdown span {
  	background-color: #000;
 	color: #fff;
  }
  .regular_board_board_all .announcement {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	clear: both;
 	display: block;
 	margin: 5px 0;
@@ -263,12 +250,12 @@
 	width: 100%;
  }
  .regular_board_board_all .announcement a {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	padding: 2px;
  }
  .regular_board_board_all form .fa-fw {
-	color: rgba(255,255,255,.5);
+	color: rgba(0,0,0,.5);
 	margin: 32px 0 0 3px;
 	position: absolute;
 	z-index: 2;
@@ -278,8 +265,8 @@
 	text-decoration: underline;
  }
  .regular_board_board_all .urls a {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	border-radius: 2px;
 	font-size: 10px;
 	line-height: 18px; 
@@ -308,12 +295,12 @@
  }
  .regular_board_board_all a {
 	border: none!important;
-	color: #1f96d8 !important;
+	color: rgba(11,38,75,1)!important;
 	text-decoration: underline!important;
 	margin: 0 3px 0 0;
  }
  .regular_board_board_all a:hover {
-	color: #fff !important;
+	color: rgba(75,11,40,1) !important;
  }
  .regular_board_board_all p{
 	height: auto!important;
@@ -458,24 +445,21 @@
   *
   * All elements that are related to forms
   */
-  .regular_board_board_all form.modes {
-	margin: 5px;
-  }
  .regular_board_board_all input[type="submit"] {
 	border: none !important;
-	background-color: #21314f; 
-	border: none !important;
-	color: #f0e4e4;
 	cursor: pointer;
 	display: block;
-	font-size: 100%;
+	font-size : 150%;
+	color : #081724;
+	height: 30px;
 	margin: 5px auto;
+	background-color : #dcebfa; 
 	padding: 1% !important;
+	text-align: center;
 	width: 100% !important;
- }
-  
+ }  
  .regular_board_board_all .profile-section {
-	
+	border-bottom: 1px solid rgba(0,0,0,.1);
 	display: block;
 	margin: 5px 0;
 	overflow: hidden;
@@ -483,7 +467,7 @@
 	width: 100%;
  }
  .regular_board_board_all .profile-section:hover {
-	background-color: #0c0c0c!important;
+	background-color: rgba(255,255,255,1);
  }
  .regular_board_board_all .profile-section input,
  .regular_board_board_all .profile-section select {
@@ -516,8 +500,8 @@
  } 
  .regular_board_board_all .user-options select,
  .regular_board_board_all .user-options input {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	border: none!important;
 	border-radius:0!important;
 	clear: none!important;
@@ -532,7 +516,7 @@
  .regular_board_board_all .user-options input[type="text"]:focus ~ span,
  .regular_board_board_all .user-options input[type="password"]:focus ~ span {
 	clear: both;
-	color: #fff;
+	color: rgba(0,0,0,.9);
 	display: block;
 	height: auto;
 	margin: 5px;
@@ -576,8 +560,8 @@
 	display: table;
  }
  .regular_board_board_all .registration form {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	border-radius: 5px;
 	clear: none;
 	display: table;
@@ -594,15 +578,15 @@
 	width: 100%;
  }
  .regular_board_board_all p.information {
-	color: rgba(255,255,255,.3);	
+	color: rgba(0,0,0,.3);	
 	cursor: default;
 	font-size: 25px;
 	line-height: 27px;
 	padding: 5px;
  }
  .regular_board_board_all form p {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	clear: both; 
 	display: block;
 	padding: 5px;
@@ -611,6 +595,7 @@
 	cursor: pointer;
  }
  .regular_board_board_all .reply {
+	margin: 15px 0 0 0 !important;
 	color: rgba(255,255,255,.8);
 	overflow: hidden;
 	padding: 5px;
@@ -627,9 +612,8 @@
 	font-size: 25px;
 	margin: 0 auto;
 	position: relative;
-	padding: 5px;
 	visibility: visible;
-	width: auto;
+	width: 100%;
  }
  .imgur {
 	clear: both;
@@ -640,7 +624,7 @@
  }
  .regular_board_board_all .noborder #reply {
 	margin: 0 0 0 -5px !important;
- }
+ } 
  .regular_board_board_all #reply {
 	margin: 0 auto 0 auto;
 	width: 100%;
@@ -650,7 +634,7 @@
  }
  .regular_board_board_all #reply section {
 	clear: both;
- 	color: rgba(255,255,255,.5);
+ 	color: rgba(0,0,0,.5);
 	display: block;
 	line-height: 25px;
  }
@@ -664,7 +648,7 @@
 	display: block;
 	margin: 5px auto;
 	padding: 5px;
-	width: auto;;
+	width: auto;
  }
  .regular_board_board_all #reply form textarea {
 	height: 200px;
@@ -677,8 +661,8 @@
  .regular_board_board_all #reply form input[type="text"],
  .regular_board_board_all #reply form input[type="password"],
  .regular_board_board_all #reply form input[type="file"]{
-	color: #fff;
-	background-color: rgba(255,255,255,.1);
+	background-color: rgba(0,0,0,.1);
+	color: rgba(0,0,0,.5);
 	box-shadow: none;
 	border: none;
 	border-radius: 2px;
@@ -694,12 +678,12 @@
 	width: 100%;
  }
  .regular_board_board_all #reply form label:hover {
-	color: rgba(255,255,255,.7);
+	color: rgba(0,0,0,.7);
  }
  .regular_board_board_all #reply form label, 
  .regular_board_board_all form label {
 	border-radius: 0;
-	color: #fff;
+	color: rgba(0,0,0,.4);
 	clear: both;
 	cursor: pointer;
 	display: block;
@@ -710,7 +694,7 @@
 	padding: 5px;
 	text-align: left;
 	text-transform: uppercase;
-	width: 98%;
+	width: 98%;	
  }
 
  /**
@@ -744,7 +728,6 @@
 	margin: 2px -5px;
 	padding: 5px;
  }
-
  
  /**
   * Containers
@@ -759,20 +742,22 @@
 	width: 100% !important; 
  }
  .regular_board_board_all .form_form small {
+	color: rgba(0,0,0,.8);
 	display: block;
 	text-align: center;
 	width: 100%;
- }
+ }  
  .regular_board_board_all .footer {
-	background-color: #000;
-	border: none !important;
-	display: block; 
+	background-color: #fff;
+	color: #000;
+	border: none;
+	display: block;  
 	clear: both; 
 	width: 100%; 
 	margin: 15px auto 0 auto;
 	padding: 5px;
-	z-index: 2;
-	position: relative;	
+	z-index: 3;
+	position: relative;
 	text-align: center;
  }
  .regular_board_board_all .footer:after {
@@ -780,14 +765,10 @@
 	content: "";
 	display: table;
  }
-  
- body {
-	overflow-x: hidden;
- } 
  .regular_board_board_all {
-	background-color: #0f1112;
-	border-radius: 3px;
+	background-color: #f7fcff;
 	border-top: 5px solid #5175a5;
+	border-radius: 3px;
 	display: block;
 	font-family: Arial, Verdana;
 	font-size: 12px;
@@ -827,8 +808,8 @@
 	width: 100%;
  }
  .regular_board_board_all .lastthree span {
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	display: block; 
 	line-height: 12px;
 	margin: 5px 0;
@@ -847,18 +828,8 @@
 	display: block; 
 	width: 100%;
  }
- .regular_board_board_all .left-half .piece_form {
-	z-index: 99;
- }
- .regular_board_board_all .left-half .piece_form,
- .regular_board_board_all .left-half .piece {
-	margin: 0 0 5px 0;
-	padding: 5px;
-	position: relative;
- }
- 
  .bg-left {
-	background-color: #0f1112;
+	background-color: #f7fcff;
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -867,60 +838,68 @@
 	z-index: 1;
  }
  .bg-right {
-	background-color: #1d2224;
+	background-color: #eef4ff;
 	position: absolute;
 	right: 0;
 	top: 0;
 	height: 100%;
 	width: 50%;	
 	z-index: 1;
- }
+ } 
  .regular_board_board_all .right-half {
- 	background-color: #0f1112;
 	float: left;
-	margin: 5px -35px 5px 5px;
+	margin: 15px -35px 5px 0;
 	padding: 5px 10px 5px 0;
 	width: 48%;
 	z-index: 2;
 	position: relative;
- } 
+ }
  .regular_board_board_all .left-half .imageFULL {
-	width: 100% !important;
 	margin: 0 0 0 -5px;
+	width: 100% !important;
  }
  .regular_board_board_all .left-half-two strong,
  .regular_board_board_all .left-half-two span {
 	clear: both; 
 	display: block; 
 	padding: 5px;
- } 
+ }
  .regular_board_board_all .left-half-two {
 	margin: 5px !important;
- }
+ } 
  .regular_board_board_all .left-half-two,
  .regular_board_board_all .left-half {
-	background-color: #1d2224;
+	color: #000;
+	background-color: #eef4ff;
 	position: relative;
-	float: right;
+	float:right;
 	display: block;
-	margin: 5px;
+	margin: 5px 10px;
 	padding: 2px;
 	width: 24%;
 	overflow: hidden;
 	z-index: 2;
 	position: relative;
  }
+ .regular_board_board_all .piece_form {
+	background-color: #fff;
+	z-index: 99;
+ }
+ .regular_board_board_all .piece_form,
+ .regular_board_board_all .left-half .piece {
+	margin: 0 0 0 5px !important;
+	padding: 10px;
+	position: relative;
+	width: 100%;
+ } 
  .regular_board_board_all .left-half input[type="text"] {
 	cursor: default;
 	display: block;
 	margin: 5px auto;
 	width: 100%;
  }
-
- 
  .regular_board_board_all .spacer {
-	background-color: #000;
-	color: #c4c9cb !important;
+	background-color: #fbfeff;
 	display: block;
 	height: auto;
 	margin: 0 0 10px 0;
@@ -971,8 +950,8 @@
  .regular_board_board_all .imgs,
  .regular_board_board_all .urls {
 	width: 100%;
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	padding: 5px;
  } 
  .regular_board_board_all .imgs:before,
@@ -1020,8 +999,8 @@
 	text-decoration: none !important;
  }
  .regular_board_board_all .navi {
-	background-color: #16202e;
-	border-bottom: 1px solid #16202e;
+	background-color: #bed2ed;
+	border-bottom: 1px solid #bed2ed;
 	clear: both;
 	display: block;
 	font-size: 10px;
@@ -1040,7 +1019,8 @@
 	display: table;
  }
  .regular_board_board_all .navi a {
-	border: 1px solid #16202e !important;
+	background-color: rgba(255,255,255,.5);
+	border: 1px solid #bed2ed !important;
 	border-bottom: 0 !important;
 	display: table;
 	float: left;
@@ -1050,8 +1030,8 @@
 	text-align: center;
  }
  .regular_board_board_all a.active {
-	color: #fff !important;
-	background-color: #0c0c0c;
+	color: #000 !important;
+	background-color: #fff;
  }
  .regular_board_board_all a.active i {
 	color: red;
@@ -1066,23 +1046,33 @@
 	text-align: center;
  }
  .regular_board_board_all .thread {
+	border-radius: 2px;
+	border-top: 5px solid #e5f0ff;
+	border-left: 1px solid #e5f0ff;
+	border-right: 1px solid #e5f0ff;
+	border-bottom: 2px solid #e5f0ff;	
+	background-color: #fff;
 	clear: both;
-	color: #c4c9cb;
+	color: rgba(0,0,0,.9);
 	display: block;
-	margin: 0;
+	margin: 5px 0 0 5px;
+	padding: 0 0 0 2px;
 	overflow: hidden;
-	padding: 5px;
 	text-align: left;
-	width: 98%;
+	width: 100%;
+ }
+ .regular_board_board_all .thread .thread {
+	border: none;
+	margin: 0 0 -5px 0;
+	padding: 0;
  }
 
  .regular_board_board_all .child {
 	border: none!important;
-	background-color: #04121f;
+	background-color: #fafbff;
  }
- 
- .regular_board_board_all .thread .thread {
-	margin: 5px;
+ .regular_board_board_all #omitted .thread:hover {
+	background-color: #f6f6f6!important;
  }
   
  .regular_board_board_all .hidden {
@@ -1106,8 +1096,8 @@
  }
  .regular_board_board_all .stats,
  .regular_board_board_all #stats{
-	background-color: #1f2a3e;
-	color: #edf3ff;
+	background-color: #eef4ff;
+	color: rgba(0,0,0,.8);
 	border: 1px solid rgba(255,255,255,.1);
 	display: block;
 	margin: 0 0 5px 0;
@@ -1115,17 +1105,16 @@
 	width: 98%;
  }
  .regular_board_board_all #omitted {
-	background-color: #1f2a3e;
-	color: #edf3ff;
-	border: 1px solid rgba(255,255,255,.1);
+	color: rgba(0,0,0,.8);
 	display: block;
 	margin: 3px 0 5px 0;
 	width: 100%; 
  }
  .regular_board_board_all #omitted .thread {
-	margin: 5px 0 10px;
-	color: #edf3ff;
-	border-left: 1px solid #fff;
+	background-color: transparent !important;
+	margin: 10px 0 -5px 0;
+	color: rgba(0,0,0,.8);
+	border-left: 1px solid #e5f0ff;
 	padding: 5px;
  }
  /**
@@ -1133,7 +1122,6 @@
   * Responsive
   *
   */
-  
 @media only screen and (max-width: 1220px) {  
  .regular_board_board_all .left-half-two strong,
  .regular_board_board_all .left-half-two span {
@@ -1143,7 +1131,8 @@
 	margin: -12px 0 12px 0;
  } 
  .regular_board_board_all .left-half {
-	background-color: #1d2224;
+	color: #000;
+	background-color: #eef4ff;
 	position: relative;
 	float:right;
 	display: block;
@@ -1156,22 +1145,21 @@
  }
  .regular_board_board_all .left-half-two {
 	height: 30px;
-	overflow: hidden; 
-	color: #fff;
-	background-color: #000;
+	overflow: hidden;
+	color: #000;
 	margin: 0 0 5px 0 !important;
 	padding: 5px;
 	position: relative;
 	width: 50%; 
 	text-align: center;
  } 
-}
+}  
 @media only screen and (max-width: 880px) {
 	.regular_board_board_all .left-half-two {
 		height: 25px;
 		overflow: hidden;
-		color: #fff;
-		background-color: #000;
+		color: #000;
+		background-color: #fff;
 		margin: 0 0 5px 0 !important;
 		padding: 5px;
 		position: relative;
@@ -1194,11 +1182,9 @@
 	.regular_board_board_all .banner {
 		margin: auto;
 	}
-	
 	.regular_board_board_all .left-half {
 		text-align: center;
 	}
-	
 	.regular_board_board_all .left-half,
 	.regular_board_board_all .navi,
 	.regular_board_board_all .right-half {
@@ -1206,6 +1192,6 @@
 		width: 100% !important;
 		clear: both !important;  
 		float: none !important;
-		margin: auto !important;
+		margin: 5px 5px 5px 0 !important;
 	}
 }
