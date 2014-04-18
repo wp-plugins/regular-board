@@ -13,6 +13,8 @@ if ( !defined ( 'regular_board_plugin' ) || isset ( $_POST['FORMSUBMIT']) && !$_
 	die();
 }
 
+include ( plugin_dir_path(__FILE__) . '/regular_board_posting_checkflood.php' );
+
 if ($user_exists ) {
 	if ( $is_moderator ) {
 		$mod_code = 1;
@@ -147,21 +149,6 @@ if ( $userisbanned ) {
 					if ( $this_area == 'post' ) {
 						$IS_IT_SPAM = 0;
 						
-						//** Akismet **//
-						if ( function_exists ( 'akismet_admin_init' ) ) {
-							$APIKey = get_option ( 'wordpress_api_key' );
-							$akismet = new Akismet ( $website_url, $APIKey );
-							if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
-								$akismet = new Akismet ( $website_url, $APIKey );
-								$akismet->setCommentAuthorEmail ( '' );
-								$akismet->setCommentAuthorURL   ( '' );
-								$akismet->setCommentContent     ( $_REQUEST['COMMENT'] );
-								$akismet->setPermalink          ( $this_page );
-								if ( $akismet->isCommentSpam() ) {
-									$IS_IT_SPAM = 1;
-								}
-							}
-						}
 					
 						$empty      = 0;
 						
@@ -296,12 +283,7 @@ if ( $userisbanned ) {
 										$post_url  = $video_id;
 									} elseif ( $status == '200' && getimagesize ( $clean_url ) !== false ) {
 										// image
-										if ( 
-											$path_info['extension'] == 'jpg'  || 
-											$path_info['extension'] == 'gif'  || 
-											$path_info['extension'] == 'jpeg' || 
-											$path_info['extension'] == 'png'
-										) {
+										if ( in_array ( $path_info [ 'extension' ], $allowed_types, true ) ) {
 											$post_type = 'image';
 											$post_url  = $clean_url;
 										}
@@ -410,6 +392,9 @@ if ( $userisbanned ) {
 												}
 											}
 										}
+									} else {
+										$post_parent = intval ( $post_parent );
+										$the_board = $wpdb->get_var ( "SELECT post_board FROM $regular_board_posts WHERE post_id = $post_parent ");
 									}
 									if ( $_REQUEST['COMMENTPARENT'] ) {
 										$post_comment_parent = sanitize_text_field ( intval ( $_REQUEST['COMMENTPARENT'] ) );
@@ -446,9 +431,19 @@ if ( $userisbanned ) {
 														$return_to = $check_id;
 													}
 													$last = $pass->post_last;
+													if ( preg_match ( '#\+\+(.*)\+\+#', $post_comment, $match ) ) {
+														$post_comment = str_replace ( '++' . $match[1] . '++', '', $post_comment );
+													}
+													if ( preg_match ( '#\[\[title:(.*)\]\]#', $post_comment, $match ) ) {
+														$post_comment = str_replace ( '[[title:' . $match[1] . ']]', '', $post_comment );
+													}
+													if ( preg_match ( '#\[\[(.*?)\]\]#', $post_comment, $match ) ) {
+														$post_comment = str_replace ( '[[' . $match[1] . ']]', '', $post_comment );
+													}													
 													$wpdb->update (
 														$regular_board_posts,
 														array ( 
+															'post_board'          => $the_board,
 															'post_name'           => $profile_name,
 															'post_title'          => $post_subject,
 															'post_comment'        => $post_comment,
@@ -460,6 +455,7 @@ if ( $userisbanned ) {
 															'post_id'      => $check_id
 														),
 														array ( 
+															'%s',
 															'%s',
 															'%s', 
 															'%s', 
@@ -481,7 +477,17 @@ if ( $userisbanned ) {
 																			1 
 																		) 
 																	 );
-												echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $current_page . '?t=' . $return_to . '"></p>';
+													// Delete posts that somehow got through with no data
+													$wpdb->delete (
+														$regular_board_posts, 
+														array(
+															'post_comment' => ''
+														),
+														array(
+															'%s'
+														)
+													);
+												echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $current_page . '?t=' . $check_id . '"></p>';
 												}
 											} else {
 												$edited = 3;
@@ -494,6 +500,15 @@ if ( $userisbanned ) {
 										} else {
 											$post_public = 1;
 											$first_post  = 0;
+										}
+										if ( preg_match ( '#\+\+(.*)\+\+#', $post_comment, $match ) ) {
+											$post_comment = str_replace ( '++' . $match[1] . '++', '', $post_comment );
+										}
+										if ( preg_match ( '#\[\[title:(.*)\]\]#', $post_comment, $match ) ) {
+											$post_comment = str_replace ( '[[title:' . $match[1] . ']]', '', $post_comment );
+										}
+										if ( preg_match ( '#\[\[(.*?)\]\]#', $post_comment, $match ) ) {
+											$post_comment = str_replace ( '[[' . $match[1] . ']]', '', $post_comment );
 										}
 										$wpdb->query (
 											$wpdb->prepare (

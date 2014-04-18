@@ -51,7 +51,9 @@ if ( $_REQUEST['email'] ) {
 		echo '<p><strong>This username is already taken.  Please use a different one.</p>';
 	}
 }
-$update_name                                   = sanitize_text_field ( $_REQUEST['USERNAME'] );
+
+$update_name                                   = sanitize_text_field ( $_REQUEST['username'] );
+
 $update_heaven                                 = intval  ( $_REQUEST['heaven'] );
 $update_boards                                 = sanitize_text_field( $_REQUEST['boards'] );
 $update_follow                                 = sanitize_text_field( $_REQUEST['follow'] );

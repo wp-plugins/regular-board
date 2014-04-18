@@ -13,97 +13,149 @@ if ( !defined ( 'regular_board_plugin' ) ) {
 
 if ( count ( $posts ) > 0 ) {
 
+	$posts->post_id = absint ( $posts->post_id );
+	$posts->post_parent = absint ( $posts->post_parent );
+	$thread_parent = 0;
+	
+	if ( !$posts->post_parent ) {
+		$thread_parent = 1;
+		$reply_to = $this_thread;
+		$comment_parent = 0;
+	}
+	
+	if ( $posts->post_parent ) {
+		$reply_to = $posts->post_parent;
+		$comment_parent = $posts->post_id;
+		$threaded = $wpdb->get_results ( 
+			$wpdb->prepare ( 
+				"SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_parent = %d AND post_comment_parent = %d ORDER BY post_last ASC", 
+				$posts->post_parent, 
+				$posts->post_id  
+			) 
+		);		
+	}
+	
+	$posts->post_name = sanitize_text_field ( $posts->post_name );
+	$posts->post_date = sanitize_text_field ( $posts->post_date );
+	$posts->post_email = sanitize_text_field ( $posts->post_email );
+	$posts->post_title = sanitize_text_field ( $posts->post_title );
+	if ( $posts->post_title ) {
+		$raw_title = str_replace ( '\\', '', '[[title:' . $posts->post_title . ']] ');
+	} else {
+		$raw_title = '';
+	}
+	$posts->post_comment = sanitize_text_field ( $posts->post_comment );
+	$posts->post_comment = str_replace ( array('!heaven','!sage'), '', $posts->post_comment );
+	if ( preg_match ( '#\+\+(.*)\+\+#', $posts->post_comment, $match ) ) {
+		$posts->post_comment = str_replace ( '++' . $match[1] . '++', '', $posts->post_comment );
+	}
+	if ( preg_match ( '#\[\[title:(.*)\]\]#', $posts->post_comment, $match ) ) {
+		$posts->post_comment = str_replace ( '[[title:' . $match[1] . ']]', '', $posts->post_comment );
+	}
+	if ( preg_match ( '#\[\[(.*?)\]\]#', $posts->post_comment, $match ) ) {
+		$posts->post_comment = str_replace ( '[[' . $match[1] . ']]', '', $posts->post_comment );
+	}
+	if ( preg_match ( '#\^(.*?)\^#', $posts->post_comment, $match ) ) {
+		$posts->post_comment = str_replace ( '^' . $match[1] . '^', '', $posts->post_comment );
+	}
+	$posts->post_comment = str_replace ( 
+		array ( 
+			'\\n', 
+			'\\r', 
+			'\\'
+		), 
+		array( 
+			'<br /><br />',
+			'<br /><br />',
+			'' 
+		),
+		$posts->post_comment 
+	);
+	if ( $protocol == 'tags' ) {
+		$posts->post_comment = str_replace ( '?b=#', '?b=', regular_board_auto_tags ( $posts->post_comment ) );
+	}
+	if ( $protocol == 'boards' ) {
+		$posts->post_comment = str_replace ( '?ht=#', '?ht=', regular_board_auto_tags ( $posts->post_comment ) );
+	}	
+	$raw_comment = str_replace ( 
+		array ( 
+			'\\n', 
+			'\\r', 
+			'\\' 
+		), 
+		array ( 
+			' || ', 
+			' || ', 
+			'' 
+		), 
+		$posts->post_comment 
+	);
+
+	$posts->post_comment_parent = absint ( $posts->post_comment_parent );
+	$posts->post_type = sanitize_text_field ( $posts->post_type );
+	$posts->post_url = sanitize_text_field ( $posts->post_url );
+	if ( $protocol == 'boards' ) {
+		$posts->post_board = sanitize_text_field ( $posts->post_board );
+		$board = sanitize_text_field ( $posts->post_board );
+		if ( $this_thread ) {
+			if ( !$posts->post_parent ) {
+				$the_board = sanitize_text_field ( $posts->post_board );
+			}		
+		}
+	}	
+	$posts->post_moderator = absint ( $posts->post_moderator );
+	$posts->post_last = sanitize_text_field ( $posts->post_last );
+	$posts->post_sticky = absint ( $posts->post_sticky );
+	$posts->post_locked = absint ( $posts->post_locked );
+	$posts->post_password = sanitize_text_field ( $posts->post_password );
+	$posts->post_userid = absint ( $posts->post_userid );
+	$posts->post_public = sanitize_text_field ( $posts->post_public );
+	$posts->post_report = sanitize_text_field ( $posts->post_report );
+	$posts->post_reportcount = absint ( $posts->post_reportcount );
+	$posts->post_guestip = sanitize_text_field ( $posts->post_guestip );
+	if ( strtolower ( $posts->post_guestip ) == 'null' ) {
+		$posts->post_guestip = 0;
+	}
+	if ( $posts->post_guestip ) {
+		$guest_post = 1;
+	} else {
+		$guest_post = 0;
+	}
+	if ( strtolower ( $posts->post_name ) == 'null' && strtolower ( $posts->post_email ) == 'heaven' && strtolower ( $posts->post_title ) == '[deleted]' && strtolower ( $posts->post_comment ) == '[deleted]' && intval ( $posts->post_locked ) == 1 ) {
+		$post_has_been_deleted  = 1;
+	}	
+
 	if ( !$this_thread && !$enable_url ) {
 		$thread_urls_disabled = 1;
 	} else {
 		$thread_urls_disabled = 0;
 	}
-	if ( $this_area != 'gallery' ) {
-		echo '<div class="thread'; if ( $posts->post_comment_parent ) { echo 'child'; } echo '">';
-	}
-	$posts->post_id             = absint ( $posts->post_id          );
-	$posts->post_parent         = absint ( $posts->post_parent      );
-	$posts->post_userid         = absint ( $posts->post_userid      );
-	$posts->post_moderator      = absint ( $posts->post_moderator   );
-	$posts->post_reportcount    = absint ( $posts->post_reportcount );
-	$posts->post_comment_parent = absint ( $posts->post_comment_parent );
-	$posts->post_name           = $posts->post_name;
-	$posts->post_date           = $posts->post_date;
-	$posts->post_email          = $posts->post_email;
-	$posts->post_title          = $posts->post_title;
-	if ( strtolower ( $posts->post_guestip ) == 'null' ) {
-		$posts->post_guestip = '';
-	}
-	$thread_parent     = '';
-	if ( !$posts->post_parent ) {
-		$thread_parent = 1;
-	}
-	if ( !$posts->post_parent ) { 
-		$reply_to = $this_thread;
-	}
-	if ( $posts->post_parent ) {
-		$reply_to       = $posts->post_parent;
-		$comment_parent = $posts->post_id;
-	} else {
-		$comment_parent = '';
-	}
-	
-	if ( $posts->post_guestip ) {
-		$guest_post             = 1;
-	} else {
-		$guest_post             = 0;
-	}
 	$posts_has_been_deleted     = 0;
-	if ( strtolower ( $posts->post_name ) == 'null' && strtolower ( $posts->post_email ) == 'heaven' && strtolower ( $posts->post_title ) == '[deleted]' && strtolower ( $posts->post_comment ) == '[deleted]' && intval ( $posts->post_locked ) == 1 ) {
-		$post_has_been_deleted  = 1;
-	}
 	
-	$raw_comment                = str_replace ( array ( '\\n', '\\r', '\\' ), array ( ' || ', ' || ', '' ), $posts->post_comment );
-	$posts->post_comment        = $posts->post_comment;
-	if ( $protocol == 'tags' ) {
-		$posts->post_comment        = str_replace ( '?b=#', '?b=', regular_board_auto_tags ( $posts->post_comment ) );
+	if ( $this_area != 'gallery' ) {
+		echo '<div class="thread'; 
+		if ( $posts->post_comment_parent ) { 
+			echo 'child'; 
+		} 
+		echo '">';
 	}
-	if ( $protocol == 'boards' ) {
-		$posts->post_comment        = str_replace ( '?ht=#', '?ht=', regular_board_auto_tags ( $posts->post_comment ) );
-	}
-	$posts->post_comment        = str_replace ( array('!heaven','!sage'), '', $posts->post_comment );
-	if ( preg_match ( '#\+\+(.*)\+\+#', $posts->post_comment, $match ) ) {
-		$posts->post_comment    = str_replace ( '++' . $match[1] . '++', '', $posts->post_comment );
-	}
-	if ( preg_match ( '#\[\[title:(.*)\]\]#', $posts->post_comment, $match ) ) {
-		$posts->post_comment    = str_replace ( '[[title:' . $match[1] . ']]', '', $posts->post_comment );
-	}
-	if ( preg_match ( '#\[\[(.*?)\]\]#', $posts->post_comment, $match ) ) {
-		$posts->post_comment    = str_replace ( '[[' . $match[1] . ']]', '', $posts->post_comment );
-	}
-	if ( preg_match ( '#\^(.*?)\^#', $posts->post_comment, $match ) ) {
-		$posts->post_comment    = str_replace ( '^' . $match[1] . '^', '', $posts->post_comment );
-	}	
-	$posts->post_type           = $posts->post_type;
-	if ( $protocol == 'boards' ) {
-		$posts->post_board          = $posts->post_board;
-		$board                      = $posts->post_board;
-		if ( $this_thread ) {
-			if ( !$posts->post_parent ) {
-				$the_board              = $posts->post_board;
-			}		
-		}
-	}
-	$posts->post_last           = $posts->post_last;
-	$posts->post_sticky         = intval ( $posts->post_sticky );
-	$posts->post_locked         = intval ( $posts->post_locked );
-	$posts->post_password       = $posts->post_password;
-	$posts->post_public         = $posts->post_public;
-	$posts->post_report         = $posts->post_report;
-	$posts->post_url            = $posts->post_url;
-	$this_is_protected          = '';
+
+
+	
+	
+
+
+
+	$this_is_protected = 0;
 	if ( !$posts->post_board ) { 
-		$this_is_protected      = '';
+		$raw_board = '';
+		$this_is_protected = 0;
+	} else {
+		$raw_board = str_replace ( '\\', '', '[[' . $posts->post_board . ']]' );
 	}
 	
-	if ( $posts->post_parent ) {
-		$threaded   = $wpdb->get_results ( $wpdb->prepare ("SELECT $regular_board_posts_select FROM $regular_board_posts WHERE post_parent = %d AND post_comment_parent = %d ORDER BY post_last ASC", $posts->post_parent, $posts->post_id  ) );
-	}
+
+	
 	if ( $protectedboards) {
 		if ( in_array ( $posts->post_board, $protectedboards, true ) ) {
 			$this_is_protected = 1;
@@ -208,8 +260,8 @@ if ( count ( $posts ) > 0 ) {
 			}
 			
 			if ( $posts->post_parent && $post_nom == 1 && $this_thread == $posts->post_id ) {
-				$check_parent = $wpdb->get_var ( "SELECT post_public FROM $regular_board_boards WHERE post_id = $posts->post_parent " );
-				if ( $check_parent ) {
+				$check_parent = $wpdb->get_var ( "SELECT post_public FROM $regular_board_posts WHERE post_id = $posts->post_parent" );
+				if ( $check_parent == 1 ) {
 					echo '<p><a href="?t=' . $posts->post_parent . '"><i class="fa fa-arrow-left"> This conversation has been branched &mdash; go back to the main discussion</i></a></p>';
 				}
 			}
@@ -664,20 +716,18 @@ if ( count ( $posts ) > 0 ) {
 			if ( $thread_urls_disabled || $this_thread || $this_area == 'history' || $this_area == 'replies' || $this_user || !$this_thread && $style == 'expanded') { 
 
 				if ( $thread_urls_disabled || $posts->post_comment && $this_thread || $this_area == 'history' || $this_area == 'replies' || $this_user || !$this_thread && $style == 'expanded') {
-					// Comment
 
 					if ( $auto_url ) {
 						$urls = wp_extract_urls ( strip_tags ( sanitize_text_field ( $posts->post_comment ) ) );
 						$n    = 0;
 					}
-					
 					if ( $search_enabled && $search ) { 
 						$posts->post_comment = str_replace ( $search, '<span class="searchresult">' . $search . '</span>', $posts->post_comment );
 					}
 					
 					echo '<div class="clear comment' . $posts->post_id . '">';
 					
-					$posts->post_comment = str_replace ( array ( '\\n', '\\r', '\\'), array( '<br /><br />','<br /><br />','' ), $posts->post_comment );
+					
 					
 					if ( $formatting ) {
 						$posts->post_comment = regular_board_format ( $posts->post_comment );
@@ -691,27 +741,20 @@ if ( count ( $posts ) > 0 ) {
 						echo $posts->post_comment;
 					}
 
+
+
+
+
 					if ( $auto_url ) {
-						/**
-						* wp_extract_urls to extract all urls found in the comment and return 
-						* a div full of the found urls, auto-linked to their destinations.
-						*/
-	
 						if ( $urls ) {
 							echo '<div class="urls">attached urls:  ';
 							$n    = 0;
 							foreach ( $urls as $url ) {
 								if ( filter_var( $url, FILTER_VALIDATE_URL ) ) {
-										$path_info = pathinfo ( $url );
-										if ( 
-											$path_info['extension'] != 'jpg' ||
-											$path_info['extension'] != 'gif' ||
-											$path_info['extension'] != 'jpeg' ||
-											$path_info['extension'] != 'png'
-										) {
-										$n++;
-										if ( $n <= $max_links ) {
-											echo '<a href="' . $url . '">' . $n . ': ' . regular_board_get_domain ( $url ) . '</a>';
+									$path_info = pathinfo ( $url );
+									if ( in_array ( $path_info [ 'extension' ], $allowed_types, true ) ) {
+										if ( ++$n <= $max_links ) {
+											echo '<a href="' . $url . '">' . $n++ . ': ' . regular_board_get_domain ( $url ) . '</a>';
 										}
 									}
 								}
@@ -722,14 +765,8 @@ if ( count ( $posts ) > 0 ) {
 								if ( filter_var( $url, FILTER_VALIDATE_URL ) ) {
 									if ( regular_board_get_domain ( $url ) == 'imgur.com' ) {
 										$path_info = pathinfo ( $url );
-										if ( 
-											$path_info['extension'] == 'jpg' ||
-											$path_info['extension'] == 'gif' ||
-											$path_info['extension'] == 'jpeg' ||
-											$path_info['extension'] == 'png'
-										) {
-											$n++;
-											if ( $n <= $max_links ) {
+										if ( in_array ( $path_info [ 'extension' ], $allowed_types, true ) ) {
+											if ( ++$n <= $max_links ) {
 												echo '<a href="' . $url . '"><img src=" ' . $url . '" alt="Image" class="imageOP" /></a>';
 											}
 										}
@@ -739,21 +776,25 @@ if ( count ( $posts ) > 0 ) {
 							echo '</div>';
 						}
 					}
-					
+
+
+
+
+
 					echo '</div>';
 					
 				}
 			}
 			// Comment source
 				echo '<div class="src' . $posts->post_id . ' hidden">
-					<blockquote>' . $raw_comment . '</blockquote>
+					<blockquote>' . $raw_board . $raw_title . $raw_comment . '</blockquote>
 				</div>';
 
 
 
 		
 			$post_parent = $posts->post_parent;
-			$post_id     = $posts->post_id;
+			$post_id = $posts->post_id;
 			
 			echo '<div>';
 			if ( $this_thread ) {
@@ -777,35 +818,40 @@ if ( count ( $posts ) > 0 ) {
 		
 		}
 	}
+
+
+
+
+
 	if ( $this_area == 'gallery' ) {
 		if ( filter_var( $posts->post_url, FILTER_VALIDATE_URL ) ) {
 			$path_info = pathinfo ( $posts->post_url );
-			if ( 
-				$path_info['extension'] == 'jpg' ||
-				$path_info['extension'] == 'gif' ||
-				$path_info['extension'] == 'jpeg' ||
-				$path_info['extension'] == 'png'
-			) {
-				
-				echo '<a class="load_link" href="' . $current_page . '?t=';
-				if ( $posts->post_parent == 0 ) { echo $posts->post_id; }
-				if ( $posts->post_parent != 0 ) { echo $posts->post_parent . '#' . $posts->post_id; }
-				if ( $posts->post_title == '' ) { $posts->post_title = 'No subject'; }
-				echo '">';
-				$check_subject = strtolower ( $posts->post_title );
+			$check_subject = strtolower ( $posts->post_title );
+			if ( $posts->post_parent ) { 
+				$thread_link = $posts->post_parent . '#' . $posts->post_id; 
+			} else { 
+				$thread_link = $posts->post_id; 
+			}
+			if ( in_array ( $path_info [ 'extension' ], $allowed_types, true ) ) {
+				echo '<a href="' . $current_page . '?t=' . $thread_link . '">';
 				if ( strpos ( $check_subject, 'nsfw' ) !== false ) {
-					echo '<strong>N S F W</strong>';
+					echo '<img src="' . $nsfw_image . '" alt="NSFW" />';
 				} else {
-					echo '<img src=" ' . $posts->post_url . '" alt="Image" class="galleryIMAGE" />';
+					echo '<img src=" ' . $posts->post_url . '" alt="Image" />';
 				}
-				echo '
-				</a>';
+				echo '</a>';
 			}
 		}
 	}
+
+
+
+
+
 	if ( $this_area != 'gallery' ) {
 		echo '</div>';
 	}
+
 } else {
 	echo '<div class="thread clear"><p><strong>Nothing to see here.</strong></p></div>';
 }

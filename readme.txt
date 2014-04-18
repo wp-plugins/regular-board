@@ -3,7 +3,7 @@ Contributors: boyevul
 Tags: anonymous, bbs, bulletin board system, forum
 Requires at least: 3.8.2
 Tested up to: 3.9
-Stable tag: 1.13.8.2
+Stable tag: 1.13.8.3
 
 == Description ==
 Regular Board is a text-based anonymous message board to which anyone may post without the need for account registration.  
@@ -46,7 +46,7 @@ formatting commands to set things like link embedding, titles, and so-forth.
 
 = Features = 
 * Out-of-the-box and running with:
-* :: integrated with DNSBL and Akismet
+* :: integrated with DNSBL
 * :: editing capabilities for users with passwords/usernames
 * :: (optional) ability to appoint janitors and moderators
 * :: (optional) board wiper that deletes threads/boards on a timed response system
@@ -66,6 +66,7 @@ formatting commands to set things like link embedding, titles, and so-forth.
 7. Done.
 
 == Changelog ==
+* 1.13.8.3  Several files have been consolidated, with some minor bug fixes (mostly in the form of variables, placement of code, and the like).
 * 1.13.8.2  esc_sql replaces mysql_real_escape_string.  test up to version update.
 * 1.13.8.1  Hotfix: Post locking
 * 1.13.8.0  CSS cleanup.  Function wrappers.  gfycat embedding.  guest posts counted for unique posters.

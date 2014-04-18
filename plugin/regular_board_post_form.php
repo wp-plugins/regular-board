@@ -154,14 +154,6 @@ if ( $userisbanned ) {
 										}
 									}
 								}
-								if ( !$user_exists ) {
-									echo '<label for="COMMENT">Posting as <em>guest</em> / posts require approval</label>';
-								} else {
-									if ( strtolower ( $profile_name ) == 'null' ) {
-										$profile_name = 'anonymous';
-									}
-									echo '<label for="COMMENT">Posting as ' . $profile_name . '</label>';
-								}
 								$board_post_to = '';
 								$tag_post_to   = '';
 								if ( $the_tag && !$this_thread ) {
@@ -187,6 +179,16 @@ if ( $userisbanned ) {
 								} else { 
 									echo 'Post';
 								}
+								
+								if ( !$user_exists ) {
+									echo ' as guest / posts require approval';
+								} else {
+									if ( strtolower ( $profile_name ) == 'null' ) {
+										$profile_name = 'anonymous';
+									}
+									echo ' as ' . $profile_name;
+								}								
+								
 								echo '"/>';									
 								echo '</form>
 								</div>';
