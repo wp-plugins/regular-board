@@ -1,5 +1,6 @@
  /**
  /**
+ /**
   * Regular Board CSS
   *
   * CSS to style Regular Board (February 10th, 2014)
@@ -43,6 +44,18 @@
 	line-height: 17px;
 	list-style: none;
  }
+ 
+.regular_board_board_all .menu {
+	left: -31px; 
+	top: 25px; 
+	position: absolute; 
+}
+.regular_board_board_all .menutoggle_on, 
+.regular_board_board_all .menutoggle_off {
+	cursor: pointer;
+	font-size: 15px;
+	margin: 8px 0 8px 13px;
+}
 
 
 
@@ -50,8 +63,10 @@
   width: 100%;
   transition: .8s opacity;
  } 
+ 
  .regular_board_board_all #masonry:hover img { opacity: 0.3; }
  .regular_board_board_all #masonry:hover img:hover { opacity: 1; } 
+ 
  .regular_board_board_all #masonry,
  .regular_board_board_all #reply,
  .regular_board_board_all #regular_board {
@@ -64,15 +79,15 @@
  .regular_board_board_all #regular_board .left-half,
  .regular_board_board_all #regular_board .right-half {
 	flex: 1;
-	margin: 0 5px 5px 0;
 	z-index: 2;	
-	padding: 5px;
+	
  }
- .regular_board_board_all #regular_board .left-half {
-	order: a;
+ 
+ .regular_board_board_all #reply {
+	margin: 0 5px 5px 15px;
  }
  .regular_board_board_all #regular_board .right-half {
-	order: b;
+	margin: 0 5px 5px 0;
  } 
 
  .regular_board_board_all .nav {
@@ -105,27 +120,26 @@
  }
  .regular_board_board_all .top_nav {
 	background-color: #0f1112;
-	border-bottom: 1px solid rgba(0,0,0,.1);
 	display: block; 
-	font-size: 10px;
-	height: 35px;
+	
+	height: 30px;
 	margin: 0;
-	overflow: hidden; 
 	padding: 5px;
 	text-transform: uppercase;
 	width: 100%;
 	z-index: 2;
 	position: relative;
+	text-align:center;
  }
  .regular_board_board_all .top_nav a,
  .regular_board_board_all .top_nav span {
 	color: #1f96b7 !important;
-	float: left; 
-	margin: 2px 0 0 2px;
-	padding: 3px;
+	margin: 5px 0 0 2px;
+	padding: 5px;
 	text-decoration: none !important;
-	height: 20px;
 	line-height: 15px;
+	position: relative;
+	font-size: 12px;
  }
  .regular_board_board_all .top_nav a:hover {
 	background-color: #5e85ba;
@@ -140,7 +154,7 @@
 	cursor: default;
 	float: right; 
 	font-size: 150%;
-	margin: 25px;
+	margin: 15px 5px 5px 0;
  }
   .regular_board_board_all .small-left { 
 	
@@ -232,11 +246,9 @@
  }
  .regular_board_board_all .text,
  .regular_board_board_all .left-half span a {
-
 	color: #edf3ff;
 	display: block; 
 	margin: 0;
-	padding: 10px;
 	text-decoration: none!important;
  }
  
@@ -266,14 +278,12 @@
 	text-align: right;
  }
  .regular_board_board_all span.frontinfo {
-	background-color: #1f2a3e;
 	color: #edf3ff;
 	display: block; 
 	font-size: 15px;
 	line-height: 20px;
-	margin: -5px 0 0 -5px;
+	margin: -5px 0;
 	padding: 5px;
-	
  }
  .regular_board_board_all a.boardlink {
 	display: block; 
@@ -392,7 +402,7 @@
   */
  
  .thumb {
-	margin: 25px 0 !important;
+	margin: 0 0 5px;
 	padding: 5px;
 	border-radius: 3px;
 	width: 73px;
@@ -417,10 +427,12 @@
  }
  .regular_board_board_all .thread .imgs .imageEXPAND{
 	height: auto;
-	width: 100%!important;
-	margin: 5px 5px 5px -5px;
+	width: 100%;
+	margin: 5px 5px 5px -1px;
 	position: relative;
 	padding: 5px;
+	clear: both;
+	display: block;
  } 
  .regular_board_video_thumbnail_large {
 	clear: both;
@@ -449,11 +461,12 @@
  }
  .regular_board_board_all .imageEXPAND{
 	height: auto;
-	max-width: 100%;
-	margin: 5px 5px 5px -5px;
+	width: 100%;
+	margin: 5px 5px 5px -1px;
 	position: relative;
 	padding: 5px;
-	float: left;
+	clear: both;
+	display: block;
  }
  .regular_board_board_all .thread .thumbnail {
 	border-radius: 3px;
@@ -494,23 +507,26 @@
   *
   * All elements that are related to forms
   */
+  .regular_board_board_all .form_form {
+	margin: 0 -5px;
+	width: 100%;
+  }
   .regular_board_board_all form.modes {
 	margin: 5px;
   }
  .regular_board_board_all input[type="submit"] {
+	background-color: #15253b;
+	border-radius: 2px;
 	color: #f0e4e4;
 	cursor: pointer;
 	font-size: 100%;
+	margin: -5px 0 10px 0 !important;
+	padding: 5px 0;
 	text-align: center;
 	width: 100%;
-	border-radius: 2px;
-	margin: -5px 0 10px 0 !important;
-	background-color: #15253b;
-	padding: 5px 0;
  }
  
  .regular_board_board_all .profile-section {
-	
 	display: block;
 	margin: 5px 0;
 	overflow: hidden;
@@ -679,7 +695,7 @@
  }
  .regular_board_board_all .reply form {
 	display: block;
-	margin: 5px auto 0 -5px;
+	margin: 5px auto 0;
 	padding: 5px;
 	width: 100%;
  }
@@ -695,7 +711,7 @@
  .regular_board_board_all .reply form input[type="password"],
  .regular_board_board_all .reply form input[type="file"]{
 	color: #fff;
-	background-color: rgba(0,0,0,.9);
+	background-color: rgba(255,255,255,.1);
 	box-shadow: none;
 	border-radius: 2px;
 	clear: none;
@@ -703,7 +719,7 @@
 	display: block;
 	float: left;
 	font-size: 15px;
-	margin: 5px 0 0 5px;
+	margin: 5px 0 0 0;
 	padding: 1%;
 	text-align: left;
 	visibility: visible;
@@ -774,13 +790,15 @@
  }
  
  .regular_board_board_all .footer {
-	background-color: #000;
-	
+	cursor: default;
+	font-size: 25px;
+	line-height: 30px;
 	display: block; 
 	clear: both; 
 	width: 100%; 
-	margin: 15px auto 0 auto;
-	padding: 5px;
+	margin: 35px auto;
+	padding: 10px 5px;
+	height: auto;
 	z-index: 2;
 	position: relative;	
 	text-align: center;
@@ -791,24 +809,20 @@
 	display: table;
  }
   
- body {
-	overflow-x: hidden;
- } 
  .regular_board_board_all {
 	background-color: #0f1112;
 	border-radius: 3px;
-	border-top: 5px solid #5175a5;
+	border: 15px solid #0f1112;
 	display: block;
 	font-family: Arial, Verdana;
-	font-size: 12px;
-	line-height: 15px;
 	display: block;
 	line-height: 15px;
 	margin: 5px auto;
-	overflow-x: hidden;
 	position: relative;
 	text-shadow: none!important;
 	width: 99%;
+	min-width: 650px;
+	max-width: 880px;
  }
  .regular_board_board_all .thread_container:after,
  .regular_board_board_all .lastthree span:after,
@@ -865,24 +879,6 @@
 	width: 100%;
  }
  
- .regular_board_board_all .bg-left {
-	background-color: #0f1112;
-	position: absolute;
-	left: 0;
-	top: 0;
-	height: 100%;
-	width: 50%;
-	z-index: 1;
- }
- .regular_board_board_all .bg-right {
-	background-color: #1d2224;
-	position: absolute;
-	right: 0;
-	top: 0;
-	height: 100%;
-	width: 50%;	
-	z-index: 1;
- }
  .regular_board_board_all .left-half .imageFULL {
 	width: 100% !important;
 	margin: 0 0 0 -5px;
@@ -1048,7 +1044,7 @@
 	display: block;
 	margin: 5px 0 5px 5px;
 	padding: 0 0 0 2px;
-	overflow: hidden;
+
 	text-align: left;
 	width: 99%;
  }
@@ -1082,16 +1078,6 @@
 	border-top: 1px dotted red;
 	border-bottom: 1px dotted red;
  }
- .regular_board_board_all .stats,
- .regular_board_board_all #stats{
-	background-color: #1f2a3e;
-	color: #edf3ff;
-	border: 1px solid rgba(255,255,255,.1);
-	display: block;
-	margin: 0 0 5px 0;
-	padding: 5px;
-	width: 98%;
- }
  .regular_board_board_all #omitted {
 	background-color: #1f1f1f;
 	color: #edf3ff;
@@ -1100,34 +1086,8 @@
 	width: 100%; 
  }
  .regular_board_board_all #omitted .thread {
-	
-	
 	margin: 10px 0 -5px 0;
 	color: #edf3ff;
 	border-left: 1px solid #fff;
 	padding: 5px;
  }
- /**
-  *
-  * Responsive
-  *
-  */
-
-@media only screen and (max-width: 880px) {
-	.regular_board_board_all .bg-left {
-		width: 100%;
-	}
-	.regular_board_board_all .bg-right {
-		display: none;
-		visibility: hidden;
-	}
-	.regular_board_board_all #regular_board {
-		flex-direction: column;
-	}
-	.regular_board_board_all #regular_board .left-half,
-	.regular_board_board_all #regular_board .right-half {
-		flex: 1;
-		margin: -7px 5px 0 0;
-		z-index: 2;	
-	}	
-}

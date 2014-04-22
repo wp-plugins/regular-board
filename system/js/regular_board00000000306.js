@@ -1,4 +1,22 @@
+
 	jQuery(document).ready(function($){
+
+		$(document).on('click','.regular_board_board_all .menutoggle_on',function(){
+			$(this).addClass('hidden');
+			$('.regular_board_board_all .menutoggle_off').removeClass('hidden');
+			$('.regular_board_board_all .right-half').addClass('hidden');
+			$('.regular_board_board_all #reply').addClass('hidden');
+			$('.regular_board_board_all .left-half').removeClass('hidden');
+		});
+		$(document).on('click','.regular_board_board_all .menutoggle_off',function(){
+			$(this).addClass('hidden');
+			$('.regular_board_board_all .menutoggle_on').removeClass('hidden');
+			$('.regular_board_board_all .right-half').removeClass('hidden');
+			$('.regular_board_board_all #reply').removeClass('hidden');
+			$('.regular_board_board_all .left-half').addClass('hidden');
+		});		
+
+		
 		var pathname = window.location.pathname;	
 		$('.regular_board_board_all').get(pathname + ' .regular_board_board_all > *');
 		window.onpopstate = function(event) {

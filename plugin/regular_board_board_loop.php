@@ -20,6 +20,9 @@ if ( $this_area != 'gallery' ) {
 		echo '<div id="thread' . htmlentities($the_board) . '">';
 	}
 }
+if ( $this_area == 'gallery' ) {
+	echo '<div id="masonry">';
+}
 foreach ( $getposts as $posts ) {
 	if ( $this_area != 'gallery' ) {
 		echo '<div class="';
@@ -74,6 +77,9 @@ foreach ( $getposts as $posts ) {
 		}
 		echo '</div>';
 	}
+}
+if ( $this_area == 'gallery' ) {
+	echo '</div>';
 }
 if ( $this_area != 'gallery' ) {
 	if ( $the_board && !$this_thread ) {

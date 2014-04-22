@@ -30,7 +30,105 @@ function regular_board_head ( ) {
 	}
 	
 	if ( has_shortcode ( $content, 'regular_board' ) ) {
-		include ( plugin_dir_path(__FILE__) . '/regular_board_meta.php' );
+		$the_board   = '';
+		$this_thread = '';
+		$getres      = '';
+
+		$query       = sanitize_text_field ( $_SERVER['QUERY_STRING'] );
+		if ( $query ) {
+			if ( isset ( $_GET['b'] ) ) {
+				$the_board   = esc_sql ( strtolower ( $_GET['b'] ) );
+			}
+			if ( isset ( $_GET['t'] ) ) {
+				$this_thread = intval ( $_GET['t'] );
+			}
+			if( $this_thread ) {
+				$getres = $wpdb->get_results ( 
+							$wpdb->prepare ( 
+								"SELECT $regular_board_posts_select FROM $regular_board_posts WHERE 
+								post_id = %d LIMIT 1", 
+								$this_thread 
+							) 
+						  );
+				if ( count ( $getres ) ) {
+					foreach ( $getres as $meta ) {
+						if ( $meta->post_board ) {
+							$the_board = $meta->post_board;
+						}
+						
+						$canonical = $author = $title = $site = $locale = $published = $last = $image = $video = $description = '';
+						
+						$locale       = get_locale();
+						$site         = get_bloginfo( 'name' );
+						$current_page = home_url('/');
+						$pretty       = esc_attr ( get_option ( 'mommaincontrol_prettycanon' ) );
+						$the_board    = esc_sql ( strtolower ( $_GET['b'] ) );
+						if ( !$meta->post_parent ) {
+							$this_thread  = intval ( $_GET['t'] );
+						}
+						if ( $meta->post_parent ) {
+							$this_thread  = intval ( $meta->post_parent ) . '#' . intval ( $_GET['t'] );
+						}
+						$canonical   = $current_page . '?t=' . $this_thread;
+						$author      = $meta->post_moderator;
+						$title       = str_replace ( '\\', '', $meta->post_title );
+						if ( !$title ) {
+							$title   = 'No subject';
+						}
+
+						$published   = $meta->post_date;
+						$last        = $meta->post_last;
+						$type        = $meta->post_type;
+						if ( $type == 'image' ) {
+							$image   = $meta->post_url;
+						}
+						if ( $type == 'youtube' ) {
+							$video   = '//youtube.com/watch?v=' . $meta->post_url;
+						}
+						$description = str_replace ( array ( '||||', '||', '*', '{{', '}}', '>>', ' >', '~~', ' - ', '----', '::', '`', '    '), '', ( str_replace ( '\\', '', $description ) ) );
+						$description = substr ( $description,0,150 );
+						echo "\n";
+						if ( $canonical ) {
+							echo '<meta property="og:url" content="' . $canonical . '" /> ' . "\n";
+						}
+						if ( $title ) {
+							echo '<meta property="og:title" content="' . $title . '" /> ' . "\n";
+						}
+						if ( $site ) {
+							echo '<meta property="og:site_name" content="' . $site . '" /> ' . "\n";
+						}
+						if ( $locale ) {
+							echo '<meta property="og:locale" content="' . $locale . '" /> ' . "\n";
+						}
+						if ( $image ) {
+							echo '<meta property="og:image" content="' . $image . '" /> ' . "\n";
+						}
+						if ( $video ) {
+							echo '<meta property="og:video" content="//www.youtube.com/v/' . $meta->post_url . '?autohide=1&amp;version=3" /> ' . "\n" . 
+							'<meta property="og:video:type" content="application/x-shockwave-flash" /> ' . "\n" . 
+							'<meta property="og:video:height" content="720" /> ' . "\n" . 
+							'<meta property="og:video:width" content="1280" /> ' . "\n" . 
+							'<meta property="og:type" content="video" /> ' . "\n" . 
+							'<meta property="og:image" content="//img.youtube.com/vi/' . $meta->post_url . '/0.jpg" /> ' . "\n";
+						} else {
+							if ( $published ) {
+								echo '<meta property="og:published_time" content="' . $published . '" /> ' . "\n";
+							}
+							if ( $published ) {
+								echo '<meta property="og:modified_time" content="' . $published . '" /> ' . "\n";
+							}
+							if ( $last ) {
+								echo '<meta property="og:updated" content="' . $last . '" /> ' . "\n";
+							}
+							echo '<meta property="og:type" content="article" /> ' . "\n";
+						}
+						if ( $description ) {
+							echo '<meta property="og:description" content="' . $description . '" /> ' . "\n\n";
+						}
+					}
+				}
+			}
+		}
 		if ( get_option ( 'regular_board_robots' ) ) {
 			echo '<meta name="robots" content="noindex,nofollow"/>';
 		}
@@ -791,37 +889,39 @@ function regular_board_shortcode ( ) {
 	
 	
 		// Navigation elements ( begin ) 
-			$reports_link = $deleted_link = $queue_link = $video_link = $video_link_class = $all_link_class = $stuff_link_class = $home_link_class = $topics_link_class = $gallery_link_class = $history_link_class = $logout_link_class = $gallery_link = $all_link = $history_link = $logout_link = $options_link = $options_link_class = '';
+			$front_link_class = $reports_link = $deleted_link = $queue_link = $video_link = $video_link_class = $all_link_class = $stuff_link_class = $home_link_class = $topics_link_class = $gallery_link_class = $history_link_class = $logout_link_class = $gallery_link = $all_link = $history_link = $logout_link = $options_link = $options_link_class = '';
 			
-			if ( $this_area == 'all' ) { $all_link_class = ' class="active" '; }
-			if ( $this_area == 'stuff' ) { $stuff_link_class = ' class="active" '; }
-			if ( $this_area == 'messages' ) { $stuff_link_class = ' class="active" '; }
-			if ( $this_area == 'options' ) { $options_link_class = ' class="active" '; }
-			if ( $this_area == 'blog' ) { $stuff_link_class = ' class="active" '; }
-			if ( $this_area == 'news' ) { $stuff_link_class = ' class="active" '; }
-			if ( $this_area == 'stats' ) { $stuff_link_class = ' class="active" '; }
-			if ( $this_area == 'mod' ) { $stuff_link_class = ' class="active" '; }
+			if ( $nothing_is_here ) { $front_link_class = ' class="active tip" '; }
+			if ( $this_area == 'all' ) { $all_link_class = ' class="active tip" '; }
+			if ( $this_area == 'stuff' ) { $stuff_link_class = ' class="active tip" '; }
+			if ( $this_area == 'messages' ) { $stuff_link_class = ' class="active tip" '; }
+			if ( $this_area == 'options' ) { $options_link_class = ' class="active tip" '; }
+			if ( $this_area == 'blog' ) { $stuff_link_class = ' class="active tip" '; }
+			if ( $this_area == 'news' ) { $stuff_link_class = ' class="active tip" '; }
+			if ( $this_area == 'stats' ) { $stuff_link_class = ' class="active tip" '; }
+			if ( $this_area == 'mod' ) { $stuff_link_class = ' class="active tip" '; }
 			
 			if ( $nothing_is_here ) { 
 				if ( !$this_area ) {
-					$home_link_class = ' class="active" '; 
+					$home_link_class = ' class="active tip" '; 
 				}
 			}
 			if ( $this_area == 'topics' || $the_board ) { 
-				$topics_link_class  = ' class="active" '; 
+				$topics_link_class  = ' class="active tip" '; 
 			}
 			if ( $the_board && $this_area == 'topics') { 
-				$topics_link_class  = ' class="active" '; 
+				$topics_link_class  = ' class="active tip" '; 
 			}
 			if ( $this_area == 'gallery' ) { 
-				$gallery_link_class = ' class="active" '; 
+				$gallery_link_class = ' class="active tip" '; 
 			}
 			if ( $this_area == 'history' ) { 
-				$history_link_class = ' class="active" '; 
+				$history_link_class = ' class="active tip" '; 
 			}
 			if ( $this_area == 'logout' ) { 
-				$logout_link_class  = ' class="active"'; 
+				$logout_link_class  = ' class="active tip"'; 
 			}
+			
 			if ( $enable_rep || $enable_url || $imgurid ) {
 				if ( $the_board ) {
 					$gallery_link = '<a title="all images" href="' . $current_page . '?b=' . $the_board . '&amp;a=gallery"' . $gallery_link_class . '>gallery</a>';
@@ -852,7 +952,7 @@ function regular_board_shortcode ( ) {
 				$queue_link   = '<a title="awaiting approval" href="' . $current_page . '?a=queue">moderation</a>';
 			}
 
-			$blog_link = '<a title="home" href="' . $current_page . '">front</a>';
+			$blog_link = '<a title="home" href="' . $current_page . '"' . $front_link_class . '>front</a>';
 			$all_link = '<a title="All (unfiltered)" href="' . $current_page. '?a=all"' . $all_link_class . '>all</a>';
 
 			if ( $the_board ) {
@@ -866,22 +966,9 @@ function regular_board_shortcode ( ) {
 				$options_link = '<a id="settings-link" title="my personal account settings" href="' . $current_page . '?a=options"' . $options_link_class . '>settings</a>';
 			}
 
-			$navigation   =  '<div class="navi">'
-				. $board_current 
-				. '<div class="navigation">'
-				. $topics_link 
-				. $gallery_link 
-				. $video_link 
-				. '<span class="nav-right">'
-				. $history_link 
-				. $stuff_link 
-				. $reports_link 
-				. $deleted_link 
-				. $queue_link 
-				. $options_link 
-				. $logout_link 
-				. '</span></div>'
-				. '</div>';	
+			$menu_toggle = ' <span>|</span> <a class="menutoggle_on" href="#">More</a><a class="menutoggle_off hidden" href="#">Less</a>';
+			
+			$navigation =  $board_current . $topics_link . $gallery_link . $video_link . $history_link . $stuff_link . $reports_link . $deleted_link . $queue_link . $options_link . $logout_link . $menu_toggle;
 		// Navigation elements ( end ) 
 
 
@@ -896,51 +983,10 @@ function regular_board_shortcode ( ) {
 			echo '<div class="regular_board_board_all">';
 			
 			if ( $protocol == 'boards' ) {
-				echo '<div class="top_nav">' .  $blog_link . ' <span>-</span> ' . $all_link . ' <span>|</span> ';
-				$board_nom = 0;
-				foreach ( $getboards as $gotboards ) {
-					if ( !$board_wipe_every ) {
-						if( $gotboards->board_wipe && $gotboards->board_wipe != strtolower ( 'never' ) ) {
-							$board_date = strtotime($gotboards->board_date);
-							$today_is = strtotime($current_timestamp);
-							if ( strpos ( strtolower ( $gotboards->board_wipe ), 'minute' ) ) {
-								$uptime = intval ( $gotboards->board_wipe ) * 60;
-							} elseif ( strpos ( strtolower ( $gotboards->board_wipe ), 'hour' ) ) {
-								$uptime = intval ( $gotboards->board_wipe ) * 3600;
-							} elseif ( strpos ( strtolower ( $gotboards->board_wipe ), 'day' ) ) {
-								$uptime = intval ( $gotboards->board_wipe ) * 86400;
-							} elseif ( strpos ( strtolower ( $gotboards->board_wipe ), 'week' ) ) {
-								$uptime = intval ( $gotboards->board_wipe ) * 604800;
-							} elseif ( strpos ( strtolower ( $gotboards->board_wipe ), 'month' ) ) {
-								$uptime = intval ( $gotboards->board_wipe ) * 2628000;
-							} elseif ( strpos ( strtolower ( $gotboards->board_wipe ), 'year' ) ) {
-								$uptime = intval ( $gotboards->board_wipe ) * 31536000;
-							} else {
-								$uptime = intval ( $gotboards->board_wipe ) * 60;
-							}
-							$board_life = ( intval ( $board_date ) + intval ( $uptime ) );
-							$next_wipe = ( intval ( $uptime ) - ( intval ( $today_is ) - intval ( $board_date ) ) );
-							$wipe = number_format ( intval ( $today_is ) - intval ( $board_date ) ) / intval ( $uptime ) * 100;
-							if($today_is > $board_life){
-								$wpdb->delete ( $regular_board_posts, array ( 'post_board' => $gotboards->board_shortname ), array ( '%s' ) );
-								$wpdb->query ( "UPDATE $regular_board_boards SET board_date = '$current_timestamp' WHERE board_shortname = '$gotboards->board_shortname'" );
-							}
-						}
-					}
-					if ( ++$board_nom > 1 && $board_nom <= count ( $getboards ) ) {
-					 echo '<span>-</span>';
-					}
-					echo '<a href="' . $current_page . '?b=' . $gotboards->board_shortname . '"'; 
-					if ( $the_board && $the_board == $gotboards->board_shortname ) { 
-						echo ' class="active"'; 
-					} 
-					echo '>';
-					echo $gotboards->board_name . '</a>';
-				}
-				echo '</div>';
+				echo '<div class="top_nav">' .  $blog_link . ' <span>-</span> ' . $all_link . ' <span>|</span> ' . $navigation . ' </div>';
 			}		
 			
-			echo '<div class="spacer">' . $banner . $navigation;
+			echo '<div class="spacer">' . $banner;
 			
 			if ( $this_thread ) {
 				echo '<p class="nav_tools">';
@@ -980,16 +1026,109 @@ function regular_board_shortcode ( ) {
 			}		
 			
 			echo '<div id="regular_board"><div class="right-half">';
-			
+
+
+
+
+
+
+
+
+
+
 			if ( $userisbanned ) { 
-				include ( plugin_dir_path(__FILE__) . '/regular_board_posting_userbanned.php' ); 
+				echo '<div class="threadcontainer"><div class="thread">';
+				if ( count ( $getuser ) ) {
+					foreach ( $getuser as $banneddetails ) {
+						$LENGTH = $banneddetails->banned_length;
+						$FILED = $banneddetails->banned_date;
+						if ( strtolower ( $LENGTH ) != 'permanent' ) {
+							$DATEFILED   = strtotime ( $banneddetails->banned_date );
+							$CURRENTDATE = strtotime ( $current_timestamp );
+
+							if ( strpos ( strtolower ( $LENGTH ), 'minute' ) ) {
+								$bantime = intval ( $LENGTH ) * 60;
+							} elseif (strpos ( strtolower ( $LENGTH ), 'hour' ) ) {
+								$bantime = intval ( $LENGTH ) * 3600;
+							} elseif (strpos ( strtolower ( $LENGTH ), 'day' ) ) {
+								$bantime = intval ( $LENGTH ) * 86400;
+							} elseif (strpos ( strtolower ( $LENGTH ), 'week' ) ) {
+								$bantime = intval ( $LENGTH ) * 604800;
+							} elseif (strpos ( strtolower ( $LENGTH ), 'month' ) ) {
+								$bantime = intval ( $LENGTH ) * 2628000;
+							} elseif (strpos ( strtolower ( $LENGTH ), 'year' ) ) {
+								$bantime = intval ( $LENGTH ) * 31536000;
+							} else {
+								$bantime = intval ( $LENGTH ) * 60;
+							}
+							$banIsActiveFor = ( $DATEFILED + $bantime );
+						} else {
+							$LENGTH = 'permanent';
+						}
+						if ( $LENGTH != 'permanent' ) {
+							if ( $CURRENTDATE > $banIsActiveFor ) { 
+								$banLifted = 1;
+							} else {
+								$banLifted = 0;
+							}
+						} else {
+							$banLifted = 0;
+						}
+						
+						if ( $banned_image ) {
+							echo '<img src="' . $banned_image . '" alt="Banned" class="imageFULL" />';
+						}
+						echo '<p>You are banned.</p>';
+						foreach ( $getuser as $gotUser ) {
+							$BANID   = intval ( $gotUser->banned_id );
+							$BANNED  = intval ( $gotUser->banned_banned );
+							$IP      = $gotUser->banned_ip;
+							$MESSAGE = $gotUser->banned_message;
+							$MESSAGE = regular_board_format ( $MESSAGE );
+							if ( !$MESSAGE ) {
+								$MESSAGE = '<em>No reason given</em>';
+							}
+							$filed_on = strtotime ( $FILED );
+							$today_is = strtotime ( $current_timestamp );
+							$unbanned = ( intval ( $bantime ) - ( intval ( $today_is ) - intval ( $filed_on ) ) );
+							
+							
+							if ( $LENGTH != 'permanent' ) {
+								echo '<p>Ban length: ' . $LENGTH . ' &mdash; ' . $unbanned . ' seconds until unbanned.</p>';
+							} else {
+								echo '<p>Ban length: PERMANENT</p>';
+							}
+							echo $MESSAGE . '</div>';
+						}
+						
+						if ( $LENGTH != 'permanent' ) {
+							if ( $unbanned <= 0 ) {
+								$wpdb->delete ( $regular_board_bans, array('banned_id' => $BANID ), array ( '%d' ) );
+							}
+						}
+						
+						echo '</div>';
+					}
+				}
 			}
+
+
+
+
+
+
+
+
+
 
 			if ( $nothing_is_here ) {
 				echo '<div id="threadthread">';
 				if ( $getposts ) {
 					echo '<div class="thread_container">';
 						if ( count ( $getposts ) > 0 ) {
+							if ( $this_area == 'gallery' ) {
+								echo '<div id="masonry">';
+							}
 							foreach ( $getposts as $posts ) {
 								if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
 									include ( ABSPATH . '/regular_board_child/regular_board_loop.php' );
@@ -997,6 +1136,9 @@ function regular_board_shortcode ( ) {
 									include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
 								}
 							}
+							if ( $this_area == 'gallery' ) {
+								echo '</div>';
+							}						
 							include ( plugin_dir_path(__FILE__) . '/regular_board_paging.php' );
 						}
 					} else {
@@ -1578,11 +1720,6 @@ function regular_board_shortcode ( ) {
 			if ( $this_area == 'videos' ) {
 				if ( $getposts ) {
 					echo '<div class="thread">
-						<h1>Video Feed';
-							if ( $the_board ) {
-								echo ' for /' . $the_board . '/';
-							}
-						echo '</h1>
 						<iframe src="//www.youtube.com/embed/?playlist=';
 					foreach ( $getposts as $posts ) {
 						if ( $posts->post_type == 'youtube' ) {
@@ -1594,7 +1731,7 @@ function regular_board_shortcode ( ) {
 							}
 						}
 					}
-					echo '&amp;controls=1&amp;showinfo=1&amp;autohide=1" width="600" height="338" frameborder="0" allowfullscreen></iframe>
+					echo '&amp;controls=1&amp;showinfo=1&amp;autohide=1" width="100%" height="338" frameborder="0" allowfullscreen></iframe>
 					</div>';
 				} else {
 					echo '<div class="thread clear"><p><strong>Nothing to see here.</strong></p></div>';
@@ -1685,24 +1822,374 @@ function regular_board_shortcode ( ) {
 				}
 			} elseif ( $this_area == 'queue' ) {
 				if ( $is_moderator || $is_user_mod ) {
-					foreach ( $get_queue as $posts ) {
-						if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
-							include ( ABSPATH . '/regular_board_child/regular_board_loop.php' );
-						} else {
-							include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
+					if ( count ( $get_queue ) ) {
+						foreach ( $get_queue as $posts ) {
+							if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
+								include ( ABSPATH . '/regular_board_child/regular_board_loop.php' );
+							} else {
+								include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
+							}
+							include ( plugin_dir_path(__FILE__) . '/regular_board_paging.php' );
 						}
-						include ( plugin_dir_path(__FILE__) . '/regular_board_paging.php' );
+					} else {
+						echo '<div class="thread clear"><p><strong>Nothing to see here.</strong></p></div>';
 					}
+				} else {
+					echo '<div class="thread clear"><p><strong>Nothing to see here.</strong></p></div>';				
 				}
 			} 
 			elseif ( $this_area == 'options' && $user_exists ) { 
-				include ( plugin_dir_path(__FILE__) . '/regular_board_user_options.php' ); 
+				if ( isset ( $_POST['options'] ) ) {
+					include ( plugin_dir_path(__FILE__) . '/regular_board_user_options_form_action.php' );
+				} ?>
+				<?php 
+				/** Begin User Options Form
+				 ** This form will allow the user to set certain aspects of their account.
+				 */ ?>
+				<div class="thread_container">
+					<div id="reply" class="reply">
+						<form method="post" name="regularboard" action="<?php echo $current_page; ?>?a=options">
+						<?php echo wp_nonce_field( 'regularboard' ); ?>
+						<?php 
+						/** Begin User Options Form Elements
+						 ** Allows the user to set certain options for their account.
+						 ** (1) User Avatar
+						 ** (2) User Username
+						 ** (3) User Password
+						 ** (4) User Board Subscription
+						 ** (5) User Following
+						 ** (6) User Slogan
+						 ** (7) User Always Anonymous
+						 */
+						/** (1) Begin User avatar
+						 ** Allow the user to set an avatar image to display on their public profile.
+						 ** ( maybe set up a thumbnailing ability to grab the image and create a smaller 
+						 ** ( version of it server-side for faster loading for larger images? )
+						 */
+						if ( $profile_email ) {
+						?>
+						<section class="profile-section">
+							<label class="small-left" for="avatar">
+								<u>user photo</u>
+								<hr />
+								( .jpg, .png, .gif )
+							</label>
+							<?php if ( $profileavatar ) { ?>
+								<img class="thumb right" src="<?php echo $profileavatar; ?>" alt="profile image" />
+							<?php } else { ?>
+								<i class="fa fa-picture-o"></i>
+							<?php }?>
+							<input type="text" name="avatar" id="avatar" value="<?php echo $profileavatar; ?>" />
+						</section>
+						<?php 
+						}
+						/** End User Avatar
+						 */
+						/** Begin User Username
+						 ** To allow the user to log back in, the user must have a username and password
+						 ** If the user neglected to sign up with the traditional method (using the quick
+						 ** button, then they will need to be able to set their username at some point should 
+						 ** they want to continue using their existing account.
+						 */
+						if ( !$profile_email ) { ?>
+							<section class="profile-section">
+								<label class="small-left" for="email">
+									<u>username</u>
+								</label>
+								<i class="fa fa-lock"></i>
+								<input type="text" name="email" id="email" />
+							</section>
+						<?php }
+						/** End User Username
+						 */
+						/** Begin User Password
+						 ** Allow the user to set a password.  If the user has already set a password, 
+						 ** require that they enter their previous password as well as a new password 
+						 ** to update the password that is already set.
+						 */
+						/** If no password has been set before
+						 */
+						if ( !$profilepassword ) { ?>
+							<section class="profile-section">
+								<label class="small-left" for="password">
+									<u>password</u>
+								</label>
+								<i class="fa fa-key"></i>
+								<input type="text" name="password" id="password" placeholder="<?php echo $random_password; ?>" />
+							</section>
+						<?php }
+						/** If a password has been set
+						 */
+						if ( $profilepassword ) { ?>
+							<section class="profile-section">
+								<label class="small-left">
+									<u>change password</u>
+								</label>
+								<i class="fa fa-key"></i>
+								<input type="text" name="oldpassword" id="oldpassword" placeholder="Enter current password" />
+								<input type="text" name="newpassword" id="newpassword" placeholder="Enter new password" />
+							</section>
+						<?php }
+						/** End User Password
+						 */
+						/** Begin User Display Name
+						 ** Allow the user to set a name that they wish to be displayed with their posts,
+						 ** and that they wish to be publicly known by (all connection requests and follows
+						 ** will depend on this name, however, should the user change it, all occurrences of
+						 ** the name in the database will also be changed to reflect that.
+						 */ 
+						if ( $profile_email ) { ?>	
+						<section class="profile-section">
+							<label class="small-left" for="username">
+								<u>display name</u>
+							</label>
+							<i class="fa fa-user"></i>
+							<input type="text" name="username" id="username" placeholder="Your memorable name" 
+							<?php if ( $profile_name != 'null' && $profile_name ) { ?>
+								value = "<?php echo $profile_name; ?>"
+							<?php } ?>
+							/>
+						</section>
+						<?php 
+						}
+						/** End User Display Name
+						 */
+						/** Begin User Board Subscription
+						 ** If use boards is set as such, and there are boards created, 
+						 ** this option will be available to the user, allowing them to 
+						 ** designate a comma-separated list of boards to which they wish 
+						 ** to be subscribed.
+						 */
+						if ( $profile_email ) { 
+							if ( $protocol == 'boards' ) {
+								if ( count ( $getboards ) > 0 ) {
+									if ( !$thisboard ) { ?>
+									<section class="profile-section">
+											<label class="small-left" for="boards">
+												<u>subscribe to boards</u>
+												<hr />
+												comma-separated list of boards<br />
+											</label>
+											<i class="fa fa-sitemap"></i>
+											<input type="text" name="boards" id="boards" value="<?php echo $boards; ?>" placeholder="Boards" />
+										</section>
+									<?php }
+								}
+							}
+						}
+						/** End User Board Subscription
+						 */
+						/** Begin User Following
+						 ** Allow the user to designate a comma-separated list of usernames that they wish to 
+						 ** follow, which acts like the subscribed list, but instead outputs a feed of 
+						 ** specific user-generated content.
+						 */ 
+						if ( $profile_email ) { ?>
+						<section class="profile-section">
+							<label class="small-left" for="follow">
+								<u>follow other users</u>
+								<hr />
+								comma-separated list of usernames<br />
+							</label>
+							<i class="fa fa-group"></i>
+							<input type="text" name="follow" id="follow" value="<?php echo $profilefollow; ?>" placeholder="Usernames" />
+						</section>
+						<?php 
+						}
+						/** End User Following
+						 */
+						/** Begin User Slogan
+						 ** Allow the user to affix a line of text to their public profile.
+						 */ 
+						if ( $profile_email ) {  ?>
+						<section class="profile-section">
+							<label class="small-left" for="slogan">
+								<u>profile slogan</u>
+								<hr />
+								A quick introduction
+							</label>
+							<i class="fa fa-microphone"></i>
+							<input type="text" name="slogan" id="slogan" value="<?php echo $profileslogan; ?>" />
+						</section>
+						<?php 
+						}
+						/** End User Slogan
+						 */
+						/** Begin User Always Anonymous
+						 ** Allow the user to determine whether or not they always wish to post anonymously, 
+						 ** which will prevent any of their posts from being publicly tied to their profile.
+						 */ 
+						if ( $profile_email ) {  ?>
+						<section class="profile-section">
+							<label class="small-left">
+								<u>always anonymous</u>
+								<hr />
+								Always post anonymously<br />
+							</label>
+							<i class="fa fa-volume-off"></i>
+							<select name="heaven" id="heaven">
+								<option <?php if ( !$profileheaven ){ ?> selected="selected" <?php } ?> value="0">no</option>
+								<option <?php if ( $profileheaven ){ ?> selected="selected" <?php } ?> value="1">yes</option>
+							</select>
+						</section>
+						<?php 
+						}
+						/** End User Always Anonymous
+						 */ ?>
+							<input type="submit" name="options" id="options" value="Save these options" />
+						</form>
+						<?php 
+						/** End User Options Form
+						 */ ?>
+							
+						<?php 
+						/** Begin Connections
+						 ** If the user has incoming connections, they will be displayed here.
+						 ** They can then decide to either decline or accept the connection invitation.
+						 */
+						if ( count ( $my_waiting ) > 0 ) {
+							foreach ( $my_waiting as $waiting ) {
+								$this_form = $waiting->friends_id;
+								if ( isset ( $_POST['accept' . $this_form . ''] ) ) {
+									$wpdb->query ( "UPDATE $regular_board_friends SET friends_mutual = 1 WHERE friends_id = $this_form" );
+									echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $this_page . '?a=options"></p>';
+								}
+								if ( isset ( $_POST['decline' . $this_form . ''] ) ) {
+									$wpdb->delete ( $regular_board_friends, array ( 'friends_id' => $this_form ), array ( '%d' ) );
+									echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $this_page . '?a=options"></p>';
+								} ?>
+								<form class="friend_request" method="post" action="<?php echo $current_page; ?>?a=options">
+								<section>
+									<label>
+										<?php echo sanitize_text_field ( $waiting->friends_connector ); ?> wants to connect
+									</label>
+									<input type="submit" name="decline<?php echo $waiting->friends_id; ?>" value="Decline" />
+									<input type="submit" name="accept<?php echo $waiting->friends_id; ?>" value="Accept" />
+								</section>
+								</form>
+							<?php }
+						} ?>
+						<?php 
+						/** End Connections
+						 */ ?>
+					</div>
+				</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<?php 
 			} elseif ( $this_area == 'history' && $user_exists || $this_user ) { 
-				include ( plugin_dir_path(__FILE__) . '/regular_board_profile_loop.php' ); 
+				if ( $this_area == 'history' ) {
+					$usprofile = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_users_select FROM $regular_board_users WHERE user_id = %d LIMIT 1", $profileid ) );
+				} elseif ( $this_user ) {
+					$usprofile = $wpdb->get_results ( $wpdb->prepare ( "SELECT $regular_board_users_select FROM $regular_board_users WHERE user_name = %s LIMIT 1", $this_user ) );
+				}
+
+				$the_profile_name = $the_profile_avatar = $the_profile_slogan = $the_profile_details = $connect_with = '';
+				if ( count ( $usprofile ) ) {
+					foreach ( $usprofile as $theprofile ) {
+							$this_user_exists = 1;
+							if ( $theprofile->user_name ) {
+								$the_profile_name = sanitize_text_field ( $theprofile->user_name );
+							}
+							if ( $theprofile->user_avatar ) {
+								if ( $theprofile->user_avatar != 'NULL' ) {
+									$the_profile_avatar = '<img src="' . $theprofile->user_avatar . '" class="imageFULL" />';
+								}
+							}
+							if ( $theprofile->user_slogan ) {
+								if ( $theprofile->user_slogan != 'NULL' ) {
+									$the_profile_slogan = '<div class="text"><p><em>' . str_replace ( '\\', '', $theprofile->user_slogan ) . '</em></p></div>';
+								}
+							}
+							$the_profile_details = '<div class="text"><p>level ' . $theprofile->user_level . '<br />active posts: ' . $totalpages . ' /
+							total posts: ' . $theprofile->user_posts . ' <br />
+							 member for ' . str_replace ( 'ago', '', regular_board_timesince ( $theprofile->user_date ) ) . ' </p></div>';
+							
+							
+						if ( $totalpages ) {
+							foreach ( $getposts as $posts ) {
+								if ( file_exists ( ABSPATH . '/regular_board_child/regular_board_loop.php' ) ) {
+									include ( ABSPATH . '/regular_board_child/regular_board_loop.php' );
+								} else {
+									include ( plugin_dir_path(__FILE__) . '/regular_board_loop.php' );
+								}
+							}
+						} else {
+							echo '<div class="thread"><center><em>nothing to see here.</em></center></div>';
+						}
+					}
+				} else {
+					$this_user_exists = 0;
+					echo '<div class="thread clear"><p><strong>Nothing to see here.</strong></p></div>';
+				}
+
+				include ( plugin_dir_path(__FILE__) . '/regular_board_paging.php' );				
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			} elseif ( $this_area == 'stats' ) { 
-				include ( plugin_dir_path(__FILE__) . '/regular_board_board_stats.php'  ); 
+				$thread_count = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_parent = 0" );
+				$reply_count = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_parent > 0" );
+				$ten_minutes = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_date BETWEEN '$ten_minutes_ago' AND '$current_timestamp'" );
+				$two_hours = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_date BETWEEN '$two_hours_ago' AND '$current_timestamp'" );
+				$twelve_hours = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_date BETWEEN '$twelve_hours_ago' AND '$current_timestamp'" );
+				$month = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_date BETWEEN '$one_month_ago' AND '$current_timestamp'" );
+				$day = $wpdb->get_var( "SELECT COUNT(*) FROM $regular_board_posts WHERE post_date BETWEEN '$one_day_ago' AND '$current_timestamp'" );
+				$count_users = ( $wpdb->get_var( "SELECT COUNT(Distinct user_id) FROM $regular_board_users WHERE user_posts > 0 " ) + $wpdb->get_var( "SELECT COUNT(Distinct post_guestip) FROM $regular_board_posts" ) );
+				$count_boards = $wpdb->get_var( "SELECT COUNT(Distinct post_board) FROM $regular_board_posts" );
+
+
+				echo '<div class="thread"><h1>Installation statistics</h1>
+
+				<p>
+					Statistics are based on <strong>active</strong> content.<br />
+					This page does not take into account posts that have been deleted or marked as spam.
+				</p>
+
+				<p>
+					<strong>Post statistics</strong>:<br />
+					There are <strong>' . $thread_count . '</strong> active threads with <strong>' . $reply_count . '</strong> active comments.<br />
+					Within the last ten minutes, <strong>' . $ten_minutes . '</strong> posts were made.<br />
+					<strong>' . $two_hours . '</strong> within the last two hours, and <strong>' . $twelve_hours . '</strong> within the last 12 hours.<br />
+					<strong>' . $month . '</strong> within the last month.<br />
+					Within the last day, there have been <strong>' . $day . '</strong> posts created.
+				</p>
+
+				<p>
+					<strong>User statistics</strong>:<br />
+					There have been ' . $count_users . ' unique posters.
+				</p>
+
+				<p>
+					<strong>Board statistics</strong>:<br />
+					There are currently ' . $count_boards . ' active boards.
+				</p>
+				</div>';
 			}				
 
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			elseif ( $the_board || $this_thread || $the_tag ) {
 				if ( $the_tag || $the_board ) {
 					if ( $the_tag ) { $the_board = $the_tag; }
@@ -1747,7 +2234,8 @@ function regular_board_shortcode ( ) {
 									} elseif ( $the_board ) {
 										$thread_div_id = $the_board;
 									}
-									echo '<div id="thread' . $thread_div_id . '"><div class="thread"><p><strong>Nothing to see here.</strong></p></div></div>';
+									$nothing = 1;
+									echo '<div id="thread' . $thread_div_id . '"><div class="thread clear"><p><strong>Nothing to see here.</strong></p></div></div>';
 								}
 							}
 						}
@@ -1759,13 +2247,59 @@ function regular_board_shortcode ( ) {
 					}
 				}			
 			}
-			
+
+
+
+
+
+
+
+
+
+
 			if ( $this_area == 'post' ) { 
-			
-			
-			include ( plugin_dir_path(__FILE__) . '/regular_board_area_post.php' ); 
-			
-			
+				echo '<div id="post" class="thread">';
+				if ( isset ( $_POST['FORMSUBMIT'] ) ) {
+					$img = $_FILES['img'];
+					if ( $_FILES['img']['size'] != 0 ) {
+						if ( $img['name'] ) {
+							$filename  = $img['tmp_name'];
+							$client_id = "$imgurid";
+							$handle    = fopen ( $filename, "r" );
+							$data      = fread ( $handle, filesize ( $filename ) );
+							$pvars     = array ( 'image' => base64_encode ( $data ) );
+							$timeout   = 30;
+							$curl      = curl_init();
+							curl_setopt ( $curl, CURLOPT_URL, 'https://api.imgur.com/3/image.json' );
+							curl_setopt ( $curl, CURLOPT_TIMEOUT, $timeout);
+							curl_setopt ( $curl, CURLOPT_HTTPHEADER, array ( 'Authorization: Client-ID ' . $client_id ) );
+							curl_setopt ( $curl, CURLOPT_POST, 1 );
+							curl_setopt ( $curl, CURLOPT_RETURNTRANSFER, 1 );
+							curl_setopt ( $curl, CURLOPT_POSTFIELDS, $pvars );
+							$out       = curl_exec ( $curl );
+							curl_close ( $curl );
+							$pms       = json_decode ( $out,true );
+							$URL       = $pms['data']['link'];
+							$TYPE      = 'image';
+						}
+					} else {
+						$URL = sanitize_text_field ( wp_strip_all_tags( $_REQUEST['URL'] ) );
+					}
+					include ( plugin_dir_path(__FILE__) . '/regular_board_post_action.php' );
+				} else { 
+					echo '<p>Nothing submitted.';
+				}
+				echo '</div>';
+
+
+
+
+
+
+
+
+
+
 			} elseif ( $this_area == 'gallery' && !$the_board || $this_area == 'replies' || $this_area == 'topics' && !$the_board || $this_area == 'all' ) {
 				echo '<div class="omitted' . $this_area . '">';
 				echo '<div class="thread_container">';
@@ -1788,16 +2322,249 @@ function regular_board_shortcode ( ) {
 						include ( plugin_dir_path(__FILE__) . '/regular_board_paging.php' );
 					}
 				} else {
-					echo '<div class="thread"><p><strong>Nothing to see here.</strong></p></div>';
+					echo '<div class="thread clear"><p><strong>Nothing to see here.</strong></p></div>';
 				}
 				echo '</div></div>';
 			}
-			elseif ( $this_area == 'news'                     ) { include ( plugin_dir_path(__FILE__) . '/regular_board_area_news.php'  ); }
-			elseif ( $enable_blog && $this_area == 'blog'     ) { include ( plugin_dir_path(__FILE__) . '/regular_board_area_blog.php'  ); }
-			elseif ( $this_area == 'mod'                      ) { include ( plugin_dir_path(__FILE__) . '/regular_board_area_mod.php'   ); }
-			elseif ( $this_area == 'stuff'                    ) { include ( plugin_dir_path(__FILE__) . '/regular_board_area_stuff.php' ); }
-			elseif ( $this_area == 'messages' && $user_exists ) { include ( plugin_dir_path(__FILE__) . '/regular_board_messages.php'   ); } 
-			elseif ( $this_area == 'logout' && $user_exists   ) { include ( plugin_dir_path(__FILE__) . '/regular_board_logout.php'     ); }
+
+
+
+
+
+
+
+
+
+
+			elseif ( $this_area == 'news' || $enable_blog && $this_area == 'blog' ) { 
+				if ( isset ( $_GET['post'] ) ) {
+					$postno = intval ( $_GET['post'] );
+				}
+				if ( $this_area == 'news' ) {
+					if ( $postno ) {
+						$args = array (
+						'p' => $postno,
+						);					
+					} else {
+						$args = array (
+							'showposts' => -1,
+							'category__in' => array ( $announcements ),
+						);
+					}
+				} else {
+					if ( $postno ) {
+						$args = array (
+						'p' => $postno,
+						);					
+					} else {
+						$args = array (
+							'showposts' => -1,
+							'category__not_in' => array ( $announcements ),
+						);
+					}				
+				}
+				$posts = get_posts ( $args );
+				if ( $posts ) {
+					if ( $postno ) {
+						echo '<div class="thread clear"><p><a class="load_link" href="' . $this_page . '?a=' . $this_area . '">More site announcements</a></p></div>';
+					}
+					foreach ( $posts as $post ) {
+						setup_postdata ( $post );
+							echo '<div class="thread clear">
+							<strong class="left"><a class="load_link" href="' . $this_page . '?a=' . $this_area . '&amp;post=' . $post->ID . '">' . $post->post_title . '</a></strong>
+							<span class="right">' . regular_board_timesince( $post->post_date ) . '</span>
+							</div>
+							<div class="thread clear">';
+							if ( $postno ) { 
+								echo '<hr />' . wpautop ( $post->post_content ) . '<hr /><em>posted by</em> ';
+								the_author();
+							}
+							echo '</div>';
+							if ( $postno ) {
+								echo '<hr />';
+							}
+					}
+				} else {
+					echo '<div class="thread"><p><strong>Nothing to see here.</strong></p></div>';
+				}
+			}
+
+
+
+
+
+
+
+
+
+
+			elseif ( $this_area == 'mod' ) { 
+				if ( count ( $mod_logs ) ) {
+					echo '<div class="thread"><div class="right">Age</div><div class="left">Message</div></div>';
+					foreach ( $mod_logs as $logs ) {
+						echo '<div class="thread"><div class="right">' . regular_board_timesince( $logs->logs_date ) . '</div><div class="left">' . $logs->logs_message . '</div></div>';
+					}
+				} else { 
+					echo '<div class="thread"><p><strong>Nothing to see here.</strong></p></div>';
+				}
+			}
+
+
+
+
+
+
+
+
+
+
+			elseif ( $this_area == 'stuff' ) { 
+				echo '<div class="thread_container">
+				<div class="container_half">
+					<em>Tools/info</em>:
+					<ul>';
+					if ( $user_exists ) {
+						echo '<li><a class="load_link" href="' . $current_page . '?a=messages">messages</a> &mdash; you have ' . $my_unread . ' unread messages.</li>
+						<li><a class="load_link" href="' . $current_page . '?a=options">options</a> &mdash; your personal settings / you have ' . $my_waitings . ' connections pending.</li>';
+					}
+					if ( $enable_blog ) {
+						echo '<li><a class="load_link" href="' . $current_page . '?a=blog">blog</a> &mdash; words and thoughts</li>';
+					}
+					if ( $announcements ) {
+						echo '<li><a class="load_link" href="' . $current_page . '?a=news">news</a> &mdash; announcements and site news</li>';
+					}
+					echo '
+					<li><a class="load_link" href="' . $current_page . '?a=stats">stats</a> &mdash; board statistics</li>
+					<li><a class="load_link" href="' . $current_page . '?a=mod">moderation log</a></li>
+					</ul>
+				</div>';
+				if ( $protocol == 'boards' ) {
+					if ( count ( $getboards ) > 0 ) {
+						echo '<div class="container_half">
+						<em>Active boards</em>:
+						<ul>';
+							foreach ( $getboards as $gotboards ) {
+								if ( $gotboards->board_postcount > 0 ) {
+									echo '<li><a class="load_link" href="' . $current_page . '?b=' . $gotboards->board_shortname . '">' . $gotboards->board_shortname . '</a></li>';
+								}
+							}
+						echo '</ul>
+						</div>';
+					}
+				}
+				echo '</div>';
+			}
+
+
+
+
+
+
+
+
+
+
+			elseif ( $this_area == 'messages' && $user_exists ) { 
+				echo '<div class="thread_container">';
+				if ( count ( $my_messages ) ) {
+					foreach ( $my_messages as $messages ) {
+					
+						$messages->messages_id      = intval ( $messages->messages_id );
+						$messages->messages_to      = sanitize_text_field ( $messages->messages_to );
+						$messages->messages_from    = sanitize_text_field ( $messages->messages_from );
+						$message_to                 = $messages->messages_to;
+						$message_from               = $messages->messages_from;
+						$message_id                 = $messages->messages_id;
+						$messages->messages_read    = intval ( $messages->messages_read );
+						$messages->messages_date    = sanitize_text_field ( $messages->messages_date );
+						$messages->messages_subject = sanitize_text_field ( $messages->messages_subject );
+						if ( !$messages->messages_subject ) {
+							$messages->messages_subject = 'No subject';
+						}
+						$messages->messages_subject = '<a class="load_link" href="' . $this_page . '?a=messages&message=' . $messages->messages_id . '">' . $messages->messages_subject . '</a>';
+						
+						$messages->messages_content = str_replace ( array ( '\\n', '\\r', '\\'), array( '<br />','<br />','' ), $messages->messages_content );
+						if ( $formatting ) {
+							$messages->messages_content = regular_board_format( $messages->messages_content );
+						} else {
+							$messages->messages_content = $messages->messages_content;
+						}
+						$messages_id = $messages->messages_id;
+						if ( $messages->messages_from != $profile_name ) {
+							if ( !$messages->messages_read ) {
+								$wpdb->query ( "UPDATE $regular_board_messages SET messages_read = 1 WHERE messages_id = $messages_id" );
+							}
+						}
+						
+						echo '<div class="thread">
+						' . $messages->messages_subject . ' &mdash; 
+						To: ' . $messages->messages_to ;
+							if ( $messages->messages_to == $profile_name ) {
+								echo ' (you) ';
+							}
+						echo '&mdash; From: ' . $messages->messages_from;
+							if ( $messages->messages_from == $profile_name ) {
+								echo ' (you) ';
+							}
+						if ( $messages->messages_from != $profile_name && !$messages->messages_read || isset ( $_GET['message'] ) ) {
+							echo '<div class="comment">' . wpautop ( $messages->messages_content ) . '</div>';
+						}
+						
+						if ( isset ( $_POST['delete' . $message_id . ''] ) && $messages->messages_to == $profile_name ) {
+							$wpdb->delete ( $regular_board_messages, array ( 'messages_id' => $message_id ), array ( '%d' ) );
+							echo '<p class="hidden"><meta http-equiv="refresh" content="0;URL=' . $this_page . '?a=messages"></p>';
+						}
+						
+						if ( $messages->messages_from != $profile_name ) {
+							echo '<form class="right" name="message' . $message_id . '" method="post" action="' . $current_page . '?a=messages">';
+							wp_nonce_field('regularboard' . $message_id . '');
+							echo '<input type="submit" value="Delete" name="delete' . $message_id . '" />
+							</form>';
+						}
+						echo '</div>';
+					}
+				}
+				echo '</div>';
+			} 
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			elseif ( $this_area == 'logout' && $user_exists   ) {
+				if ( $profile_name && $profilepassword ) {
+					$wpdb->update (
+						$regular_board_users,
+						array ( 
+							'user_logged_in'      => 0,
+							'user_logged_in_from' => ''
+						),
+						array ( 
+							'user_id'  => $profileid
+						),
+						array ( 
+							'%d', 
+							'%s', 
+							'%d'
+						)
+					);
+				}
+				echo '<div class="thread clear"><p>You are now logged out.</p></div>';
+			}
+
+
+
+
+
+
+
+
+
 
 			if ( $this_thread ) {
 				echo '<div class="piece_form thread_form"><div class="form_form">';
@@ -1824,7 +2591,7 @@ function regular_board_shortcode ( ) {
 			
 			
 			// Sidebar ( begin )
-				echo '<div class="left-half">';
+				echo '<div class="left-half hidden">';
 				$banner = '';
 				if ( $board_banner != '' ) {
 					$banner  = '<div class="banner piece text"><img src="' . $board_banner . '" alt="Banner" /></div>';
@@ -2018,7 +2785,8 @@ function regular_board_shortcode ( ) {
 
 					
 				}
-				if ( $this_area == 'history' && $user_exists || $this_user ) {
+				
+				if ( $this_area == 'history' && $user_exists || $this_user && $this_user_exists ) {
 					echo '<div class="piece text">';
 					echo '<strong>';
 						if ( $the_profile_name ) { 
@@ -2089,6 +2857,7 @@ function regular_board_shortcode ( ) {
 					}
 					echo '</div>';
 				}
+				
 				$url_data = '';
 				if ( $the_board && !$this_thread  ) { 
 					$url_data = $current_page . '?b=' . $the_board; 
@@ -2161,46 +2930,10 @@ function regular_board_shortcode ( ) {
 					echo '<div class="piece text"><div class="text">' . regular_board_format ( wpautop ( get_option ( 'regular_board_frontpage' ) ) ) . '</div></div>';
 				}
 
-				echo '<div class="piece text"><div class="tag_cloud"><span><a href="#">navigation</a></span>';
+				echo '<div class="piece text"><div class="tag_cloud">';
 				if ( $protocol == 'boards' ) {
 					foreach ( $getboards as $gotboards ) {
-						if ( $gotboards->board_postcount > 0 ) {
-							$percent = regular_board_percent ( $gotboards->board_postcount, $total_posts );
-						} else {
-							$percent = 0;
-						}
-						if ( !$percent ) { 
-							$percent = 10; 
-						} elseif ( $percent >= 1 && $percent <= 10 ) { 
-							$percent = 11; 
-						} elseif ( $percent >= 11 && $percent <= 20 ) { 
-							$percent = 12;
-						} elseif ( $percent >= 21 && $percent <= 30 ) {
-							$percent = 13; 
-						} elseif ( $percent >= 31 && $percent <= 40 ) {
-							$percent = 14; 
-						} elseif ( $percent >= 41 && $percent <= 50 ) {
-							$percent = 15; 
-						} elseif ( $percent >= 51 && $percent <= 60 ) {
-							$percent = 16; 
-						} elseif ( $percent >= 61 && $percent <= 70 ) { 
-							$percent = 17; 
-						} elseif ( $percent >= 71 && $percent <= 80 ) { 
-							$percent = 18; 
-						} elseif ( $percent >= 81 && $percent <= 90 ) { 
-							$percent = 19; 
-						} elseif ( $percent >= 91 && $percent <= 100 ) { 
-							$percent = 20; 
-						}
-						echo '<span '; 
-						if ( $percent == 10 ) { 
-							echo 'class="nothing" '; 
-						} 
-						echo 'style="font-size:' . $percent . 'px;"><a href="' . $current_page . '?b=' . $gotboards->board_shortname . '"'; 
-						if ( $the_board && $the_board == $gotboards->board_shortname ) { 
-							echo ' class="active"'; 
-						} 
-						echo '>' . $gotboards->board_name . '</a></span>';
+						echo '<span><a href="' . $current_page . '?b=' . $gotboards->board_shortname . '">' . $gotboards->board_name . '</a></span>';
 					}
 				}
 				echo '<span><a href="' . $current_page . '?a=replies"'; 
@@ -2232,7 +2965,6 @@ function regular_board_shortcode ( ) {
 				echo '<div class="footer">' . $regular_board_footer . '</div>';
 			}
 		
-			echo '<div class="bg-left"></div><div class="bg-right"></div>';
 			echo '</div>';
 		// Regular Board ( end )
 

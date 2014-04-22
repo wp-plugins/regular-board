@@ -11,6 +11,59 @@ if ( !defined('regular_board_plugin' ) ) {
 	die();
 }
 
+
+
+
+
+
+
+
+
+
+/*	Classes
+		- @RegularBoardMediaEmbed
+			- Pass a provider, url, id, and comment (availability) to embed an appropriate media selector.
+			- This is used when Expand all media is used on a thread (and there is, in fact, media to expand).
+	
+	*/
+	class RegularBoardMediaEmbed {
+		var $provider, $url, $id, $comment;
+		function RegularBoardMediaEmbed ( $provider, $url, $id, $comment ) {
+			if ( $provider == 'imgur' ) {
+				$url = substr ( $url, 19 );
+				echo '<div class="clear media' . $id . '"><iframe class="imgur-album" width="100%" height="550" frameborder="0" src="//imgur.com/a/' . $url . '/embed"></iframe></div>'; 
+			} elseif ( $provider == 'soundcloud' ) {
+				$url = esc_url ( $url );
+				echo '<div class="clear media' . $id . '"><iframe width="100%" height="166" scrolling="no" frameborder="no"src="http://w.soundcloud.com/player/?url=' . $url . '&auto_play=false&color=915f33&theme_color=00FF00"></iframe></div>'; 
+			} elseif ( $provider == 'vimeo' ) {
+				$url = substr ( $url, 17 );
+				echo '<div class="clear media' . $id . '"><iframe src="//player.vimeo.com/video/' . $url . '?title=0&amp;byline=0&amp;portrait=0&amp;color=d6cece" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>'; 
+			} elseif ( $provider == 'youtube' ) {
+				echo '<div class="clear media' . $id . '"><iframe width="100%" height="338" src="//www.youtube.com/embed/' . $url . '" frameborder="0" allowfullscreen></iframe></div>';
+			} elseif ( $provider == 'image' ) {
+				echo '<div class="clear media' . $id . '"><a href="' . $url . '"><img class="';
+					if ( $commment == 'yes' ) {
+						echo 'imageOP'; 
+					} else {
+						echo 'imageFULL';
+					}
+				echo '" alt="image" src="' . $url . '"/></a></div>';					
+			} elseif ( $provider == 'gfycat' ) {
+				$url = protocol_relative_url_dangit ( str_replace ( '//gfycat.com/', '', $url ) );
+				echo '<div class="clear media' . $id . '"><iframe src="//gfycat.com/iframe/' . $url . '" frameborder="0" scrolling="no" width="592" height="320" ></iframe></div>';
+			}
+		}
+	}
+
+
+
+
+
+
+
+
+
+
 /** Announcements category for Regular Board **/
 if ( get_option ( 'regular_board_announcements' ) && get_option ( 'regular_board_hideannouncements' ) ) {
 	add_action ( 'pre_get_posts', 'regular_board_exclude_announcements' );
@@ -61,7 +114,7 @@ if ( !function_exists ( 'regular_board_style' ) ) {
 			wp_register_script   ( 'regular_board-form', protocol_relative_url_dangit ( $form_submit ), array( 'jquery' ), '', null, false);
 			wp_enqueue_script    ( 'regular_board-form');
 
-			$regularboard   = plugins_url() . '/regular-board/system/js/regular_board00000000281.js?' . $regular_board_version;
+			$regularboard   = plugins_url() . '/regular-board/system/js/regular_board00000000306.js?' . $regular_board_version;
 			if ( get_option ( 'regular_board_css_url' ) ) {
 				$css_file   = get_option ( 'regular_board_css_url' );
 			} else { 
@@ -71,20 +124,21 @@ if ( !function_exists ( 'regular_board_style' ) ) {
 				$css_choice = $wpdb->get_var( "SELECT user_colormode FROM $regular_board_users WHERE user_logged_in_from = '$user_ip'" );
 				if ( $css_choice ) {
 					if ( $css_choice == 1 ) {
-						$css_file   = plugins_url() . '/regular-board/system/css/regular_board_dm_00000000281.css';
+						$css_file   = plugins_url() . '/regular-board/system/css/regular_board_dm_00000000306.css';
 					}
 					if ( $css_choice == 2 ) {
-						$css_file   = plugins_url() . '/regular-board/system/css/regular_board_nm_00000000281.css';
+						$css_file   = plugins_url() . '/regular-board/system/css/regular_board_nm_00000000306.css';
 					}
 				} else {
 					if ( date ( 'H' ) >= 7 && date ( 'H' ) <= 19 ) {
-						$css_file   = plugins_url() . '/regular-board/system/css/regular_board_nm_00000000281.css';
+						$css_file   = plugins_url() . '/regular-board/system/css/regular_board_nm_00000000306.css';
 					} else {
-						$css_file   = plugins_url() . '/regular-board/system/css/regular_board_dm_00000000281.css';
+						$css_file   = plugins_url() . '/regular-board/system/css/regular_board_dm_00000000306.css';
 					}
 				}
 			}
 			$regbostyle     = $css_file . '?' . $regular_board_version;
+			
 			// Selectively load lazyload!
 			if ( get_option ( 'regular_board_lazyload' ) ) {
 				$lazy_load           = '//cdn.jsdelivr.net/jquery.lazyload/1.9.0/jquery.lazyload.min.js';
@@ -222,11 +276,11 @@ if ( !function_exists ( 'regular_board_auto_tags' ) ) {
 	function regular_board_auto_tags($text){
 		if ( get_option ( 'regular_board_useboards' ) == 'tags' ) {
 			$text = preg_replace('!((#)[-a-zA-Zа-яА-Я()0-9@:%_+~?&;//=]+)!i', '<a href="?b=$1">$1</a>', $text);
-			$text = preg_replace('!((@)[-a-zA-Zа-яА-Я()0-9@:%_+~?&;//=]+)!i', '<a href="?u=$1">$1</a>', $text);
+			$text = preg_replace('!((@)[-a-zA-Zа-яА-Я()0-9@:%_+~?&;//=]+)!i', '<a href="?u=$1">&#64;$1</a>', $text);
 		}
 		if ( get_option ( 'regular_board_useboards' ) == 'boards' ) {
 			$text = preg_replace('!((#)[-a-zA-Zа-яА-Я()0-9@:%_+~?&;//=]+)!i', '<a href="?ht=$1">$1</a>', $text);
-			$text = preg_replace('!((@)[-a-zA-Zа-яА-Я()0-9@:%_+~?&;//=]+)!i', '<a href="?u=$1">$1</a>', $text);
+			$text = preg_replace('!((@)[-a-zA-Zа-яА-Я()0-9@:%_+~?&;//=]+)!i', '<a href="?u=$1">&#64;$1</a>', $text);
 		}
 		$text = str_replace ('@', '', $text );
 		return $text;

@@ -52,7 +52,7 @@ if ( $userisbanned ) {
 		}
 	}
 
-	if ( $posting == 0 || $archived == 1 || $this_thread && $view_this ) {
+	if ( $posting == 0 || $archived == 1 || $this_thread && $view_this || $nothing ) {
 		if ( $archived == 1 ) {
 			echo '<p>This thread has been archived.  It can no longer be replied to.</p>';
 		}
@@ -65,13 +65,13 @@ if ( $userisbanned ) {
 			}
 			
 			
-			if ( $the_board && $not_here || $this_thread || $this_area == 'messages' || $nothing_is_here ) {
+			if ( $the_tag || $this_user && $this_user_exists || $the_board && $not_here || $this_thread || $this_area == 'messages' || $nothing_is_here || $this_area == 'all' || $this_area == 'topics' || $this_area == 'replies' ) {
 			if ( $thisboard ) {
 				$the_board = $thisboard;
 			} else {
 				$the_board = $the_board;
 			}
-			
+				
 			if ( filter_var ( $check_this_ip, FILTER_VALIDATE_IP ) ) { 
 				$IPPASS = true; 
 			} elseif ( filter_var ( $check_this_ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) { 
@@ -116,8 +116,14 @@ if ( $userisbanned ) {
 								if ( $this_area && !$the_board && !$this_thread ) {
 									$current_page_class = $this_area;
 								}
-								if ( $nothing_is_here ) {
+								if ( $nothing_is_here || $this_area == 'all' || $this_area == 'topics' || $this_area == 'replies' ) {
 									$current_page_class = 'thread';
+								}
+								
+								if ( $this_user ) {
+									$default_data = $at_user = '@' . $this_user . ' ';
+								} else { 
+									$at_user = '';
 								}
 								
 								if ( $this_thread ) {
@@ -156,13 +162,14 @@ if ( $userisbanned ) {
 								}
 								$board_post_to = '';
 								$tag_post_to   = '';
+
 								if ( $the_tag && !$this_thread ) {
-									$tag_post_to = '#' . $the_tag . ' ';
+									$default_data = $tag_post_to = '#' . $the_tag . ' ';
 								}
 								if ( $the_board && !$this_thread ) {
 									$board_post_to = '[[' . $the_board . ']] ';
 								}
-								echo '<textarea  id="COMMENT" name="COMMENT" maxlength="' . $max_body . '">' . $board_post_to . $tag_post_to . '</textarea>';
+								echo '<textarea  id="COMMENT" name="COMMENT" maxlength="' . $max_body . '">' . $at_user . $board_post_to . $tag_post_to . '</textarea>';
 								
 								if ( $imgurid ) { 
 									if ( $this_area != 'messages' ) {
