@@ -2045,6 +2045,9 @@
 									$check_for_password = $wpdb->get_results (
 										"SELECT post_password FROM $regularboardplugin_posts WHERE post_id = $check LIMIT 1"
 									);
+									$check_exists = $wpdb->get_results (
+										"SELECT post_id FROM $regularboardplugin_posts WHERE post_parent = $check"
+									);									
 									// (1) Logged-in Admin don't need to enter passwords.
 									if( $current_user_is_an_admin ) {
 										$wpdb->delete (
