@@ -5,6 +5,8 @@ Requires at least: 3.8.2
 Tested up to: 3.9
 Stable tag: 2.00.0.0
 
+Text-based anonymous forum.
+
 == Description ==
 An extremely simple, text-based forum to which anyone may post to or share links on.
 
