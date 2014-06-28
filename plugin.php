@@ -808,8 +808,8 @@
 							$post_date                = $cfabs->post_date;
 							$post_date_micro          = $cfabs->post_date_micro;
 							$post_email               = $cfabs->post_email;
-							$post_title               = $cfabs->post_title;
-							$post_comment             = $cfabs->post_comment;
+							$post_title               = str_replace( '\\', '', $cfabs->post_title);
+							$post_comment             = str_replace( '\\', '', $cfabs->post_comment);
 							$post_comment_original    = $cfabs->post_comment_original;
 							$post_edited              = $cfabs->post_edited;
 							$post_moderator_comment   = $cfabs->post_moderator_comment;
@@ -1027,7 +1027,7 @@
 				}
 				
 				function regularboardplugin_do_post() {
-					global $self_domain, $expires, $wpdb, $wp, $post, $ipaddress, $allowed_image_types, $regularboardplugin_posts_select, $no_url_error, $no_comment_error, $no_title_error, $current_user_is_an_admin, $is_current_logged_in, $is_current_an_admin;
+					global $random_password, $self_domain, $expires, $wpdb, $wp, $post, $ipaddress, $allowed_image_types, $regularboardplugin_posts_select, $no_url_error, $no_comment_error, $no_title_error, $current_user_is_an_admin, $is_current_logged_in, $is_current_an_admin;
 					$regularboardplugin_posts = $wpdb->prefix . 'regularboardplugin_posts';
 					if( isset( $_GET['t'] ) ) {
 						if( is_numeric( $_GET['t'] ) ) {
@@ -1078,8 +1078,8 @@
 								$post_date                = $cfab->post_date;
 								$post_date_micro          = $cfab->post_date_micro;
 								$post_email               = $cfab->post_email;
-								$post_title               = $cfab->post_title;
-								$post_comment             = $cfab->post_comment;
+								$post_title               = str_replace( '\\', '', $cfab->post_title);
+								$post_comment             = str_replace( '\\', '', $cfab->post_comment);
 								$post_comment_original    = $cfab->post_comment_original;
 								$post_edited              = $cfab->post_edited;
 								$post_moderator_comment   = $cfab->post_moderator_comment;
@@ -1319,7 +1319,7 @@
 								
 								$sent_password             = sanitize_text_field( $_REQUEST['post_password'] );
 								$post_password             = sanitize_text_field( wp_hash( $_REQUEST['post_password'] ) );
-								if( !$post_password ) {
+								if( !$post_password || !$sent_password ) {
 									$sent_password = $random_password;
 									$post_password = wp_hash( $random_password );
 								}
@@ -1644,8 +1644,8 @@
 								$post_date                = $r->post_date;
 								$post_date_micro          = $r->post_date_micro;
 								$post_email               = $r->post_email;
-								$post_title               = $r->post_title;
-								$post_comment             = $r->post_comment;
+								$post_title               = str_replace( '\\', '', $r->post_title);
+								$post_comment             = str_replace( '\\', '', $r->post_comment);
 								$post_comment_original    = $r->post_comment_original;
 								$post_edited              = $r->post_edited;
 								$post_moderator_comment   = $r->post_moderator_comment;
@@ -1765,8 +1765,8 @@
 									$post_date                = $r->post_date;
 									$post_date_micro          = $r->post_date_micro;
 									$post_email               = $r->post_email;
-									$post_title               = $r->post_title;
-									$post_comment             = $r->post_comment;
+									$post_title               = str_replace( '\\', '', $r->post_title);
+									$post_comment             = str_replace( '\\', '', $r->post_comment);
 									$post_comment_original    = $r->post_comment_original;
 									$post_edited              = $r->post_edited;
 									$post_moderator_comment   = $r->post_moderator_comment;
@@ -2047,7 +2047,7 @@
 									);
 									$check_exists = $wpdb->get_results (
 										"SELECT post_id FROM $regularboardplugin_posts WHERE post_parent = $check"
-									);									
+									);	
 									// (1) Logged-in Admin don't need to enter passwords.
 									if( $current_user_is_an_admin ) {
 										$wpdb->delete (
@@ -2060,8 +2060,12 @@
 											)
 										);							
 									} else {
+										$check_password = sanitize_text_field( wp_hash( $_REQUEST['delete_posts_password'] ) );
+										$check_for_password = $wpdb->get_results (
+											"SELECT post_password FROM $regularboardplugin_posts WHERE post_id = $check LIMIT 1"
+										);									
 										foreach( $check_for_password as $cfp ) {
-											if( $cfp->post_password ) {
+											if( $cfp->post_password == $check_password ) {
 												$wpdb->delete (
 													$regularboardplugin_posts, 
 													array(
@@ -2089,8 +2093,12 @@
 											);
 										}
 									} else {
+										$check_password = sanitize_text_field( wp_hash( $_REQUEST['delete_posts_password'] ) );
+										$check_for_password = $wpdb->get_results (
+											"SELECT post_password FROM $regularboardplugin_posts WHERE post_id = $check LIMIT 1"
+										);									
 										foreach( $check_for_password as $cfp ) {
-											if( $cfp->post_password ) {
+											if( $cfp->post_password == $check_password ) {
 												if( count( $check_exists ) == 0 ) {
 													$wpdb->delete (
 														$regularboardplugin_posts, 
