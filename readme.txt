@@ -3,7 +3,7 @@ Contributors: boyevul
 Tags: anonymous, bbs, bulletin board system, forum
 Requires at least: 3.8.2
 Tested up to: 3.9
-Stable tag: 2.00.0.0
+Stable tag: 2.00.0.1
 
 Text-based anonymous forum.
 
@@ -27,22 +27,11 @@ newest platform.
 * PHP5+
 * "Pretty Permalinks" (not default WordPress permalink structure)
 
-
-= Embeds from = 
-* Automatically converts links from these sources into embeds:
-* :: Imgur albums
-* :: Imgur image links
-* :: Soundcloud
-* :: Vimeo
-* :: Youtube
-* :: gfycat
-* :: direct image links
-
 = Features = 
 * cleaner code
 * DNSBL/SURBL integration
 * front-end moderation (no admin panel)
-* embedding from imgur, soundcloud, vimeo, youtube, remote images, and gfycat
+* embedding from imgur, soundcloud, vimeo, youtube, remote images, and gfycat (among others)
 
 == Installation ==
 1. Make sure permalinks aren't default ("pretty permalinks").
@@ -52,4 +41,7 @@ newest platform.
 5. Done.
 
 == Changelog ==
+* 2.00.0.1  Vine.co and Funnyordie.com added to sites that can be embedded.
+* 2.00.0.1  Colors altered to be more dependent on the theme that is currently being used.
+* 2.00.0.1  get_permalink() used in place of get_site_url() for all/return links.
 * 2.00.0.0  Something went horribly wrong with previous versions; this will fix that.

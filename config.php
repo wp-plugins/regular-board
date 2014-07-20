@@ -10,7 +10,7 @@
 	// Do NOT alter any of these values
 	
 	// For media providers, works in conunction with mediaembed to determine approved providers/extensions	
-	$supported_providers = array( 'imgur album', 'imgur', 'soundcloud', 'vimeo', 'youtube', 'gfycat', 'image' );
+	$supported_providers = array( 'imgur album', 'imgur', 'soundcloud', 'vimeo', 'youtube', 'gfycat', 'image', 'vine', 'funnyordie' );
 	$allowed_image_types = array( 'jpg', 'gif', 'jpeg', 'png' );
 
 
