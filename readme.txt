@@ -3,7 +3,7 @@ Contributors: boyevul
 Tags: anonymous, bbs, bulletin board system, forum
 Requires at least: 3.8.2
 Tested up to: 3.9
-Stable tag: 2.00.0.1
+Stable tag: 2.00.0.2
 
 Text-based anonymous forum.
 
@@ -41,6 +41,13 @@ newest platform.
 5. Done.
 
 == Changelog ==
+* 2.00.0.2  Better embed determination based on preg_match rulesets.
+* 2.00.0.2  Text-posts should now be classified correctly when being submitted.
+* 2.00.0.2  Media embeds use the div container "mediaEmbed" for those of you using a plugin like Fitvids that specifically targets media containers to manipulate content. (.mediaEmbed)
+* 2.00.0.2  Load the CSS only when we need it (instead of on every page).
+* 2.00.0.2  Post type links hidden if no post types of that value exist on the board. Display post count in link.
+* 2.00.0.2  Reply form hidden by default (with javascript enabled in browser) and expanded upon click.
+* 2.00.0.2  ?u=anonymous now correctly brings up posts submitted by users who neglected to enter a name (instead of returning nothing).
 * 2.00.0.1  Vine.co and Funnyordie.com added to sites that can be embedded.
 * 2.00.0.1  Colors altered to be more dependent on the theme that is currently being used.
 * 2.00.0.1  get_permalink() used in place of get_site_url() for all/return links.

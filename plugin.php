@@ -3,7 +3,7 @@
 	/****************************************************
 
 		Plugin Name:	Regular Board
-		Version:		2.00.0.1
+		Version:		2.00.0.2
 		License:		GNU General Public License v2
 		License URI:	//gnu.org/licenses/gpl-2.0.html
 		
@@ -253,50 +253,54 @@
 	****************************************************/
 	if( !function_exists( 'regularboardplugin_board_css' ) ) {
 		function regularboardplugin_board_css() {
-			echo '
-			<style type="text/css" media="screen">
-			.regularboardplugin_container *,.regularboardplugin_container *:before,.regularboardplugin_container *:after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box;}
-			.regularboardplugin_container{border-radius:2px;margin:0 auto;display:block;border-radius:2px;overflow:hidden;}
-			.regularboardplugin_container .pages,.regularboardplugin_container .filter_by,.regularboardplugin_container .admin_actions{width:100%;display:block;margin:0 auto;color:rgba(0,0,0,.5);padding:5px;font-size:65%;border-top:1px solid rgba(0,0,0,.1);}
-			.regularboardplugin_container .pages a{padding:5px;background-color:rgba(0,0,0,.5);color:#e5f5ff;}
-			.regularboardplugin_container .name a{color:#fff;}
-			.regularboardplugin_container .filter_by a:hover, .regularboardplugin_container .admin_actions a:hover{text-decoration:none;}
-			.regularboardplugin_container .filter_by a, .regularboardplugin_container .admin_actions a{color:rgba(44,129,183,.8);text-decoration:none;border:none;background-color:rgba(0,0,0,.1);border-radius:2px;padding:2px;}
-			.regularboardplugin_container .left{float:left;}
-			.regularboardplugin_container .right{float:right;}
-			.regularboardplugin_container section{padding:5px;display:block;margin:0 auto;width:100%;border-radius:2px;border:1px solid rgba(0,0,0,.1);border-bottom:1px solid rgba(0,0,0,.1);overflow:hidden;}
-			.regularboardplugin_container section a{color:#2d709a;}
-			.regularboardplugin_container small.domain{font-size:55%;padding:2px;border-radius:2px;border:1px solid rgba(0,0,0,.1);color:rgba(255,255,255,.8);cursor:default;}
-			.regularboardplugin_container p{padding:5px;margin:10px;}	
-			.regularboardplugin_container .media{margin:-4px auto;display:block;position:relative;z-index:3;}
-			.regularboardplugin_container .media img{-webkit-box-shadow: 0 0 5px 2px rgba(0,0,0,.1);box-shadow: 0 0 5px 2px rgba(0,0,0,.1);}
-			.regularboardplugin_container img{max-width:100%;margin:5px auto;}
-			.regularboardplugin_container .mod_comment{color:red;padding:5px 0;border-top:1px solid rgba(0,0,0,.1);}
-			.regularboardplugin_container .banned{font-size:75%;padding:2px;border:1px solid rgba(0,0,0,.1);background-color:rgba(0,0,0,.8);color:rgba(255,255,255,.9);}
-			.regularboardplugin_container .submission_links{width:100%;clear:both;display:block;padding:5px;border-top:1px solid rgba(0,0,0,.1);}
-			.regularboardplugin_container .submission_links a{padding:5px;border-radius:2px;border:1px solid rgba(0,0,0,.1);text-decoration:none;margin:2px;width:32%;float:left;display:block;font-size:75%;text-align:center;}
-			.regularboardplugin_container .submission_links a:hover{-webkit-box-shadow: 0 0 5px 1px rgba(0,0,0,.1);box-shadow: 0 0 5px 1px rgba(0,0,0,.1);}
-			.regularboardplugin_container small{font-size:75%;}
-			.regularboardplugin_container date,.regularboardplugin_container small.user{font-size:60%;padding:5px;border-radius:2px;border:1px solid rgba(0,0,0,.1);background-color:rgba(0,0,0,.5);color:rgba(255,255,255,.8);cursor:default;}
-			.regularboardplugin_container small.name,.regularboardplugin_container small.score{font-size:60%;padding:5px;border-radius:2px;border:1px solid rgba(0,0,0,.1);background-color:green;color:rgba(255,255,255,.9);cursor:default;}
-			.regularboardplugin_container form input[type="checkbox"]{float:left;clear:none;width:25px;margin:20px 0 -10px 0;}
-			.regularboardplugin_container form div.clear{clear:both;display:block;margin:5px auto;width:100%;}
-			.regularboardplugin_container .pages:after,.regularboardplugin_container .filter_by:after,.regularboardplugin_container .admin_actions:after,.regularboardplugin_container .submission_links:after,.regularboardplugin_container form div.clear:after{clear:both;content:"";display:table;}
-			.regularboardplugin_container form div.small{width:25%;float:right;margin:2px;}
-			.regularboardplugin_container form div.small_input{width:28%;float:left;margin:1px;clear:none;}
-			.regularboardplugin_container form.create div.float{float:left;margin:1px;width:49%;}
-			.regularboardplugin_container form.create label,.regularboardplugin_container form input{padding:5px;width:100%;margin:5px auto 0;}
-			.regularboardplugin_container form.create label{font-size:75%;clear:both;display:block;}
-			.regularboardplugin_container form.create input{font-size:105%;}
-			.regularboardplugin_container input[type="checkbox"].confirm{clear:both;margin:5px auto;display:block;}
-			.regularboardplugin_container form input[type="submit"]{margin:0;clear:both;display:block;}
-			.regularboardplugin_container form.create input#post_url,.regularboardplugin_container form.create input[type="submit"]{width:99%;}
-			.regularboardplugin_container form.create textarea{height:150px;width:99%;}
-			.regularboardplugin_container form{border-radius:2px;padding:5px;margin:0 auto;width:100%;}
-			.regularboardplugin_container .information{padding:5px;text-align:center;background-color:rgba(0,0,0,.7);color:rgba(255,255,255,.8);margin:0 auto;width:100%;display:block;cursor:default;border-top:1px solid rgba(255,255,255,.1);}
-			.regularboardplugin_container .parent{border:0!important;}
-			</style>
-			';
+			global $post;
+			if( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'regular board') ) {
+				echo '
+				<style type="text/css" media="screen">
+				.regularboardplugin_container *,.regularboardplugin_container *:before,.regularboardplugin_container *:after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box;}
+				.regularboardplugin_container{border-radius:2px;margin:0 auto;display:block;border-radius:2px;overflow:hidden;}
+				.regularboardplugin_container .pages,.regularboardplugin_container .filter_by,.regularboardplugin_container .admin_actions{width:100%;display:block;margin:0 auto;color:rgba(0,0,0,.5);padding:5px;font-size:65%;border-top:1px solid rgba(0,0,0,.1);}
+				.regularboardplugin_container .pages a{padding:5px;background-color:rgba(0,0,0,.5);color:#e5f5ff;}
+				.regularboardplugin_container .name a{color:#fff;}
+				.regularboardplugin_container .filter_by a:hover, .regularboardplugin_container .admin_actions a:hover{text-decoration:none;}
+				.regularboardplugin_container .filter_by a, .regularboardplugin_container .admin_actions a{color:rgba(44,129,183,.8);text-decoration:none;border:none;padding:2px;}
+				.regularboardplugin_container .left{float:left;}
+				.regularboardplugin_container .right{float:right;}
+				.regularboardplugin_container section{padding:5px;display:block;margin:0 auto 5px;width:100%;border-radius:2px;border:1px solid rgba(0,0,0,.1);border-bottom:1px solid rgba(0,0,0,.1);overflow:hidden;}
+				.regularboardplugin_container section a{color:#2d709a;}
+				.regularboardplugin_container small.domain{font-size:55%;padding:2px;border-radius:2px;border:1px solid rgba(0,0,0,.1);color:rgba(255,255,255,.8);cursor:default;}
+				.regularboardplugin_container p{padding:5px;margin:10px;}	
+				.regularboardplugin_container .mediaEmbed{margin:-4px auto;display:block;position:relative;z-index:3;width:100%;}
+				.regularboardplugin_container .mediaEmbed img{-webkit-box-shadow: 0 0 5px 2px rgba(0,0,0,.1);box-shadow: 0 0 5px 2px rgba(0,0,0,.1);width:100%;}
+				.regularboardplugin_container img{max-width:100%;margin:5px auto;}
+				.regularboardplugin_container .mod_comment{color:red;padding:5px 0;border-top:1px solid rgba(0,0,0,.1);}
+				.regularboardplugin_container .banned{font-size:75%;padding:2px;border:1px solid rgba(0,0,0,.1);background-color:rgba(0,0,0,.8);color:rgba(255,255,255,.9);}
+				.regularboardplugin_container .submission_links{width:100%;clear:both;display:block;padding:5px;border-top:1px solid rgba(0,0,0,.1);}
+				.regularboardplugin_container .submission_links a{padding:5px;border-radius:2px;border:1px solid rgba(0,0,0,.1);text-decoration:none;margin:2px;width:32%;float:left;display:block;font-size:75%;text-align:center;}
+				.regularboardplugin_container .submission_links a:hover{-webkit-box-shadow: 0 0 5px 1px rgba(0,0,0,.1);box-shadow: 0 0 5px 1px rgba(0,0,0,.1);}
+				.regularboardplugin_container small{font-size:75%;}
+				.regularboardplugin_container date,.regularboardplugin_container small.user{font-size:60%;padding:5px;border-radius:2px;border:1px solid rgba(0,0,0,.1);background-color:rgba(0,0,0,.5);color:rgba(255,255,255,.8);cursor:default;}
+				.regularboardplugin_container small.name,.regularboardplugin_container small.score{font-size:60%;padding:5px;border-radius:2px;border:1px solid rgba(0,0,0,.1);background-color:green;color:rgba(255,255,255,.9);cursor:default;}
+				.regularboardplugin_container form input[type="checkbox"]{float:left;clear:none;width:25px;margin:20px 0 -10px 0;}
+				.regularboardplugin_container form div.clear{clear:both;display:block;margin:5px auto;width:100%;}
+				.regularboardplugin_container .pages:after,.regularboardplugin_container .filter_by:after,.regularboardplugin_container .admin_actions:after,.regularboardplugin_container .submission_links:after,.regularboardplugin_container form div.clear:after{clear:both;content:"";display:table;}
+				.regularboardplugin_container form div.small{width:25%;float:right;margin:2px;}
+				.regularboardplugin_container form div.small_input{width:28%;float:left;margin:1px;clear:none;}
+				.regularboardplugin_container form.create div.float{float:left;margin:1px;width:49%;}
+				.regularboardplugin_container form.create label,.regularboardplugin_container form input{padding:5px;width:100%;margin:5px auto 0;}
+				.regularboardplugin_container form.create label{font-size:75%;clear:both;display:block;}
+				.regularboardplugin_container form.create input{font-size:105%;}
+				.regularboardplugin_container input[type="checkbox"].confirm{clear:both;margin:5px auto;display:block;}
+				.regularboardplugin_container form input[type="submit"]{margin:0;clear:both;display:block;}
+				.regularboardplugin_container form.create input#post_url,.regularboardplugin_container form.create input[type="submit"]{width:99%;}
+				.regularboardplugin_container form.create textarea{height:150px;width:99%;}
+				.regularboardplugin_container form{border-radius:2px;padding:5px;margin:0 auto;width:100%;}
+				.regularboardplugin_container .information{padding:5px;text-align:center;background-color:rgba(0,0,0,.7);color:rgba(255,255,255,.8);margin:0 auto;width:100%;display:block;cursor:default;border-top:1px solid rgba(255,255,255,.1);}
+				.regularboardplugin_container .parent{border:0!important;}
+				.regularboardplugin_container .hidden_element{display:none;visibility:Hidden;}
+				</style>
+				';
+			}
 		}
 	}
 	
@@ -349,7 +353,7 @@
 	$error_no_posts        = 'No posts to display.';
 	$new_content           = '';
 	if( isset( $_GET['t'] ) ) {
-		$posting_mode      = '<span class="information">Posting Mode: Reply</span>';
+		$posting_mode      = '<span class="information">Posting Mode: Reply (Click to expand)</span>';
 	} else {
 		if( isset( $_GET['a'] ) && $_GET['a'] == 'linkpost' ) {
 			$new_content = 'Link';
@@ -369,6 +373,20 @@
 	/****************************************************
 		Functions
 	/***************************************************/
+	// (1) Convert long numbers to shorter versions
+	// http://stackoverflow.com/questions/10599933/convert-long-number-into-abbreviated-string-in-javascript-with-a-special-shortn
+	if( !function_exists( 'regularboardplugin_nicenumbers' ) ) {
+		function regularboardplugin_nicenumbers($n) {
+			$n = (0+str_replace(",","",$n));
+			if(!is_numeric($n)) return false;
+			if($n>1000000000000) return round(($n/1000000000000),1).'t';
+			else if($n>1000000000) return round(($n/1000000000),1).'b';
+			else if($n>1000000) return round(($n/1000000),1).'m';
+			else if($n>1000) return round(($n/1000),1).'k';
+			return number_format($n);
+		}
+	}
+	
 	// (1) Generate random password for blank password posts
 	$seedlet = str_split ( 'abcdefghijklmnopqrstuvwxyz' . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' . '0123456789!@#$%^&*()' );
 	shuffle ( $seedlet );
@@ -651,10 +669,10 @@
 
 			if ( $provider == 'imgur album' ) {
 				$url = substr ( $url, 19 );
-				echo '<div class="media"><iframe class="imgur-album" width="100%" height="550" frameborder="0" src="//imgur.com/a/' . $url . '/embed"></iframe></div>'; 
+				echo '<iframe class="imgur-album" width="100%" height="550" frameborder="0" src="//imgur.com/a/' . $url . '/embed"></iframe>'; 
 			} elseif ( $provider == 'image' || $provider == 'imgur' ) {
 				$url = esc_url ( $url );
-				echo '<div class="media"><a href="' . $url . '"><img class="image" alt="image" src="' . $url . '"/></a></div>';
+				echo '<a href="' . $url . '"><img class="image" alt="image" src="' . $url . '"/></a>';
 			}
 			elseif( $provider == 'soundcloud' ) {
 				echo '<iframe width="100%" height="166" scrolling="no" frameborder="no"src="http://w.soundcloud.com/player/?url=' . $url . '&auto_play=false&color=915f33&theme_color=00FF00"></iframe>'; 
@@ -688,7 +706,7 @@
 				$url = explode( '/', $url );
 				$url = $url[sizeof($url)-2];
 				echo '
-				<object width="100%" height="400" id="ordie_player_' . $url . '">
+				<object width="640" height="400" id="ordie_player_' . $url . '">
 					<param name="movie" value="http://player.ordienetworks.com/flash/fodplayer.swf" />
 					<param name="flashvars" value="key=' . $url . '" />
 					<param name="allowfullscreen" value="true" />
@@ -815,14 +833,49 @@
 					echo '<span class="right"><a href="?a=bans">Bans</a></span>';
 				}
 
+				$check_all_posts = $wpdb->get_results (
+					"SELECT $regularboardplugin_posts_select FROM $regularboardplugin_posts"
+				);
+				$parents = $allposts = $texts = $images = $embeds = $links = 0;
+				foreach( $check_all_posts as $cap ) {
+					if( $cap->post_type == 'text' ) {
+						$texts++;
+					}
+					if( $cap->post_type == 'image' ) {
+						$images++;
+					}
+					if( $cap->post_type == 'embed' ) {
+						$embeds++;
+					}
+					if( $cap->post_type == 'link' ) {
+						$links++;
+					}
+					$allposts++;
+					if( $cap->post_parent == 0 ) {
+						$parents++;
+					}
+				}
+				
 				echo '<span class="left">
-					<a href="' . get_permalink() . '">All</a> 
-					<a href="?a=allposts">All posts</a> 
-					<a href="?a=texts">Text</a>
-					<a href="?a=images">Images</a>
-					<a href="?a=embeds">Embeds</a>
-					<a href="?a=links">Links</a> 
-				</span>
+					[<a href="' . get_permalink() . '">All - ' . regularboardplugin_nicenumbers( $parents ) . '</a>] 
+					[<a href="?a=allposts">All posts - ' . regularboardplugin_nicenumbers ( $allposts ) . '</a>] '; 
+					if( $texts ) {
+						$texts = regularboardplugin_nicenumbers( $texts );
+						echo '[<a href="?a=texts">Text - ' . $texts . '</a>] ';
+					}
+					if( $images ) {
+						$images = regularboardplugin_nicenumbers( $images );
+						echo '[<a href="?a=images">Images - ' . $images . '</a>] ';
+					}
+					if( $embeds ) {
+						$embeds = regularboardplugin_nicenumbers( $embeds );
+						echo '[<a href="?a=embeds">Embeds - ' . $embeds . '</a>] ';
+					}
+					if( $links ) {
+						$links = regularboardplugin_nicenumbers( $links );
+						echo '[<a href="?a=links">Links - ' . $links . '</a>] ';
+					}
+				echo '</span>
 			</div>';
 			
 			
@@ -916,9 +969,11 @@
 							
 							if( $post_url ) {
 								if( in_array( $post_provider, $supported_providers, true ) ) {
-									echo '</section>';
+									echo '</section><div class="mediaEmbed">';
+									
 									new regularboardplugin_MediaEmbed ( $post_provider, $post_url );
-									echo '<section>';
+									
+									echo '</div><section>';
 								}
 							}								
 							if( $post_comment ) {
@@ -998,7 +1053,11 @@
 					$regularboardplugin_posts_by = " WHERE post_type = 'link' AND post_parent = 0 ";
 				} elseif( isset( $_GET['u'] ) ) {
 					$dont_show = 0;
-					$regularboardplugin_posts_by = " WHERE post_name = '" . $_GET['u'] . "' ";
+					if( $_GET['u'] == strtolower( 'anonymous' ) ) {
+						$regularboardplugin_posts_by = " WHERE post_name = '' ";
+					} else {
+						$regularboardplugin_posts_by = " WHERE post_name = '" . $_GET['u'] . "' ";
+					}
 				} else {
 					$dont_show = 0;
 					$reply_mode = 0;
@@ -1181,9 +1240,11 @@
 								
 								if( $post_url ) {
 									if( in_array( $post_provider, $supported_providers, true ) ) {
-										echo '</section>';
+										echo '</section><div class="mediaEmbed">';
+										
 										new regularboardplugin_MediaEmbed ( $post_provider, $post_url );
-										echo '<section>';
+										
+										echo '</div><section>';
 									}
 								}								
 								if( $post_comment ) {
@@ -1269,30 +1330,32 @@
 										curl_close ( $ch );
 										$path_info = pathinfo( $check_url );
 										$url_present = 0;
-										
-											if( strpos( $check_url, 'imgur.com/a/' ) !== false) {
-												$post_type         = 'album';
-												$post_provider     = 'imgur album';
-												$post_url          = $check_url;
-												$url_present       = 1;
+											if( preg_match( '/\/\/(.*imgur\.com\/.*)/i', $check_url ) ) {
+												if( strpos( $check_url, 'imgur.com/a/' ) !== false) {
+													$post_type         = 'album';
+													$post_provider     = 'imgur album';
+													$post_url          = $check_url;
+													$url_present       = 1;
+												}
+												elseif( strpos( $check_url, 'i.imgur.com/' ) !== false ) {
+													$post_type         = 'image';
+													$post_provider     = 'imgur';
+													$post_url          = $check_url;
+													$url_present       = 1;
+												}
+												
 											}
-											elseif( strpos( $check_url, 'i.imgur.com/' ) !== false ) {
-												$post_type         = 'image';
-												$post_provider     = 'imgur';
-												$post_url          = $check_url;
-												$url_present       = 1;
-											}
-											elseif( strpos( $check_url, 'soundcloud.com/' ) !== false ) {
+											elseif( preg_match( '/\/\/(.*soundcloud\.com\/.*)/i', $check_url ) ) {
 												$post_type         = 'embed';
 												$post_provider     = 'soundcloud';
 												$url_present       = 1;
 											}
-											elseif( strpos( $check_url, 'vimeo.com/' ) !== false ) {
+											elseif( preg_match( '/\/\/(.*vimeo\.com\/.*)/i', $check_url ) ) {
 												$post_type         = 'embed';
 												$post_provider     = 'vimeo';
 												$url_present       = 1;
 											}
-											elseif( strpos( $check_url, 'youtube.com/' ) !== false ) {
+											elseif( preg_match( '/\/\/(.*youtube\.com\/.*)/i', $check_url ) ) {
 												$post_type         = 'embed';
 												$post_provider     = 'youtube';
 												$url_present       = 1;
@@ -1302,19 +1365,19 @@
 													$post_url  = $video_id;
 												}
 											}
-											elseif( strpos( $check_url, 'gfycat.com/' ) !== false ) {
+											elseif( preg_match( '/\/\/(.*gfycat\.com\/.*)/i', $check_url ) ) {
 												$post_type         = 'embed';
 												$post_provider     = 'gfycat';
 												$post_url          = $check_url;
 												$url_present       = 1;
 											}
-											elseif( strpos( $check_url, 'vine.co/' ) !== false ) {
+											elseif( preg_match( '/\/\/(.*vine\.co\/.*)/i', $check_url ) ) {
 												$post_type         = 'embed';
 												$post_provider     = 'vine';
 												$post_url          = $check_url;
 												$url_present       = 1;
 											}
-											elseif( strpos( $check_url, 'funnyordie.com/' ) !== false ) {
+											elseif( preg_match( '/\/\/(.*funnyordie\.com\/.*)/i', $check_url ) ) {
 												$post_type         = 'embed';
 												$post_provider     = 'funnyordie';
 												$post_url          = $check_url;
@@ -1332,13 +1395,9 @@
 													$post_type             = 'link';
 													$post_provider         = 'link';
 													$post_url              = $check_url;
-											
-											} else {
-												$post_type                 = 'text';
-											}
-										
+											} 
 									}
-									
+
 									if( $post_url ) {
 										$post_url = $check_url;
 										$parsed = parse_url( $check_url );
@@ -1346,6 +1405,7 @@
 									}
 								} else {
 									$check_url = $post_url = $spam_check = $blank;
+									$post_type = 'text';
 								}
 								
 								$post_board                = $blank;
@@ -1392,8 +1452,11 @@
 									}
 									$wpdb->query(
 										"UPDATE $regularboardplugin_posts SET post_reply_count = post_reply_count + 1 WHERE post_id = $post_parent"
-									);					
+									);
 								}
+								$wpdb->query(
+									"UPDATE $regularboardplugin_posts SET post_type = 'text' WHERE post_type = ''"
+								);
 								$duplicate_found = 0;
 								$no_url          = 0;
 								$no_comment      = 0;
@@ -1615,6 +1678,10 @@
 						$page = $page . '?a=' . sanitize_text_field( $_GET['a'] );
 					}
 					
+					if( $reply_mode ) {
+						echo '
+						<div class="reply_mode_form">';
+					}
 					echo '
 						<form method="post" name="post_form" class="create" action="' . $page . '">';
 					wp_nonce_field( 'post_form' );
@@ -1653,6 +1720,9 @@
 						echo '
 						<input type="submit" name="do_post" value="Post" />
 						</form>';
+						if( $reply_mode ) {
+							echo '</div>';
+						}						
 				}					
 
 				echo '<span class="submission_links">';
@@ -1668,7 +1738,21 @@
 				
 				if( isset( $_GET['a'] ) && $_GET['a'] == 'linkpost' || isset( $_GET['a'] ) && $_GET['a'] == 'selfpost' || $reply_mode ) {
 					if( $reply_mode && count( $results ) > 0 || $reply_mode && count( $replies ) > 0 || !$reply_mode ) {
+						if( $reply_mode ) { 
+							echo '<script type="text/javascript">
+							jQuery(document).ready(function(){
+								jQuery(\'.reply_mode_form\').addClass(\'hidden_element\');
+								jQuery(\'.reply_mode_toggle\').live(\'click\', function(event) {        
+									 jQuery(\'.reply_mode_form\').toggleClass(\'hidden_element\');
+								});
+							});
+							</script>';
+							echo '<span class="reply_mode_toggle">';
+						}
 						echo $posting_mode;
+						if( $reply_mode ) { 
+							echo '</span>';
+						}						
 						regularboardplugin_do_post_form();
 					}
 				}
@@ -1779,9 +1863,11 @@
 								echo '</p>';
 								if( $reply_mode && $post_url ) {
 									if( in_array( $post_provider, $supported_providers, true ) ) {
-										echo '</section>';
+										echo '</section><div class="mediaEmbed">';
+										
 										new regularboardplugin_MediaEmbed ( $post_provider, $post_url );
-										echo '<section>';
+										
+										echo '</div><section>';
 									}
 								}
 								if( $reply_mode && $post_comment ) {
@@ -1886,7 +1972,9 @@
 									
 									if( $post_url ) {
 										if( in_array( $post_provider, $supported_providers, true ) ) {
+											echo '<div class="mediaEmbed">';
 											new regularboardplugin_MediaEmbed ( $post_provider, $post_url );
+											echo '</div>';
 										}
 									}								
 									if( $reply_mode && $post_comment ) {
