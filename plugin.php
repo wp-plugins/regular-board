@@ -3,7 +3,7 @@
 	/****************************************************
 
 		Plugin Name:	Regular Board
-		Version:		2.00.0.2
+		Version:		2.00.0.3
 		License:		GNU General Public License v2
 		License URI:	//gnu.org/licenses/gpl-2.0.html
 		
@@ -660,76 +660,11 @@
 		echo "SAFE!";
 	}
 	*/
-	
-	// (1) Pass a provider (like Youtube) and a URL to embed the media from its appropriate source.
-	// (1) Supported providers: imgur, soundcloud, vimeo, youtube, remote images, and gfycat
-	class regularboardplugin_MediaEmbed {
-		var $provider, $url;
-		function regularboardplugin_MediaEmbed ( $provider, $url ) {
-
-			if ( $provider == 'imgur album' ) {
-				$url = substr ( $url, 19 );
-				echo '<iframe class="imgur-album" width="100%" height="550" frameborder="0" src="//imgur.com/a/' . $url . '/embed"></iframe>'; 
-			} elseif ( $provider == 'image' || $provider == 'imgur' ) {
-				$url = esc_url ( $url );
-				echo '<a href="' . $url . '"><img class="image" alt="image" src="' . $url . '"/></a>';
-			}
-			elseif( $provider == 'soundcloud' ) {
-				echo '<iframe width="100%" height="166" scrolling="no" frameborder="no"src="http://w.soundcloud.com/player/?url=' . $url . '&auto_play=false&color=915f33&theme_color=00FF00"></iframe>'; 
-			}
-			elseif( $provider == 'vimeo' ) {
-				$url = substr ( $url, 17 );
-				echo '<iframe src="//player.vimeo.com/video/' . $url . '?title=0&amp;byline=0&amp;portrait=0&amp;color=d6cece" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'; 
-			}
-			elseif( $provider == 'youtube' ) {
-				if ( preg_match ('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $url, $match ) ) {
-					$match[1] = sanitize_text_field ( $match[1] );
-					$video_id = $match[1];
-					$url = $video_id;
-				}
-				echo '
-				<object width="640" height="390">
-					<param name="movie" value="https://www.youtube.com/v/' . $url . '?version=3"></param>
-					<param name="allowScriptAccess" value="always"></param>
-					<embed src="https://www.youtube.com/v/' . $url . '?version=3"
-						type="application/x-shockwave-flash"
-						allowscriptaccess="always"
-						width="640" height="390"></embed>
-				</object>
-				';				
-			}
-			elseif( $provider == 'gfycat' ) {
-				$url = str_replace ( 'gfycat.com/', '', $url );				
-				echo '<iframe src="//gfycat.com/iframe/' . $url . '" frameborder="0" scrolling="no" width="592" height="320" ></iframe>';
-			}
-			elseif( $provider == 'funnyordie' ) {
-				$url = explode( '/', $url );
-				$url = $url[sizeof($url)-2];
-				echo '
-				<object width="640" height="400" id="ordie_player_' . $url . '">
-					<param name="movie" value="http://player.ordienetworks.com/flash/fodplayer.swf" />
-					<param name="flashvars" value="key=' . $url . '" />
-					<param name="allowfullscreen" value="true" />
-					<param name="allowscriptaccess" value="always">
-					<embed width="640" height="400" flashvars="key=' . $url . '" allowfullscreen="true" allowscriptaccess="always" quality="high" src="http://player.ordienetworks.com/flash/fodplayer.swf" name="ordie_player_5325b03b52" type="application/x-shockwave-flash"></embed>
-				</object>
-				';
-			}
-			elseif( $provider == 'vine' ) {
-				$url = $url . '/embed/postcard';
-				echo '<iframe class="vine-embed" src="' . $url . '" width="600" height="600" frameborder="0"></iframe><script async src="//platform.vine.co/static/scripts/embed.js" charset="utf-8"></script>';
-			}
-			else {
-				return;
-			}
-		}
-	}
 
 
-	
-	
-	
-	
+
+
+
 	/****************************************************
 		Continue Plugin Necessities 
 	****************************************************/	
@@ -841,12 +776,6 @@
 					if( $cap->post_type == 'text' ) {
 						$texts++;
 					}
-					if( $cap->post_type == 'image' ) {
-						$images++;
-					}
-					if( $cap->post_type == 'embed' ) {
-						$embeds++;
-					}
 					if( $cap->post_type == 'link' ) {
 						$links++;
 					}
@@ -862,14 +791,6 @@
 					if( $texts ) {
 						$texts = regularboardplugin_nicenumbers( $texts );
 						echo '[<a href="?a=texts">Text - ' . $texts . '</a>] ';
-					}
-					if( $images ) {
-						$images = regularboardplugin_nicenumbers( $images );
-						echo '[<a href="?a=images">Images - ' . $images . '</a>] ';
-					}
-					if( $embeds ) {
-						$embeds = regularboardplugin_nicenumbers( $embeds );
-						echo '[<a href="?a=embeds">Embeds - ' . $embeds . '</a>] ';
 					}
 					if( $links ) {
 						$links = regularboardplugin_nicenumbers( $links );
@@ -968,13 +889,9 @@
 							echo '</p>';
 							
 							if( $post_url ) {
-								if( in_array( $post_provider, $supported_providers, true ) ) {
-									echo '</section><div class="mediaEmbed">';
-									
-									new regularboardplugin_MediaEmbed ( $post_provider, $post_url );
-									
-									echo '</div><section>';
-								}
+								echo '</section><div class="mediaEmbed">';
+									echo wp_oembed_get ( $post_url );
+								echo '</div><section>';
 							}								
 							if( $post_comment ) {
 								echo wpautop( regularboardplugin_comment_format( $post_comment ) );
@@ -1239,13 +1156,9 @@
 								echo '</p>';
 								
 								if( $post_url ) {
-									if( in_array( $post_provider, $supported_providers, true ) ) {
-										echo '</section><div class="mediaEmbed">';
-										
-										new regularboardplugin_MediaEmbed ( $post_provider, $post_url );
-										
-										echo '</div><section>';
-									}
+									echo '</section><div class="mediaEmbed">';
+										echo wp_oembed_get ( $post_url );
+									echo '</div><section>';
 								}								
 								if( $post_comment ) {
 									echo wpautop( regularboardplugin_comment_format( $post_comment ) );
@@ -1330,72 +1243,9 @@
 										curl_close ( $ch );
 										$path_info = pathinfo( $check_url );
 										$url_present = 0;
-											if( preg_match( '/\/\/(.*imgur\.com\/.*)/i', $check_url ) ) {
-												if( strpos( $check_url, 'imgur.com/a/' ) !== false) {
-													$post_type         = 'album';
-													$post_provider     = 'imgur album';
-													$post_url          = $check_url;
-													$url_present       = 1;
-												}
-												elseif( strpos( $check_url, 'i.imgur.com/' ) !== false ) {
-													$post_type         = 'image';
-													$post_provider     = 'imgur';
-													$post_url          = $check_url;
-													$url_present       = 1;
-												}
-												
-											}
-											elseif( preg_match( '/\/\/(.*soundcloud\.com\/.*)/i', $check_url ) ) {
-												$post_type         = 'embed';
-												$post_provider     = 'soundcloud';
-												$url_present       = 1;
-											}
-											elseif( preg_match( '/\/\/(.*vimeo\.com\/.*)/i', $check_url ) ) {
-												$post_type         = 'embed';
-												$post_provider     = 'vimeo';
-												$url_present       = 1;
-											}
-											elseif( preg_match( '/\/\/(.*youtube\.com\/.*)/i', $check_url ) ) {
-												$post_type         = 'embed';
-												$post_provider     = 'youtube';
-												$url_present       = 1;
-												if ( preg_match ('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $check_url, $match ) ) {
-													$match[1] = sanitize_text_field ( $match[1] );
-													$video_id  = $match[1];
-													$post_url  = $video_id;
-												}
-											}
-											elseif( preg_match( '/\/\/(.*gfycat\.com\/.*)/i', $check_url ) ) {
-												$post_type         = 'embed';
-												$post_provider     = 'gfycat';
-												$post_url          = $check_url;
-												$url_present       = 1;
-											}
-											elseif( preg_match( '/\/\/(.*vine\.co\/.*)/i', $check_url ) ) {
-												$post_type         = 'embed';
-												$post_provider     = 'vine';
-												$post_url          = $check_url;
-												$url_present       = 1;
-											}
-											elseif( preg_match( '/\/\/(.*funnyordie\.com\/.*)/i', $check_url ) ) {
-												$post_type         = 'embed';
-												$post_provider     = 'funnyordie';
-												$post_url          = $check_url;
-												$url_present       = 1;
-											}
-											elseif( in_array( pathinfo( $check_url, PATHINFO_EXTENSION ), $allowed_image_types, true ) ) {
-												if( getimagesize ( $check_url ) !== false ) {
-													$post_type         = 'image';
-													$post_provider     = 'image';
-													$post_url          = $check_url;
-													$url_present       = 1;
-												}
-											}
-											elseif( !$url_present ) {
-													$post_type             = 'link';
-													$post_provider         = 'link';
-													$post_url              = $check_url;
-											} 
+										$post_type             = 'link';
+										$post_provider         = 'link';
+										$post_url              = $check_url;
 									}
 
 									if( $post_url ) {
@@ -1454,6 +1304,12 @@
 										"UPDATE $regularboardplugin_posts SET post_reply_count = post_reply_count + 1 WHERE post_id = $post_parent"
 									);
 								}
+								$wpdb->query(
+									"UPDATE $regularboardplugin_posts SET post_type = 'link' WHERE post_type = 'embed'"
+								);
+								$wpdb->query(
+									"UPDATE $regularboardplugin_posts SET post_type = 'link' WHERE post_type = 'image'"
+								);
 								$wpdb->query(
 									"UPDATE $regularboardplugin_posts SET post_type = 'text' WHERE post_type = ''"
 								);
@@ -1862,13 +1718,9 @@
 								echo ' <date>' . regularboardplugin_timesince( $post_date ) . '</date>';
 								echo '</p>';
 								if( $reply_mode && $post_url ) {
-									if( in_array( $post_provider, $supported_providers, true ) ) {
-										echo '</section><div class="mediaEmbed">';
-										
-										new regularboardplugin_MediaEmbed ( $post_provider, $post_url );
-										
-										echo '</div><section>';
-									}
+									echo '</section><div class="mediaEmbed">';
+										echo wp_oembed_get ( $post_url );
+									echo '</div><section>';
 								}
 								if( $reply_mode && $post_comment ) {
 									echo wpautop( regularboardplugin_comment_format( $post_comment ) );
@@ -1971,11 +1823,9 @@
 									echo '</p>';
 									
 									if( $post_url ) {
-										if( in_array( $post_provider, $supported_providers, true ) ) {
-											echo '<div class="mediaEmbed">';
-											new regularboardplugin_MediaEmbed ( $post_provider, $post_url );
-											echo '</div>';
-										}
+										echo '<div class="mediaEmbed">';
+											echo wp_oembed_get ( $post_url );
+										echo '</div>';
 									}								
 									if( $reply_mode && $post_comment ) {
 										echo wpautop( regularboardplugin_comment_format( $post_comment ) );

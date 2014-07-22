@@ -3,7 +3,7 @@ Contributors: boyevul
 Tags: anonymous, bbs, bulletin board system, forum
 Requires at least: 3.8.2
 Tested up to: 3.9
-Stable tag: 2.00.0.2
+Stable tag: 2.00.0.3
 
 Text-based anonymous forum.
 
@@ -31,7 +31,7 @@ newest platform.
 * cleaner code
 * DNSBL/SURBL integration
 * front-end moderation (no admin panel)
-* embedding from imgur, soundcloud, vimeo, youtube, remote images, and gfycat (among others)
+* embedding from using oEmbed (http://codex.wordpress.org/Embeds)
 
 == Installation ==
 1. Make sure permalinks aren't default ("pretty permalinks").
@@ -41,6 +41,7 @@ newest platform.
 5. Done.
 
 == Changelog ==
+* 2.00.0.3  oEmbeds now favored over previous embed code. http://codex.wordpress.org/Embeds (because I'm the idiot who tried to reinvent the wheel when the wheel was already round enough)
 * 2.00.0.2  Better embed determination based on preg_match rulesets.
 * 2.00.0.2  Text-posts should now be classified correctly when being submitted.
 * 2.00.0.2  Media embeds use the div container "mediaEmbed" for those of you using a plugin like Fitvids that specifically targets media containers to manipulate content. (.mediaEmbed)
