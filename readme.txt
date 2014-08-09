@@ -1,9 +1,9 @@
 === Regular Board ===
 Contributors: boyevul
 Tags: anonymous, bbs, bulletin board system, forum
-Requires at least: 3.8.2
-Tested up to: 3.9
-Stable tag: 2.00.0.3
+Requires at least: 3.9.1
+Tested up to: 4.0
+Stable tag: 2.00.0.4
 
 Text-based anonymous forum.
 
@@ -41,7 +41,8 @@ newest platform.
 5. Done.
 
 == Changelog ==
-* 2.00.0.3  oEmbeds now favored over previous embed code. http://codex.wordpress.org/Embeds (because I'm the idiot who tried to reinvent the wheel when the wheel was already round enough)
+* 2.00.0.4  error involving got while browsing page numbers fixed
+* 2.00.0.3  oEmbeds now favoured over previous embed code. http://codex.wordpress.org/Embeds (because I'm the idiot who tried to reinvent the wheel when the wheel was already round enough)
 * 2.00.0.2  Better embed determination based on preg_match rulesets.
 * 2.00.0.2  Text-posts should now be classified correctly when being submitted.
 * 2.00.0.2  Media embeds use the div container "mediaEmbed" for those of you using a plugin like Fitvids that specifically targets media containers to manipulate content. (.mediaEmbed)

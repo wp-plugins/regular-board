@@ -1,91 +1,128 @@
 <?php 
-	
-	/****************************************************
 
-		Plugin Name:	Regular Board
-		Version:		2.00.0.3
-		License:		GNU General Public License v2
-		License URI:	//gnu.org/licenses/gpl-2.0.html
-		
-	*****************************************************/
+/**
+ *
+ * Plugin Name: Regular Board
+ * Version: 2.00.0.4
+ * License: GNU General Public License v2
+ * License URI: //gnu.org/licenses/gpl-2.0.html
+ * Author: Matthew Trevino
+ * Author URI: //wordpress.org/plugins/my-optional-modules/
+ *
+ * LICENSE
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License, version 2, as
+ * published by the Free Software Foundation.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program;if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA 
+ *
+ */
+ 
+ /**
+  *
+  * Regular Board Requirements
+  * (1) cURL
+  * (2) PHP5+
+  * (3) WordPress 3.9.1+
+  * (4) "Pretty Permalinks" (not default WordPress permalink structure)
+  *
+  */
 	
-	// (1) Requirements:
-	//     - cURL
-	//     - PHP5+
-	//     - WordPress 3.9.1
-	//     - "Pretty Permalinks" (not default WordPress permalink structure) ("Post Name" setting recommended)
+
+ /**
+  *
+  * Cookie functionality
+  * (1) sets a cookie for the password and name that expires in 30 days
+  * (2) prefills name and password fields in both form and delete area
+  * (3) set it first because we need to set this stuff before everything is sent
+  *
+  */
+$self_domain  = sanitize_text_field( $_SERVER['SERVER_NAME'] );
+if( isset( $_POST['do_post'] ) ) {
+	$expires_days = 30;
+	$expires      = time() + 60 * 60 * 24 * $expires_days;
+	setcookie( 'post_password', sanitize_text_field( $_REQUEST['post_password'] ), $expires, '/', $self_domain );
+	setcookie( 'post_name', sanitize_text_field( $_REQUEST['post_name'] ), $expires, '/', $self_domain );	
+}
+
+/**
+ *
+ * SQL row selection information
+ *
+ */
+$regularboardplugin_posts_select = '
+	post_id, 
+	post_parent, 
+	post_name, 
+	post_date, 
+	post_date_micro,
+	post_email, 
+	post_title, 
+	post_comment, 
+	post_comment_original, 
+	post_edited, 
+	post_moderator_comment, 
+	post_type, 
+	post_url, 
+	post_provider, 
+	post_domain, 
+	post_board, 
+	post_moderator, 
+	post_last, 
+	post_sticky, 
+	post_locked, 
+	post_password, 
+	post_userid, 
+	post_report, 
+	post_reportcount, 
+	post_reply_count, 
+	post_guestip, 
+	post_public, 
+	post_like, 
+	post_dislike, 
+	post_approval_rating, 
+	post_delete_this, 
+	post_banned
+';
+
+/**
+ *
+ * Installation/uninstallation
+ * Handle all of our installation procedures in this area, including 
+ * anything that needs to be taken care upon activation of the 
+ * plugin.
+ *
+ */
 	
-	// (1) Sets a cookie for password and name in post that expires in 30 days
-	// (1) Prefills name and password fields in both form and delete area
-	// (1) Set it first because we need to set this stuff before everything is sent
-	$self_domain  = sanitize_text_field( $_SERVER['SERVER_NAME'] );
-	if( isset( $_POST['do_post'] ) ) {
-		$expires_days = 30;
-		$expires      = time() + 60 * 60 * 24 * $expires_days;
-		setcookie( 'post_password', sanitize_text_field( $_REQUEST['post_password'] ), $expires, '/', $self_domain );
-		setcookie( 'post_name', sanitize_text_field( $_REQUEST['post_name'] ), $expires, '/', $self_domain );	
+// (1) Uncomment the uninstall hook & deactivate/reactivate the plugin to uninstall it.
+// register_activation_hook( __FILE__, 'regularboardplugin_uninstall' );
+if( !function_exists( 'regularboardplugin_uninstall' ) ) {
+
+	function regularboardplugin_uninstall() {
+
+		global $wpdb;
+		$regularboardplugin_posts = $wpdb->prefix . 'regularboardplugin_posts';
+		delete_option( 'regularboardplugin_installed' );
+		$wpdb->query( "DROP TABLE $regularboardplugin_posts" );
+
 	}
 
-	$regularboardplugin_posts_select = '
-		post_id, 
-		post_parent, 
-		post_name, 
-		post_date, 
-		post_date_micro,
-		post_email, 
-		post_title, 
-		post_comment, 
-		post_comment_original, 
-		post_edited, 
-		post_moderator_comment, 
-		post_type, 
-		post_url, 
-		post_provider, 
-		post_domain, 
-		post_board, 
-		post_moderator, 
-		post_last, 
-		post_sticky, 
-		post_locked, 
-		post_password, 
-		post_userid, 
-		post_report, 
-		post_reportcount, 
-		post_reply_count, 
-		post_guestip, 
-		post_public, 
-		post_like, 
-		post_dislike, 
-		post_approval_rating, 
-		post_delete_this, 
-		post_banned
-	';
+}
 
-
-
-
-
-	/****************************************************
-		Installation
-	****************************************************/
-	
-	// (1) Uncomment the uninstall hook & deactivate/reactivate the plugin to uninstall it.
-	// register_activation_hook( __FILE__, 'regularboardplugin_uninstall' );
-	if( !function_exists( 'regularboardplugin_uninstall' ) ) {
-		function regularboardplugin_uninstall() {
-			global $wpdb;
-			$regularboardplugin_posts = $wpdb->prefix . 'regularboardplugin_posts';
-			delete_option( 'regularboardplugin_installed' );
-			$wpdb->query( "DROP TABLE $regularboardplugin_posts" );
-		}
-	}
-
-	if( !get_option( 'regularboardplugin_installed' ) ) {
-	
+// (1) Check to see if Regular Board has been installed previously
+if( !get_option( 'regularboardplugin_installed' ) ) {
 	
 		if( !function_exists( 'clean_up_old_regularboard' ) ) {
-			register_activation_hook( __FILE__, 'clean_up_old_regularboard' );		
+			
+			// Upgrade from previous versions that use outdated code and references
+			register_activation_hook( __FILE__, 'clean_up_old_regularboard' );
 			function clean_up_old_regularboard() {
+			
 				global $wpdb;
 				
 				$rb_table_1 = $wpdb->prefix . 'regular_board_posts';
@@ -95,29 +132,49 @@
 				$rb_table_5 = $wpdb->prefix . 'regular_board_logs';
 				$rb_table_6 = $wpdb->prefix . 'regular_board_friends';
 				$rb_table_7 = $wpdb->prefix . 'regular_board_messages';
-				
+
 				if( $wpdb->get_var( "SHOW TABLES LIKE '$rb_table_1'" ) == $rb_table_1 ){ 
+
 					$wpdb->query( "DROP TABLE $rb_table_1" );
+
 				}
+
 				if( $wpdb->get_var( "SHOW TABLES LIKE '$rb_table_2'" ) == $rb_table_2 ){ 
+
 					$wpdb->query( "DROP TABLE $rb_table_2" );
+
 				}
+
 				if( $wpdb->get_var( "SHOW TABLES LIKE '$rb_table_3'" ) == $rb_table_3 ){ 
+
 					$wpdb->query( "DROP TABLE $rb_table_3" );
+
 				}
+
 				if( $wpdb->get_var( "SHOW TABLES LIKE '$rb_table_4'" ) == $rb_table_4 ){ 
+
 					$wpdb->query( "DROP TABLE $rb_table_4" );
+
 				}
+
 				if( $wpdb->get_var( "SHOW TABLES LIKE '$rb_table_5'" ) == $rb_table_5 ){ 
+
 					$wpdb->query( "DROP TABLE $rb_table_5" );
+
 				}
+
 				if( $wpdb->get_var( "SHOW TABLES LIKE '$rb_table_6'" ) == $rb_table_6 ){ 
+
 					$wpdb->query( "DROP TABLE $rb_table_6" );
+
 				}
+
 				if( $wpdb->get_var( "SHOW TABLES LIKE '$rb_table_6'" ) == $rb_table_7 ){ 
+
 					$wpdb->query( "DROP TABLE $rb_table_7" );
+
 				}
-				
+
 				// (1) Clean up after the original Regular Board
 				$original_regular_board_options = array( 
 					'regular_board_noindexboards',
@@ -168,19 +225,28 @@
 					'regular_board_postingoptions',
 					'regular_board_installation'
 				);
+
 				foreach( $original_regular_board_options as &$o ) {
+
 					if( get_option( $o ) ) {
+
 						delete_option( $o );
+
 					}
+
 				}
+
 			}
+
 		}
-		
-	
+
+
 		// (1) Comment this activation hook out if uninstalling the plugin
 		if( !function_exists( 'regularboardplugin_install' ) ) {
-			register_activation_hook( __FILE__, 'regularboardplugin_install' );		
+
+			register_activation_hook( __FILE__, 'regularboardplugin_install' );			
 			function regularboardplugin_install() {
+
 				global $wpdb, $regularboardplugin_posts;			
 				$regularboardplugin_posts = $wpdb->prefix . 'regularboardplugin_posts';
 				$posts = "CREATE TABLE $regularboardplugin_posts( 
@@ -218,34 +284,45 @@
 					post_banned BIGINT(20) NOT NULL ,
 					PRIMARY KEY( post_id )
 				);";
-				
+
 				require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 				dbDelta( $posts );
 				update_option( 'regularboardplugin_installed', 1 );
+
 			}
+
 		}
+
 	}
+
+
+
+
+
+/**
+ *
+ * Plugin Base
+ *
+ */
+define( 'regularboardplugin_plugin', true );
+require_once( ABSPATH . 'wp-includes/pluggable.php' );
 	
+// (1) Determine if user is logged into WordPress
+// (2) Determine if user is an admin
+$current_user_is_an_admin = $is_current_logged_in = $is_current_an_admin = 0;
+
+if( is_user_logged_in() ) {
+
+	$is_current_logged_in = wp_get_current_user();
+	$is_current_an_admin  = $is_current_logged_in->user_login;
 	
-	
-	
-	
-	/****************************************************
-		Plugin Base
-	****************************************************/
-	define( 'regularboardplugin_plugin', true );
-	require_once( ABSPATH . 'wp-includes/pluggable.php' );
-	
-	// (1) Determine if user is logged into WordPress
-	// (2) Determine if user is an admin
-	$current_user_is_an_admin = $is_current_logged_in = $is_current_an_admin = 0;
-	if( is_user_logged_in() ) {
-		$is_current_logged_in = wp_get_current_user();
-		$is_current_an_admin  = $is_current_logged_in->user_login;
-		if( current_user_can( 'manage_options' ) ) {
-			$current_user_is_an_admin = 1;
-		}		
+	if( current_user_can( 'manage_options' ) ) {
+
+		$current_user_is_an_admin = 1;
+
 	}
+
+}
 	
 	
 	/****************************************************
@@ -315,7 +392,7 @@
 		include ( ABSPATH . '/regular_board_config.php' );
 	}
 	
-	$location = '';
+	$got = $get = $location = '';
 	if( isset( $_GET['a'] ) || isset( $_GET['b'] ) || isset( $_GET['t'] ) || isset( $_GET['u'] ) || isset( $_GET['n'] ) ) {
 		if( isset( $_GET['a'] ) ) {
 			$get              = 'a';
