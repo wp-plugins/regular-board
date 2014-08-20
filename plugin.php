@@ -3,7 +3,7 @@
 /**
  *
  * Plugin Name: Regular Board
- * Version: 2.00.0.4
+ * Version: 2.00.0.6
  * License: GNU General Public License v2
  * License URI: //gnu.org/licenses/gpl-2.0.html
  * Author: Matthew Trevino
@@ -34,14 +34,14 @@
   */
 	
 
- /**
-  *
-  * Cookie functionality
-  * (1) sets a cookie for the password and name that expires in 30 days
-  * (2) prefills name and password fields in both form and delete area
-  * (3) set it first because we need to set this stuff before everything is sent
-  *
-  */
+/**
+ *
+ * Cookie functionality
+ * (1) sets a cookie for the password and name that expires in 30 days
+ * (2) prefills name and password fields in both form and delete area
+ * (3) set it first because we need to set this stuff before everything is sent
+ *
+ */
 $self_domain  = sanitize_text_field( $_SERVER['SERVER_NAME'] );
 if( isset( $_POST['do_post'] ) ) {
 	$expires_days = 30;
@@ -49,6 +49,121 @@ if( isset( $_POST['do_post'] ) ) {
 	setcookie( 'post_password', sanitize_text_field( $_REQUEST['post_password'] ), $expires, '/', $self_domain );
 	setcookie( 'post_name', sanitize_text_field( $_REQUEST['post_name'] ), $expires, '/', $self_domain );	
 }
+
+/**
+ *
+ * Media embed class for media output
+ *
+ */
+class regularBoard_mediaEmbed {
+	var $url;
+	function regularBoard_mediaEmbed ( $url ) {
+		$url  = esc_url ( $url );
+		$chck = strtolower( $url );
+		$chck = sanitize_text_field( $url );
+		$url  = sanitize_text_field( $url );
+		if( preg_match( '/\/\/(.*imgur\.com\/.*)/i', $url ) ) {
+			if( strpos( $chck, 'imgur.com/a/' ) !== false ) {
+				$url = substr ( $url, 19 );
+				echo '<iframe class="imgur-album" width="100%" height="550" frameborder="0" src="//imgur.com/a/' . $url . '/embed"></iframe>'; 
+			} else {
+				$url = esc_url ( $url );
+				echo '<a href="' . $url . '"><img class="image" alt="image" src="' . $url . '"/></a>';
+			}
+		}
+		elseif( preg_match( '/\/\/(.*youtube\.com\/.*)/i', $url ) ) {
+			if ( preg_match ('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $url, $match ) ) {
+				$match[1] = sanitize_text_field ( $match[1] );
+				$video_id = $match[1];
+				$url      = $video_id;
+			}
+			echo '
+			<object width="640" height="390" data="https://www.youtube.com/v/' . $url . '?version=3">
+				<param name="movie" value="https://www.youtube.com/v/' . $url . '?version=3" />
+				<param name="allowScriptAccess" value="always" />
+				<embed src="https://www.youtube.com/v/' . $url . '?version=3"
+					type="application/x-shockwave-flash"
+					allowscriptaccess="always"
+					width="640" 
+					height="390" />
+				
+			</object>
+			';              
+		}
+		elseif( preg_match( '/\/\/(.*liveleak\.com\/.*)/i', $url ) ) {
+			$url      = parse_url( $url );
+			$video_id = str_replace( 'i=', '', $url['query'] );
+			echo '
+				<object width="640" height="390" data="http://www.liveleak.com/e/' . $video_id . '">
+					<param name="movie" value="http://www.liveleak.com/e/' . $video_id . '" />
+					<param name="wmode" value="transparent" />
+					<embed src="http://www.liveleak.com/e/' . $video_id . '" 
+						type="application/x-shockwave-flash" 
+						wmode="transparent" 
+						width="640" 
+						height="390" />
+				</object>
+			';              
+		}			
+		elseif( preg_match( '/\/\/(.*youtu\.be\/.*)/i', $url ) ) {
+			$url = explode( '/', $url );
+			$url = $url[sizeof($url)-1];
+			echo '
+			<object width="640" height="390" data="https://www.youtube.com/v/' . $url . '?version=3">
+				<param name="movie" value="https://www.youtube.com/v/' . $url . '?version=3" />
+				<param name="allowScriptAccess" value="always" />
+				<embed src="https://www.youtube.com/v/' . $url . '?version=3"
+					type="application/x-shockwave-flash"
+					allowscriptaccess="always"
+					width="640" 
+					height="390" />
+			</object>
+			';              
+		}           
+		elseif( preg_match( '/\/\/(.*soundcloud\.com\/.*)/i', $url ) ) {
+			echo '<iframe width="100%" height="166" scrolling="no" frameborder="no" src="http://w.soundcloud.com/player/?url=' . $url . '&auto_play=false&color=915f33&theme_color=00FF00"></iframe>'; 
+		}
+		elseif( preg_match( '/\/\/(.*vimeo\.com\/.*)/i', $url ) ) {
+			$url = explode( '/', $url );
+			$url = $url[sizeof($url)-1];
+			echo '<iframe src="//player.vimeo.com/video/' . $url . '?title=0&amp;byline=0&amp;portrait=0&amp;color=d6cece" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'; 
+		}
+		elseif( preg_match( '/\/\/(.*gfycat\.com\/.*)/i', $url ) ) {
+			$url = str_replace ( '//gfycat.com/', '', $url );
+			echo '<iframe src="//gfycat.com/iframe/' . $url . '" frameborder="0" scrolling="no" width="592" height="320" ></iframe>';
+		}
+		elseif( preg_match( '/\/\/(.*funnyordie\.com\/.*)/i', $url ) ) {
+			$url = explode( '/', $url );
+			$url = $url[sizeof($url)-2];
+			echo '
+			<object width="640" height="400" id="ordie_player_' . $url . '" data="http://player.ordienetworks.com/flash/fodplayer.swf">
+				<param name="movie" value="http://player.ordienetworks.com/flash/fodplayer.swf" />
+				<param name="flashvars" value="key=' . $url . '" />
+				<param name="allowfullscreen" value="true" />
+				<param name="allowscriptaccess" value="always">
+				<embed width="640" height="400" flashvars="key=' . $url . '" allowfullscreen="true" allowscriptaccess="always" quality="high" src="http://player.ordienetworks.com/flash/fodplayer.swf" name="ordie_player_5325b03b52" type="application/x-shockwave-flash"></embed>
+			</object>
+			';
+		}
+		elseif( preg_match( '/\/\/(.*vine\.co\/.*)/i', $url ) ) {
+			$url = $url . '/embed/postcard';
+			echo '<iframe class="vine-embed" src="' . $url . '" width="600" height="600" frameborder="0"></iframe><script async src="//platform.vine.co/static/scripts/embed.js" charset="utf-8"></script>';
+		}
+		else {
+			return;
+		}
+	}
+}
+
+/**
+ *
+ * Enqueue scripts
+ *
+ */
+function regular_board_scripts(){
+	wp_enqueue_script( 'fittext', plugins_url().'/regular_board/includes/script/script.js', array( 'jquery' ) );
+}
+add_action('wp_enqueue_scripts','regular_board_scripts'); 
 
 /**
  *
@@ -332,55 +447,14 @@ if( is_user_logged_in() ) {
 		function regularboardplugin_board_css() {
 			global $post;
 			if( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'regular board') ) {
-				echo '
-				<style type="text/css" media="screen">
-				.regularboardplugin_container *,.regularboardplugin_container *:before,.regularboardplugin_container *:after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box;}
-				.regularboardplugin_container{border-radius:2px;margin:0 auto;display:block;border-radius:2px;overflow:hidden;}
-				.regularboardplugin_container .pages,.regularboardplugin_container .filter_by,.regularboardplugin_container .admin_actions{width:100%;display:block;margin:0 auto;color:rgba(0,0,0,.5);padding:5px;font-size:65%;border-top:1px solid rgba(0,0,0,.1);}
-				.regularboardplugin_container .pages a{padding:5px;background-color:rgba(0,0,0,.5);color:#e5f5ff;}
-				.regularboardplugin_container .name a{color:#fff;}
-				.regularboardplugin_container .filter_by a:hover, .regularboardplugin_container .admin_actions a:hover{text-decoration:none;}
-				.regularboardplugin_container .filter_by a, .regularboardplugin_container .admin_actions a{color:rgba(44,129,183,.8);text-decoration:none;border:none;padding:2px;}
-				.regularboardplugin_container .left{float:left;}
-				.regularboardplugin_container .right{float:right;}
-				.regularboardplugin_container section{padding:5px;display:block;margin:0 auto 5px;width:100%;border-radius:2px;border:1px solid rgba(0,0,0,.1);border-bottom:1px solid rgba(0,0,0,.1);overflow:hidden;}
-				.regularboardplugin_container section a{color:#2d709a;}
-				.regularboardplugin_container small.domain{font-size:55%;padding:2px;border-radius:2px;border:1px solid rgba(0,0,0,.1);color:rgba(255,255,255,.8);cursor:default;}
-				.regularboardplugin_container p{padding:5px;margin:10px;}	
-				.regularboardplugin_container .mediaEmbed{margin:-4px auto;display:block;position:relative;z-index:3;width:100%;}
-				.regularboardplugin_container .mediaEmbed img{-webkit-box-shadow: 0 0 5px 2px rgba(0,0,0,.1);box-shadow: 0 0 5px 2px rgba(0,0,0,.1);width:100%;}
-				.regularboardplugin_container img{max-width:100%;margin:5px auto;}
-				.regularboardplugin_container .mod_comment{color:red;padding:5px 0;border-top:1px solid rgba(0,0,0,.1);}
-				.regularboardplugin_container .banned{font-size:75%;padding:2px;border:1px solid rgba(0,0,0,.1);background-color:rgba(0,0,0,.8);color:rgba(255,255,255,.9);}
-				.regularboardplugin_container .submission_links{width:100%;clear:both;display:block;padding:5px;border-top:1px solid rgba(0,0,0,.1);}
-				.regularboardplugin_container .submission_links a{padding:5px;border-radius:2px;border:1px solid rgba(0,0,0,.1);text-decoration:none;margin:2px;width:32%;float:left;display:block;font-size:75%;text-align:center;}
-				.regularboardplugin_container .submission_links a:hover{-webkit-box-shadow: 0 0 5px 1px rgba(0,0,0,.1);box-shadow: 0 0 5px 1px rgba(0,0,0,.1);}
-				.regularboardplugin_container small{font-size:75%;}
-				.regularboardplugin_container date,.regularboardplugin_container small.user{font-size:60%;padding:5px;border-radius:2px;border:1px solid rgba(0,0,0,.1);background-color:rgba(0,0,0,.5);color:rgba(255,255,255,.8);cursor:default;}
-				.regularboardplugin_container small.name,.regularboardplugin_container small.score{font-size:60%;padding:5px;border-radius:2px;border:1px solid rgba(0,0,0,.1);background-color:green;color:rgba(255,255,255,.9);cursor:default;}
-				.regularboardplugin_container form input[type="checkbox"]{float:left;clear:none;width:25px;margin:20px 0 -10px 0;}
-				.regularboardplugin_container form div.clear{clear:both;display:block;margin:5px auto;width:100%;}
-				.regularboardplugin_container .pages:after,.regularboardplugin_container .filter_by:after,.regularboardplugin_container .admin_actions:after,.regularboardplugin_container .submission_links:after,.regularboardplugin_container form div.clear:after{clear:both;content:"";display:table;}
-				.regularboardplugin_container form div.small{width:25%;float:right;margin:2px;}
-				.regularboardplugin_container form div.small_input{width:28%;float:left;margin:1px;clear:none;}
-				.regularboardplugin_container form.create div.float{float:left;margin:1px;width:49%;}
-				.regularboardplugin_container form.create label,.regularboardplugin_container form input{padding:5px;width:100%;margin:5px auto 0;}
-				.regularboardplugin_container form.create label{font-size:75%;clear:both;display:block;}
-				.regularboardplugin_container form.create input{font-size:105%;}
-				.regularboardplugin_container input[type="checkbox"].confirm{clear:both;margin:5px auto;display:block;}
-				.regularboardplugin_container form input[type="submit"]{margin:0;clear:both;display:block;}
-				.regularboardplugin_container form.create input#post_url,.regularboardplugin_container form.create input[type="submit"]{width:99%;}
-				.regularboardplugin_container form.create textarea{height:150px;width:99%;}
-				.regularboardplugin_container form{border-radius:2px;padding:5px;margin:0 auto;width:100%;}
-				.regularboardplugin_container .information{padding:5px;text-align:center;background-color:rgba(0,0,0,.7);color:rgba(255,255,255,.8);margin:0 auto;width:100%;display:block;cursor:default;border-top:1px solid rgba(255,255,255,.1);}
-				.regularboardplugin_container .parent{border:0!important;}
-				.regularboardplugin_container .hidden_element{display:none;visibility:Hidden;}
-				</style>
-				';
+				$myStyleFile = WP_PLUGIN_URL . '/regular_board/includes/css/css.css';
+				wp_register_style( 'regular_board', $myStyleFile );
+				wp_enqueue_style( 'regular_board' );
 			}
 		}
 	}
 	
+	add_action( 'wp_print_styles', 'regularboardplugin_board_css' );
 	
 	
 	
@@ -430,7 +504,7 @@ if( is_user_logged_in() ) {
 	$error_no_posts        = 'No posts to display.';
 	$new_content           = '';
 	if( isset( $_GET['t'] ) ) {
-		$posting_mode      = '<span class="information">Posting Mode: Reply (Click to expand)</span>';
+		$posting_mode      = '<span class="information reply_mode_toggle">Posting Mode: Reply (Click to expand)</span>';
 	} else {
 		if( isset( $_GET['a'] ) && $_GET['a'] == 'linkpost' ) {
 			$new_content = 'Link';
@@ -823,7 +897,7 @@ if( is_user_logged_in() ) {
 	// (1) :: valid
 	// (1) :: not listed on the DNSBL servers provided
 	function regularboardplugin_shortcode() {
-		global $postsperthread, $postsperpage, $page_number, $location, $get, $got, $self_domain, $expires, $allowed_image_types, $page, $wpdb, $wp, $post, $content, $ipaddress, $regularboardplugin_posts_select, $error_no_posts, $posting_mode, $no_url_error, $current_user_is_an_admin, $is_current_logged_in, $is_current_an_admin, $admin_code, $guest_code, $user_code, $supported_providers;
+		global $postsperthread, $postsperpage, $page_number, $location, $get, $got, $self_domain, $expires, $page, $wpdb, $wp, $post, $content, $ipaddress, $regularboardplugin_posts_select, $error_no_posts, $posting_mode, $no_url_error, $current_user_is_an_admin, $is_current_logged_in, $is_current_an_admin, $admin_code, $guest_code, $user_code, $supported_providers;
 		$regularboardplugin_posts = $wpdb->prefix . 'regularboardplugin_posts';
 		echo '<div class="regularboardplugin_container">';
 		if( $ipaddress !== false ) {
@@ -967,7 +1041,7 @@ if( is_user_logged_in() ) {
 							
 							if( $post_url ) {
 								echo '</section><div class="mediaEmbed">';
-									echo wp_oembed_get ( $post_url );
+									new regularBoard_mediaEmbed ( $post_url );
 								echo '</div><section>';
 							}								
 							if( $post_comment ) {
@@ -1013,6 +1087,7 @@ if( is_user_logged_in() ) {
 				} else {
 					echo '<section>You do not have permission to view this.</section>';
 				}
+				echo '</form>';
 			} else {
 			
 				// (1) Database results
@@ -1117,7 +1192,7 @@ if( is_user_logged_in() ) {
 				}
 				
 				function regularboardplugin_do_post() {
-					global $random_password, $self_domain, $expires, $wpdb, $wp, $post, $ipaddress, $allowed_image_types, $regularboardplugin_posts_select, $no_url_error, $no_comment_error, $no_title_error, $current_user_is_an_admin, $is_current_logged_in, $is_current_an_admin;
+					global $random_password, $self_domain, $expires, $wpdb, $wp, $post, $ipaddress, $regularboardplugin_posts_select, $no_url_error, $no_comment_error, $no_title_error, $current_user_is_an_admin, $is_current_logged_in, $is_current_an_admin;
 					$regularboardplugin_posts = $wpdb->prefix . 'regularboardplugin_posts';
 					if( isset( $_GET['t'] ) ) {
 						if( is_numeric( $_GET['t'] ) ) {
@@ -1234,7 +1309,7 @@ if( is_user_logged_in() ) {
 								
 								if( $post_url ) {
 									echo '</section><div class="mediaEmbed">';
-										echo wp_oembed_get ( $post_url );
+										new regularBoard_mediaEmbed ( $post_url );
 									echo '</div><section>';
 								}								
 								if( $post_comment ) {
@@ -1660,7 +1735,7 @@ if( is_user_logged_in() ) {
 
 				echo '<span class="submission_links">';
 				if( isset( $_GET['a'] ) && $_GET['a'] == 'linkpost' || isset( $_GET['a'] ) && $_GET['a'] == 'selfpost' || $reply_mode ) {			
-					echo '<a href="' . get_permalink() . '">Return</a>';
+					echo '<a class="return_link" href="' . get_permalink() . '">Return</a>';
 				}
 				echo '<a href="?a=linkpost">Submit a link</a> <a href="?a=selfpost">Submit a text post</a>';
 				echo '</span>';
@@ -1671,17 +1746,6 @@ if( is_user_logged_in() ) {
 				
 				if( isset( $_GET['a'] ) && $_GET['a'] == 'linkpost' || isset( $_GET['a'] ) && $_GET['a'] == 'selfpost' || $reply_mode ) {
 					if( $reply_mode && count( $results ) > 0 || $reply_mode && count( $replies ) > 0 || !$reply_mode ) {
-						if( $reply_mode ) { 
-							echo '<script type="text/javascript">
-							jQuery(document).ready(function(){
-								jQuery(\'.reply_mode_form\').addClass(\'hidden_element\');
-								jQuery(\'.reply_mode_toggle\').live(\'click\', function(event) {        
-									 jQuery(\'.reply_mode_form\').toggleClass(\'hidden_element\');
-								});
-							});
-							</script>';
-							echo '<span class="reply_mode_toggle">';
-						}
 						echo $posting_mode;
 						if( $reply_mode ) { 
 							echo '</span>';
@@ -1796,7 +1860,7 @@ if( is_user_logged_in() ) {
 								echo '</p>';
 								if( $reply_mode && $post_url ) {
 									echo '</section><div class="mediaEmbed">';
-										echo wp_oembed_get ( $post_url );
+										new regularBoard_mediaEmbed ( $post_url );
 									echo '</div><section>';
 								}
 								if( $reply_mode && $post_comment ) {
@@ -1901,7 +1965,7 @@ if( is_user_logged_in() ) {
 									
 									if( $post_url ) {
 										echo '<div class="mediaEmbed">';
-											echo wp_oembed_get ( $post_url );
+											new regularBoard_mediaEmbed ( $post_url );
 										echo '</div>';
 									}								
 									if( $reply_mode && $post_comment ) {

@@ -1,0 +1,42 @@
+.regularboardplugin_container *,.regularboardplugin_container *:before,.regularboardplugin_container *:after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box;}
+.regularboardplugin_container{border-radius:2px;margin:0 auto;display:block;border-radius:2px;overflow:hidden;}
+.regularboardplugin_container .pages,.regularboardplugin_container .filter_by,.regularboardplugin_container .admin_actions{width:100%;display:block;margin:0 auto;color:rgba(0,0,0,.5);padding:5px;font-size:65%;border-top:1px solid rgba(0,0,0,.1);}
+.regularboardplugin_container .pages a{padding:5px;background-color:rgba(0,0,0,.5);color:#e5f5ff;}
+.regularboardplugin_container .name a{color:#fff;}
+.regularboardplugin_container .filter_by a:hover, .regularboardplugin_container .admin_actions a:hover{text-decoration:none;}
+.regularboardplugin_container .filter_by a, .regularboardplugin_container .admin_actions a{color:rgba(44,129,183,.8);text-decoration:none;border:none;padding:2px;}
+.regularboardplugin_container .left{float:left;}
+.regularboardplugin_container .right{float:right;}
+.regularboardplugin_container section{padding:5px;display:block;margin:0 auto 5px;width:100%;border-radius:2px;border:1px solid rgba(0,0,0,.1);border-bottom:1px solid rgba(0,0,0,.1);overflow:hidden;}
+.regularboardplugin_container section a{color:#2d709a;}
+.regularboardplugin_container small.domain{font-size:55%;padding:2px;border-radius:2px;border:1px solid rgba(0,0,0,.1);color:rgba(255,255,255,.8);cursor:default;}
+.regularboardplugin_container p{padding:5px;margin:10px;}	
+.regularboardplugin_container .mediaEmbed{margin:-4px auto;display:block;position:relative;z-index:3;width:100%;}
+.regularboardplugin_container .mediaEmbed img{-webkit-box-shadow: 0 0 5px 2px rgba(0,0,0,.1);box-shadow: 0 0 5px 2px rgba(0,0,0,.1);width:100%;}
+.regularboardplugin_container img{max-width:100%;margin:5px auto;}
+.regularboardplugin_container .mod_comment{color:red;padding:5px 0;border-top:1px solid rgba(0,0,0,.1);}
+.regularboardplugin_container .banned{font-size:75%;padding:2px;border:1px solid rgba(0,0,0,.1);background-color:rgba(0,0,0,.8);color:rgba(255,255,255,.9);}
+.regularboardplugin_container .submission_links{width:100%;clear:both;display:block;padding:5px;border-top:1px solid rgba(0,0,0,.1);}
+.regularboardplugin_container .submission_links a{padding:5px;border-radius:2px;border:1px solid rgba(0,0,0,.1);text-decoration:none;margin:2px;width:31%;float:left;display:block;font-size:75%;text-align:center;}
+.regularboardplugin_container .submission_links a.return_link{float:right;}
+.regularboardplugin_container .submission_links a:hover{background-color: rgba(0,0,0,.8);color: rgba(255,255,255,.5);}
+.regularboardplugin_container small{font-size:75%;}
+.regularboardplugin_container date,.regularboardplugin_container small.user{font-size:60%;padding:5px;border-radius:2px;border:1px solid rgba(0,0,0,.1);background-color:rgba(0,0,0,.5);color:rgba(255,255,255,.8);cursor:default;}
+.regularboardplugin_container small.name,.regularboardplugin_container small.score{font-size:60%;padding:5px;border-radius:2px;border:1px solid rgba(0,0,0,.1);background-color:green;color:rgba(255,255,255,.9);cursor:default;}
+.regularboardplugin_container form input[type="checkbox"]{float:left;clear:none;width:25px;margin:20px 0 -10px 0;}
+.regularboardplugin_container form div.clear{clear:both;display:block;margin:5px auto;width:100%;}
+.regularboardplugin_container .pages:after,.regularboardplugin_container .filter_by:after,.regularboardplugin_container .admin_actions:after,.regularboardplugin_container .submission_links:after,.regularboardplugin_container form div.clear:after{clear:both;content:"";display:table;}
+.regularboardplugin_container form div.small{width:25%;float:right;margin:2px;}
+.regularboardplugin_container form div.small_input{width:28%;float:left;margin:1px;clear:none;}
+.regularboardplugin_container form.create div.float{float:left;margin:1px;width:49%;}
+.regularboardplugin_container form.create label,.regularboardplugin_container form input{padding:5px;width:100%;margin:5px auto 0;}
+.regularboardplugin_container form.create label{font-size:75%;clear:both;display:block;}
+.regularboardplugin_container form.create input{font-size:105%;}
+.regularboardplugin_container input[type="checkbox"].confirm{clear:both;margin:5px auto;display:block;}
+.regularboardplugin_container form input[type="submit"]{margin:0;clear:both;display:block;}
+.regularboardplugin_container form.create input#post_url,.regularboardplugin_container form.create input[type="submit"]{width:99%;}
+.regularboardplugin_container form.create textarea{height:150px;width:99%;}
+.regularboardplugin_container form{border-radius:2px;padding:5px;margin:0 auto;width:100%;}
+.regularboardplugin_container .information{padding:5px;text-align:center;background-color:rgba(0,0,0,.7);color:rgba(255,255,255,.8);margin:0 auto;width:100%;display:block;cursor:default;border-top:1px solid rgba(255,255,255,.1);}
+.regularboardplugin_container .parent{border:0!important;}
+.regularboardplugin_container .hidden_element{display:none;visibility:Hidden;}

@@ -3,7 +3,7 @@ Contributors: boyevul
 Tags: anonymous, bbs, bulletin board system, forum
 Requires at least: 3.9.1
 Tested up to: 4.0
-Stable tag: 2.00.0.4
+Stable tag: 2.00.0.6
 
 Text-based anonymous forum.
 
@@ -31,7 +31,7 @@ newest platform.
 * cleaner code
 * DNSBL/SURBL integration
 * front-end moderation (no admin panel)
-* embedding from using oEmbed (http://codex.wordpress.org/Embeds)
+* embedding enabled for Imgur, Youtube, LiveLeak, Soundcloud, gfycat, Funny or Die, and Vine.
 
 == Installation ==
 1. Make sure permalinks aren't default ("pretty permalinks").
@@ -41,6 +41,11 @@ newest platform.
 5. Done.
 
 == Changelog ==
+* 2.00.0.6  Fitvids (//fitvidsjs.com/) added for media embeds.
+* 2.00.0.6  oEmbeds ditched. Previous method reinstated: imgur, youtube, liveleak, soundcloud, gfycat, funnyordie, vine supported.
+* 2.00.0.6  Reply mode toggle form altered; script.js added to handle all board-related scripts
+* 2.00.0.5  Closed an open form on the bans area (affected admin only)
+* 2.00.0.5  CSS moved to include (instead of being output into header)
 * 2.00.0.4  error involving got while browsing page numbers fixed
 * 2.00.0.3  oEmbeds now favoured over previous embed code. http://codex.wordpress.org/Embeds (because I'm the idiot who tried to reinvent the wheel when the wheel was already round enough)
 * 2.00.0.2  Better embed determination based on preg_match rulesets.
