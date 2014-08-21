@@ -3,7 +3,7 @@
 /**
  *
  * Plugin Name: Regular Board
- * Version: 2.00.0.6
+ * Version: 2.00.0.7
  * License: GNU General Public License v2
  * License URI: //gnu.org/licenses/gpl-2.0.html
  * Author: Matthew Trevino
@@ -42,12 +42,12 @@
  * (3) set it first because we need to set this stuff before everything is sent
  *
  */
-$self_domain  = sanitize_text_field( $_SERVER['SERVER_NAME'] );
-if( isset( $_POST['do_post'] ) ) {
+$self_domain  = sanitize_text_field( $_SERVER[ 'SERVER_NAME' ] );
+if( isset( $_POST[ 'do_post' ] ) ) {
 	$expires_days = 30;
 	$expires      = time() + 60 * 60 * 24 * $expires_days;
-	setcookie( 'post_password', sanitize_text_field( $_REQUEST['post_password'] ), $expires, '/', $self_domain );
-	setcookie( 'post_name', sanitize_text_field( $_REQUEST['post_name'] ), $expires, '/', $self_domain );	
+	setcookie( 'post_password', sanitize_text_field( $_REQUEST[ 'post_password' ] ), $expires, '/', $self_domain );
+	setcookie( 'post_name', sanitize_text_field( $_REQUEST[ 'post_name' ] ), $expires, '/', $self_domain );	
 }
 
 /**
@@ -92,7 +92,7 @@ class regularBoard_mediaEmbed {
 		}
 		elseif( preg_match( '/\/\/(.*liveleak\.com\/.*)/i', $url ) ) {
 			$url      = parse_url( $url );
-			$video_id = str_replace( 'i=', '', $url['query'] );
+			$video_id = str_replace( 'i=', '', $url[ 'query' ] );
 			echo '
 				<object width="640" height="390" data="http://www.liveleak.com/e/' . $video_id . '">
 					<param name="movie" value="http://www.liveleak.com/e/' . $video_id . '" />
@@ -467,25 +467,25 @@ if( is_user_logged_in() ) {
 	}
 	
 	$got = $get = $location = '';
-	if( isset( $_GET['a'] ) || isset( $_GET['b'] ) || isset( $_GET['t'] ) || isset( $_GET['u'] ) || isset( $_GET['n'] ) ) {
-		if( isset( $_GET['a'] ) ) {
+	if( isset( $_GET[ 'a' ] ) || isset( $_GET[ 'b' ] ) || isset( $_GET[ 't' ] ) || isset( $_GET[ 'u' ] ) || isset( $_GET[ 'n' ] ) ) {
+		if( isset( $_GET[ 'a' ] ) ) {
 			$get              = 'a';
-			$got = $_GET['a'] = sanitize_text_field( $_GET['a'] );
+			$got = $_GET[ 'a' ] = sanitize_text_field( $_GET[ 'a' ] );
 		}
-		if( isset( $_GET['u'] ) ) {
+		if( isset( $_GET[ 'u' ] ) ) {
 			$get              = 'u';
-			$got = $_GET['u'] = sanitize_text_field( $_GET['u'] );
+			$got = $_GET[ 'u' ] = sanitize_text_field( $_GET[ 'u' ] );
 		}		
-		if( isset( $_GET['b'] ) ) {
+		if( isset( $_GET[ 'b' ] ) ) {
 			$get              = 'b';
-			$got = $_GET['b'] = sanitize_text_field( $_GET['b'] );
+			$got = $_GET[ 'b' ] = sanitize_text_field( $_GET[ 'b' ] );
 		}
-		if( isset( $_GET['t'] ) ) {
+		if( isset( $_GET[ 't' ] ) ) {
 			$get              = 't';
-			$got = $_GET['t'] = sanitize_text_field( $_GET['t'] );
+			$got = $_GET[ 't' ] = sanitize_text_field( $_GET[ 't' ] );
 		}
-		if( isset( $_GET['n'] ) ) {
-			$page_number = $_GET['n'] = intval( $_GET['n'] );
+		if( isset( $_GET[ 'n' ] ) ) {
+			$page_number = $_GET[ 'n' ] = intval( $_GET[ 'n' ] );
 			if( $got ) {
 				$location    = '?' . $get . '=' . $got . '&n=' . $page_number;
 			} else {
@@ -503,12 +503,12 @@ if( is_user_logged_in() ) {
 	****************************************************/
 	$error_no_posts        = 'No posts to display.';
 	$new_content           = '';
-	if( isset( $_GET['t'] ) ) {
+	if( isset( $_GET[ 't' ] ) ) {
 		$posting_mode      = '<span class="information reply_mode_toggle">Posting Mode: Reply (Click to expand)</span>';
 	} else {
-		if( isset( $_GET['a'] ) && $_GET['a'] == 'linkpost' ) {
+		if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' ) {
 			$new_content = 'Link';
-		} elseif ( isset( $_GET['a'] ) && $_GET['a'] == 'selfpost' ) {
+		} elseif ( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' ) {
 			$new_content = 'Self Post';
 		}
 		$posting_mode      = '<span class="information">Posting Mode: New ' . $new_content . '</span>';
@@ -588,7 +588,7 @@ if( is_user_logged_in() ) {
 	if( !function_exists( 'regularboardplugin_fix_canonical' ) ) {
 		function regularboardplugin_fix_canonical() {
 			global $wp, $post, $content;
-			$canonical_url = sanitize_text_field( htmlentities( '//' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] ) );
+			$canonical_url = sanitize_text_field( htmlentities( '//' . $_SERVER[ 'HTTP_HOST' ] . $_SERVER[ 'REQUEST_URI' ] ) );
 			echo "\n";
 			echo '<link rel="canonical" href="' . $canonical_url . '"/>';
 			echo "\n";
@@ -599,9 +599,9 @@ if( is_user_logged_in() ) {
 	if( !function_exists( 'regularboardplugin_get_domain' ) ) {
 		function regularboardplugin_get_domain( $url ) {
 			$pieces = parse_url( $url );
-			$domain = isset( $pieces['host'] ) ? $pieces['host'] : '';
+			$domain = isset( $pieces[ 'host' ] ) ? $pieces[ 'host' ] : '';
 			if( preg_match( '/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domain, $regs ) ) {
-				return $regs['domain'];
+				return $regs[ 'domain' ];
 			}
 			return false;			
 		}
@@ -694,7 +694,7 @@ if( is_user_logged_in() ) {
 			$this->url = $url;
 			
 			$url_exploded = parse_url($this->url);
-			$domain = $url_exploded['host'];
+			$domain = $url_exploded[ 'host' ];
 
 			$this->spam_check = $this->lookup($domain);
 		}
@@ -833,10 +833,10 @@ if( is_user_logged_in() ) {
 	// (2) Determine if connecting (valid) IP is blacklisted on the DNSBL
 	if( !function_exists( 'regularboardplugin_check_dnsbl' ) ) {
 	
-		if( inet_pton( $_SERVER['REMOTE_ADDR'] ) === false ) {
+		if( inet_pton( $_SERVER[ 'REMOTE_ADDR' ] ) === false ) {
 			$ipaddress = false;
 		} else {
-			$ipaddress = esc_attr( $_SERVER['REMOTE_ADDR'] );
+			$ipaddress = esc_attr( $_SERVER[ 'REMOTE_ADDR' ] );
 			
 			function regularboardplugin_check_dnsbl( $ipaddress ) {
 				$dnsbl_lookup = array( 
@@ -897,17 +897,19 @@ if( is_user_logged_in() ) {
 	// (1) :: valid
 	// (1) :: not listed on the DNSBL servers provided
 	function regularboardplugin_shortcode() {
+
 		global $postsperthread, $postsperpage, $page_number, $location, $get, $got, $self_domain, $expires, $page, $wpdb, $wp, $post, $content, $ipaddress, $regularboardplugin_posts_select, $error_no_posts, $posting_mode, $no_url_error, $current_user_is_an_admin, $is_current_logged_in, $is_current_an_admin, $admin_code, $guest_code, $user_code, $supported_providers;
+
 		$regularboardplugin_posts = $wpdb->prefix . 'regularboardplugin_posts';
 		echo '<div class="regularboardplugin_container">';
 		if( $ipaddress !== false ) {
 			
-			if( isset( $_GET['t'] ) ) {
-				if( is_numeric( $_GET['t'] ) ) {
-					$page = regularboardplugin_protocol_relative_url ( get_permalink() .  '?t=' . intval( $_GET['t'] ) );
+			if( isset( $_GET[ 't' ] ) ) {
+				if( is_numeric( $_GET[ 't' ] ) ) {
+					$page = regularboardplugin_protocol_relative_url ( get_permalink() .  '?t=' . intval( $_GET[ 't' ] ) );
 				}
-			} elseif( isset( $_GET['b'] ) ) {
-				$page = regularboardplugin_protocol_relative_url ( get_permalink() .  '?t=' . sanitize_text_field( $_GET['b'] ) );
+			} elseif( isset( $_GET[ 'b' ] ) ) {
+				$page = regularboardplugin_protocol_relative_url ( get_permalink() .  '?t=' . sanitize_text_field( $_GET[ 'b' ] ) );
 			} else {
 				$page = regularboardplugin_protocol_relative_url ( get_permalink() );
 			}
@@ -916,7 +918,7 @@ if( is_user_logged_in() ) {
 			
 			echo '<div class="filter_by">';
 				if( $current_user_is_an_admin ) {
-					echo '<span class="right"><a href="?a=bans">Bans</a></span>';
+					echo '<span class="right"><a href="?a=bans">Moderation</a></span>';
 				}
 
 				$check_all_posts = $wpdb->get_results (
@@ -955,7 +957,7 @@ if( is_user_logged_in() ) {
 			$ipaddress = wp_hash( $ipaddress );
 			
 	
-			if( isset( $_GET['a'] ) && $_GET['a'] == 'bans') {
+			if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'bans') {
 				if( $current_user_is_an_admin ) {
 					$check_for_a_bans = $wpdb->get_results (
 						"SELECT $regularboardplugin_posts_select FROM $regularboardplugin_posts WHERE post_banned = 1 ORDER BY post_id DESC"
@@ -1005,7 +1007,7 @@ if( is_user_logged_in() ) {
 							}										
 							
 							echo '<section>';
-							echo '<input type="checkbox" name="unban[]" value="' . $post_id . '" />';
+							echo '<input type="checkbox" class="checkbox" name="unban[]" value="' . $post_id . '" />';
 							echo '<p>';
 							if( $post_title ) {
 								echo '<em>';
@@ -1065,9 +1067,9 @@ if( is_user_logged_in() ) {
 						echo '<input type="submit" value="Unban these users" name="unban_user" id="unban_user" />';
 						echo '</form>';
 
-						if( isset( $_POST['unban_user'] ) ) {
-							if(!empty($_POST['unban'])) {
-								foreach( $_POST['unban'] as $check ) {
+						if( isset( $_POST[ 'unban_user' ] ) ) {
+							if(!empty($_POST[ 'unban' ])) {
+								foreach( $_POST[ 'unban' ] as $check ) {
 									$set_ban_date = date( 'Y-m-d H:i:s' );
 									$wpdb->query(
 										"UPDATE $regularboardplugin_posts SET post_banned = 0 WHERE post_id = $check"
@@ -1093,39 +1095,40 @@ if( is_user_logged_in() ) {
 				// (1) Database results
 				$reply_mode = 0;
 				$regularboardplugin_parent_by = $regularboardplugin_posts_by = '';
-				if( isset( $_GET['t'] ) ) {
-					if( is_numeric( $_GET['t'] ) ) {
+				if( isset( $_GET[ 't' ] ) ) {
+					if( is_numeric( $_GET[ 't' ] ) ) {
 						$reply_mode = 1;
-						$_GET['t'] = intval( $_GET['t'] );
-						$regularboardplugin_posts_by = ' WHERE post_id = ' . $_GET['t'] . ' ';
-						$regularboardplugin_parent_by = ' WHERE post_parent = ' . $_GET['t'] . ' ';
+						$_GET[ 't' ] = intval( $_GET[ 't' ] );
+						$regularboardplugin_posts_by = ' WHERE post_id = ' . $_GET[ 't' ] . ' ';
+						$regularboardplugin_parent_by = ' WHERE post_parent = ' . $_GET[ 't' ] . ' ';
 						$dont_show = 0;
 					}
-				} elseif( isset( $_GET['b'] ) ) {
+				} elseif( isset( $_GET[ 'b' ] ) ) {
 					$reply_mode = 0;
-					$regularboardplugin_posts_by = ' WHERE post_board = ' . $_GET['b'] . ' AND post_parent = 0 ';
+					$_GET[ 'b' ] = sanitize_text_field( htmlentities( $_GET[ 'b' ] ) );
+					$regularboardplugin_posts_by = ' WHERE post_board = "' . $_GET[ 'b' ] . '" AND post_parent = 0 ';
 					$dont_show = 0;
-				} elseif( isset( $_GET['a'] ) && $_GET['a'] == 'allposts' ) {
+				} elseif( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'allposts' ) {
 					$dont_show = 0;
 					$regularboardplugin_posts_by = " WHERE post_id > 0 ";				
-				} elseif( isset( $_GET['a'] ) && $_GET['a'] == 'texts' ) {
+				} elseif( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'texts' ) {
 					$dont_show = 0;
 					$regularboardplugin_posts_by = " WHERE post_type = 'text' AND post_parent = 0 ";
-				} elseif( isset( $_GET['a'] ) && $_GET['a'] == 'images' ) {
+				} elseif( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'images' ) {
 					$dont_show = 0;
 					$regularboardplugin_posts_by = " WHERE post_type = 'image' AND post_parent = 0 ";
-				} elseif( isset( $_GET['a'] ) && $_GET['a'] == 'embeds' ) {
+				} elseif( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'embeds' ) {
 					$dont_show = 0;
 					$regularboardplugin_posts_by = " WHERE post_type = 'embed' AND post_parent = 0 ";
-				} elseif( isset( $_GET['a'] ) && $_GET['a'] == 'links' ) {
+				} elseif( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'links' ) {
 					$dont_show = 0;
 					$regularboardplugin_posts_by = " WHERE post_type = 'link' AND post_parent = 0 ";
-				} elseif( isset( $_GET['u'] ) ) {
+				} elseif( isset( $_GET[ 'u' ] ) ) {
 					$dont_show = 0;
-					if( $_GET['u'] == strtolower( 'anonymous' ) ) {
+					if( $_GET[ 'u' ] == strtolower( 'anonymous' ) ) {
 						$regularboardplugin_posts_by = " WHERE post_name = '' ";
 					} else {
-						$regularboardplugin_posts_by = " WHERE post_name = '" . $_GET['u'] . "' ";
+						$regularboardplugin_posts_by = " WHERE post_name = '" . $_GET[ 'u' ] . "' ";
 					}
 				} else {
 					$dont_show = 0;
@@ -1139,8 +1142,8 @@ if( is_user_logged_in() ) {
 						"SELECT COUNT(*) FROM $regularboardplugin_posts $regularboardplugin_parent_by"
 					);
 					if( $totalpages > 0 ) {
-						if( isset( $_GET['n'] ) ) {
-							$page_no = intval( $_GET['n'] );
+						if( isset( $_GET[ 'n' ] ) ) {
+							$page_no = intval( $_GET[ 'n' ] );
 						} else {
 							$page_no = 1;
 						}
@@ -1160,8 +1163,8 @@ if( is_user_logged_in() ) {
 						"SELECT COUNT(*) FROM $regularboardplugin_posts $regularboardplugin_posts_by"
 					);
 					if( $totalpages > 0 ) {
-						if( isset( $_GET['n'] ) ) {
-							$page_no = intval( $_GET['n'] );
+						if( isset( $_GET[ 'n' ] ) ) {
+							$page_no = intval( $_GET[ 'n' ] );
 						} else {
 							$page_no = 1;
 						}
@@ -1187,18 +1190,20 @@ if( is_user_logged_in() ) {
 				$replies = '';
 				if( $reply_mode ) {
 					$replies = $wpdb->get_results (
-						"SELECT $regularboardplugin_posts_select FROM $regularboardplugin_posts WHERE post_parent = " . $_GET['t'] . " ORDER BY post_last ASC LIMIT $start, $postsperpage"
+						"SELECT $regularboardplugin_posts_select FROM $regularboardplugin_posts WHERE post_parent = " . $_GET[ 't' ] . " ORDER BY post_last ASC LIMIT $start, $postsperpage"
 					);
 				}
 				
 				function regularboardplugin_do_post() {
 					global $random_password, $self_domain, $expires, $wpdb, $wp, $post, $ipaddress, $regularboardplugin_posts_select, $no_url_error, $no_comment_error, $no_title_error, $current_user_is_an_admin, $is_current_logged_in, $is_current_an_admin;
+					$reply_mode = 0;
+					$dont_show  = 0;
 					$regularboardplugin_posts = $wpdb->prefix . 'regularboardplugin_posts';
-					if( isset( $_GET['t'] ) ) {
-						if( is_numeric( $_GET['t'] ) ) {
+					if( isset( $_GET[ 't' ] ) ) {
+						if( is_numeric( $_GET[ 't' ] ) ) {
 							$reply_mode = 1;
 						}
-					} elseif( isset( $_GET['b'] ) ) {
+					} elseif( isset( $_GET[ 'b' ] ) ) {
 						$reply_mode = 0;
 					} else {
 						$reply_mode = 0;
@@ -1332,29 +1337,29 @@ if( is_user_logged_in() ) {
 								$post_id = $post_parent = $post_name = $post_date_micro = $post_date = $post_email = $post_title = $post_comment = $post_comment_original = $post_edited = $post_moderator_comment = $post_type = $post_url = $post_board = $post_moderator = $post_last = $post_sticky = $post_locked = $post_password = $post_userid = $post_report = $post_reportcount = $post_reply_count = $post_guestip = $post_public = $post_like = $post_dislike = $post_approval_rating = $post_delete_this = '';
 							}
 						} else { 
-							if( isset( $_GET['a'] ) && $_GET['a'] == 'linkpost' || isset( $_GET['a'] ) && $_GET['a'] == 'selfpost' || $reply_mode ) {
+							if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' || isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode ) {
 
 								$regularboardplugin_posts = $wpdb->prefix . 'regularboardplugin_posts';
 								$blank                     = '';
 								$post_provider = $post_domain = $post_id = $post_parent = $post_name = $post_date = $post_email = $post_title = $post_comment = $post_comment_original = $post_edited = $post_moderator_comment = $post_type = $post_url = $post_board = $post_moderator = $post_last = $post_sticky = $post_locked = $post_password = $post_userid = $post_report = $post_reportcount = $post_reply_count = $post_guestip = $post_public = $post_like = $post_dislike = $post_approval_rating = $post_delete_this = $post_id = $blank;
-								if( isset( $_GET['t'] ) ) {
-									$post_parent           = intval( $_GET['t'] );
+								if( isset( $_GET[ 't' ] ) ) {
+									$post_parent           = intval( $_GET[ 't' ] );
 								} else {
 									$post_parent           = 0;
 								}
 								$post_banned               = 0;
-								$post_name                 = sanitize_text_field( $_REQUEST['post_name'] );
+								$post_name                 = sanitize_text_field( $_REQUEST[ 'post_name' ] );
 								$post_date                 = date( 'Y-m-d H:i:s' );
-								$post_email                = sanitize_text_field( $_REQUEST['post_email'] );
+								$post_email                = sanitize_text_field( $_REQUEST[ 'post_email' ] );
 								
 								if( !$reply_mode ) {
-									$post_title            = sanitize_text_field( $_REQUEST['post_title'] );
+									$post_title            = sanitize_text_field( $_REQUEST[ 'post_title' ] );
 								} else {
 									$post_title            = $blank;
 								}
 								
-								if( isset( $_GET['a'] ) && $_GET['a'] == 'selfpost' || $reply_mode ) {
-									$post_comment          = sanitize_text_field( $_REQUEST['post_comment'] );
+								if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode ) {
+									$post_comment          = sanitize_text_field( $_REQUEST[ 'post_comment' ] );
 								} else {
 									$post_comment          = $blank;
 								}
@@ -1364,15 +1369,15 @@ if( is_user_logged_in() ) {
 								$post_moderator_comment    = $blank;
 								$post_type                 = $blank;
 								
-								if( isset( $_GET['a'] ) && $_GET['a'] == 'linkpost' || $reply_mode ) {
+								if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' || $reply_mode ) {
 								
-									$validate_this = sanitize_text_field( $_REQUEST['post_url'] );
+									$validate_this = sanitize_text_field( $_REQUEST[ 'post_url' ] );
 									if( filter_var( "$validate_this", FILTER_VALIDATE_URL ) === false ) {
-										$_REQUEST['post_url'] = $blank;
+										$_REQUEST[ 'post_url' ] = $blank;
 									}
 								
-									$spam_check                = sanitize_text_field( esc_url( $_REQUEST['post_url'] ) );
-									$check_url                 = sanitize_text_field( esc_url( str_replace( array('http://www.','https://www.'), '', $_REQUEST['post_url'] ) ) );
+									$spam_check                = sanitize_text_field( esc_url( $_REQUEST[ 'post_url' ] ) );
+									$check_url                 = sanitize_text_field( esc_url( str_replace( array('http://www.','https://www.'), '', $_REQUEST[ 'post_url' ] ) ) );
 							
 									if( $spam_check ) {
 										$spam_check = new Blacklist( "$check_url" );
@@ -1403,7 +1408,7 @@ if( is_user_logged_in() ) {
 									if( $post_url ) {
 										$post_url = $check_url;
 										$parsed = parse_url( $check_url );
-										$post_domain = $parsed['host'];
+										$post_domain = $parsed[ 'host' ];
 									}
 								} else {
 									$check_url = $post_url = $spam_check = $blank;
@@ -1428,8 +1433,8 @@ if( is_user_logged_in() ) {
 								$post_sticky               = 0;
 								$post_locked               = 0;
 								
-								$sent_password             = sanitize_text_field( $_REQUEST['post_password'] );
-								$post_password             = sanitize_text_field( wp_hash( $_REQUEST['post_password'] ) );
+								$sent_password             = sanitize_text_field( $_REQUEST[ 'post_password' ] );
+								$post_password             = sanitize_text_field( wp_hash( $_REQUEST[ 'post_password' ] ) );
 								if( !$post_password || !$sent_password ) {
 									$sent_password = $random_password;
 									$post_password = wp_hash( $random_password );
@@ -1472,18 +1477,18 @@ if( is_user_logged_in() ) {
 								if( !$post_title && !$post_parent ) {
 									$no_title = 1;
 								}
-								if( isset( $_GET['a'] ) && $_GET['a'] == 'selfpost' || $reply_mode && !$post_url ) {
+								if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode && !$post_url ) {
 									if( !$post_comment ) {
 										$no_comment = 1;
 									}
 								}
-								if( isset( $_GET['a'] ) && $_GET['a'] == 'linkpost' && !$post_url ) {
+								if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' && !$post_url ) {
 									$no_url = 1;
 								}
 								
-								if( isset( $_GET['a'] ) && $_GET['a'] == 'selfpost' ) {
+								if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' ) {
 									$check_for_duplicate = " WHERE post_comment LIKE '%$post_comment%' ";
-								} elseif( isset( $_GET['a'] ) && $_GET['a'] == 'linkpost' ) {
+								} elseif( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' ) {
 									$check_for_duplicate = " WHERE post_url LIKE '%$post_url%' ";
 								} else {
 									if( $post_url && !$post_comment ) {
@@ -1657,33 +1662,35 @@ if( is_user_logged_in() ) {
 				}
 				// (1) Post form
 				function regularboardplugin_do_post_form() {
+					$dont_show  = 0;
+					$reply_mode = 0;
 					
 					$set_password = $set_name = '';
-					if( isset( $_COOKIE['post_password'] ) ) {
-						$set_password = $_COOKIE['post_password'];
+					if( isset( $_COOKIE[ 'post_password' ] ) ) {
+						$set_password = $_COOKIE[ 'post_password' ];
 					}
-					if( isset( $_COOKIE['post_name'] ) ) {
-						$set_name = $_COOKIE['post_name'];
+					if( isset( $_COOKIE[ 'post_name' ] ) ) {
+						$set_name = $_COOKIE[ 'post_name' ];
 					}
 					
 					global $page;
 					
-					if( isset( $_GET['t'] ) ) {
-						if( is_numeric( $_GET['t'] ) ) {
+					if( isset( $_GET[ 't' ] ) ) {
+						if( is_numeric( $_GET[ 't' ] ) ) {
 							$reply_mode = 1;
 						}
-					} elseif( isset( $_GET['t'] ) && isset( $_GET['n'] ) ) {
-						if( is_numeric( $_GET['t'] ) && is_numeric( $_GET['n'] ) ) {
+					} elseif( isset( $_GET[ 't' ] ) && isset( $_GET[ 'n' ] ) ) {
+						if( is_numeric( $_GET[ 't' ] ) && is_numeric( $_GET[ 'n' ] ) ) {
 							$reply_mode = 1;
 						}						
-					} elseif( isset( $_GET['b'] ) ) {
+					} elseif( isset( $_GET[ 'b' ] ) ) {
 						$reply_mode = 0;
 					} else {
 						$reply_mode = 0;
 					}
 					
-					if( isset( $_GET['a'] ) ) {
-						$page = $page . '?a=' . sanitize_text_field( $_GET['a'] );
+					if( isset( $_GET[ 'a' ] ) ) {
+						$page = $page . '?a=' . sanitize_text_field( $_GET[ 'a' ] );
 					}
 					
 					if( $reply_mode ) {
@@ -1709,16 +1716,16 @@ if( is_user_logged_in() ) {
 							echo '><label for="post_password">Password</label><input type="password" id="post_password" name="post_password" value="' . $set_password . '" /></div>
 						</div>';
 						
-						if( isset( $_GET['a'] ) && $_GET['a'] == 'selfpost' || $reply_mode ) {
+						if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode ) {
 							echo '<div class="clear">
 								<label for="post_comment">Comment(*)</label><textarea id="post_comment" name="post_comment"></textarea>
 							</div>';
 						}
 						
-						if( isset( $_GET['a'] ) && $_GET['a'] == 'linkpost' || $reply_mode ) {
+						if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' || $reply_mode ) {
 							echo '<div class="clear">
 							<label for="post_url">URL';
-							if( isset( $_GET['a'] ) && $_GET['a'] == 'linkpost' ) {
+							if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' ) {
 								echo '(*)';
 							}
 							echo '</label><input type="text" id="post_url" name="post_url" />
@@ -1734,17 +1741,17 @@ if( is_user_logged_in() ) {
 				}					
 
 				echo '<span class="submission_links">';
-				if( isset( $_GET['a'] ) && $_GET['a'] == 'linkpost' || isset( $_GET['a'] ) && $_GET['a'] == 'selfpost' || $reply_mode ) {			
+				if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' || isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode ) {			
 					echo '<a class="return_link" href="' . get_permalink() . '">Return</a>';
 				}
 				echo '<a href="?a=linkpost">Submit a link</a> <a href="?a=selfpost">Submit a text post</a>';
 				echo '</span>';
 					
-				if( isset( $_POST['do_post'] ) ) {
+				if( isset( $_POST[ 'do_post' ] ) ) {
 					regularboardplugin_do_post();
 				}
 				
-				if( isset( $_GET['a'] ) && $_GET['a'] == 'linkpost' || isset( $_GET['a'] ) && $_GET['a'] == 'selfpost' || $reply_mode ) {
+				if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' || isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode ) {
 					if( $reply_mode && count( $results ) > 0 || $reply_mode && count( $replies ) > 0 || !$reply_mode ) {
 						echo $posting_mode;
 						if( $reply_mode ) { 
@@ -1754,8 +1761,10 @@ if( is_user_logged_in() ) {
 					}
 				}
 		
-				if( isset( $_GET['a'] ) && $_GET['a'] == 'linkpost' || isset( $_GET['a'] ) && $_GET['a'] == 'selfpost' ) {
+				if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' || isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' ) {
 					$dont_show = 1;
+				} else {
+					$dont_show = 0;
 				}
 				if( !$dont_show  || $reply_mode ) {
 					echo '<form name="post_contents" method="post" action="' . $page . '">';
@@ -1809,14 +1818,14 @@ if( is_user_logged_in() ) {
 								}
 								
 								$class = '';
-								if( isset( $_GET['t'] ) ) {
-									if( $post_id == $_GET['t'] ) {
+								if( isset( $_GET[ 't' ] ) ) {
+									if( $post_id == $_GET[ 't' ] ) {
 										$class = ' class="parent"';
 									}
 								}
 								
 								echo '<section>';
-								echo '<input type="checkbox" name="post_id[]" value="' . $post_id . '" />';
+								echo '<input type="checkbox" class="checkbox" name="post_id[]" value="' . $post_id . '" />';
 
 								if( $post_title ) {
 									echo '<p><em>';
@@ -1832,15 +1841,17 @@ if( is_user_logged_in() ) {
 									echo ' <small class="domain"><a href="//' . $post_domain . '">' . $post_domain . '</a></small>';
 								}
 								
-								echo '&mdash; <small>no. ' . $post_id . '</small>';
-								
+								echo '<span class="threadMeta">';
+
 								if( $post_parent && !$reply_mode ) {
-									echo ' - <small><a href="' . $page . '?t=' . $post_parent . '">+</a></small><br />';
+									echo '<span><small><a href="' . $page . '?t=' . $post_parent . '">+</a></small></span>';
 								} elseif( !$post_parent && !$reply_mode ) {
-									echo ' - <small><a href="' . $page . '?t=' . $post_id . '">' . $post_reply_count . ' comments</a></small><br />';
+									echo '<span><small><a href="' . $page . '?t=' . $post_id . '">' . $post_reply_count . ' comments</a></small></span>';
 								} else {
-									echo '<br />';
+									
 								}
+								echo '</span>';
+								
 								echo '<small class="name"><a href="?u=' . $post_name . '">' . $post_name . '</a></small>';
 								
 								if( $current_user_is_an_admin ) {
@@ -1928,22 +1939,12 @@ if( is_user_logged_in() ) {
 									}										
 									
 									echo '<section id="' . $post_id . '">';
-									echo '<input type="checkbox" name="post_id[]" value="' . $post_id . '" />';
+									echo '<input type="checkbox" class="checkbox" name="post_id[]" value="' . $post_id . '" />';
 									echo '<p>';
-									if( $post_title ) {
-										echo '<em>';
-										if( $post_url ) {
-											echo '<a href="' . $post_url . '">' . $post_title . '</a>';
-										} else {										
-											echo $post_title;
-										}
-										echo '</em>';
-									}
 									if( $post_url ) {
 										echo ' <small class="domain"><a href="//' . $post_domain . '">' . $post_domain . '</a></small>';
 									}										
 									
-									echo ' &mdash; <small>no. ' . $post_id . '</small><br />';
 									echo '<small class="name"><a href="?u=' . $post_name . '">' . $post_name . '</a></small>';
 									
 									if( $current_user_is_an_admin ) {
@@ -1994,8 +1995,8 @@ if( is_user_logged_in() ) {
 					}						
 						
 						$set_password = '';
-						if( isset( $_COOKIE['post_password'] ) ) {
-							$set_password = $_COOKIE['post_password'];
+						if( isset( $_COOKIE[ 'post_password' ] ) ) {
+							$set_password = $_COOKIE[ 'post_password' ];
 						}
 					
 
@@ -2038,28 +2039,36 @@ if( is_user_logged_in() ) {
 							
 						}
 						
-						
-						if( $current_user_is_an_admin ) {
-							echo '<div class="small">
-								<input type="text" value="" name="reason_for_ban" placeholder="Reason" id="reason_for_ban" />
-								<div class="small_input"><input type="submit" name="ban_user" id="ban_user" value="B" /></div>
-								<div class="small_input"><input type="submit" name="ban_all_user" id="ban_all_user" value="ALL" /></div>
-								<div class="small_input"><input type="submit" name="ban_delete_user" id="ban_delete_user" value="B+D" />
-								</div>
-							</div>';
-						}
-						
-						echo '<div class="small"><input type="password" value="' . $set_password . '" name="delete_posts_password" id="delete_posts_password" /><input type="submit" name="delete_posts" id="delete_posts" value="Delete" /></div>';
-						
+						echo '<div class="post_controls">';
+							if( $current_user_is_an_admin ) {
+								echo '<div class="small">
+									<input type="text" value="" name="reason_for_ban" placeholder="Reason" id="reason_for_ban" />
+									<div class="small_input"><input type="submit" name="ban_user" id="ban_user" value="B" /></div>
+									<div class="small_input"><input type="submit" name="ban_all_user" id="ban_all_user" value="ALL" /></div>
+									<div class="small_input"><input type="submit" name="ban_delete_user" id="ban_delete_user" value="B+D" />
+									</div>
+								</div>';
+							}
+							echo '<div class="small"><input type="password" value="' . $set_password . '" name="delete_posts_password" id="delete_posts_password" /><input type="submit" name="delete_posts" id="delete_posts" value="Delete" /></div>';
+						echo '</div>';
 						echo '</form>';
 						
+						/**
+						 * User ban form handling
+						 * 1: Determine if the (current) user is an admin
+						 * 2: Determine if the ban/delete form has been activated
+						 * 3: Determine which posts we are grabbing data from
+						 * 4: Determine the action to take based on the form being submitted
+						 */
+
 						if( $current_user_is_an_admin ) {
-							if( isset( $_POST['ban_delete_user'] ) ) {
-								if(!empty($_POST['post_id'])) {
-									foreach( $_POST['post_id'] as $check ) {
+
+							if( isset( $_POST[ 'ban_delete_user' ] ) ) {
+								if(!empty($_POST[ 'post_id' ])) {
+									foreach( $_POST[ 'post_id' ] as $check ) {
 									
-										if( $_REQUEST['reason_for_ban'] ) {
-											$reason_for_ban = sanitize_text_field( $_REQUEST['reason_for_ban'] );
+										if( $_REQUEST[ 'reason_for_ban' ] ) {
+											$reason_for_ban = sanitize_text_field( $_REQUEST[ 'reason_for_ban' ] );
 										} else {
 											$reason_for_ban = 'No reason given.';
 										}							
@@ -2093,16 +2102,16 @@ if( is_user_logged_in() ) {
 									}
 								}
 							}
-							if( isset( $_POST['ban_all_user'] ) ) {
-								if(!empty($_POST['post_id'])) {
-									foreach( $_POST['post_id'] as $check ) {
+							if( isset( $_POST[ 'ban_all_user' ] ) ) {
+								if(!empty($_POST[ 'post_id' ])) {
+									foreach( $_POST[ 'post_id' ] as $check ) {
 										$this_ipaddress = $wpdb->get_results (
 											"SELECT post_guestip FROM $regularboardplugin_posts WHERE post_id = $check"
 										);
 										if( count( $this_ipaddress ) ) {
 											foreach( $this_ipaddress as $tip ) {
-												if( $_REQUEST['reason_for_ban'] ) {
-													$reason_for_ban = sanitize_text_field( $_REQUEST['reason_for_ban'] );
+												if( $_REQUEST[ 'reason_for_ban' ] ) {
+													$reason_for_ban = sanitize_text_field( $_REQUEST[ 'reason_for_ban' ] );
 												} else {
 													$reason_for_ban = 'No reason given.';
 												}							
@@ -2133,18 +2142,17 @@ if( is_user_logged_in() ) {
 									}
 								}
 							}						
-							if( isset( $_POST['ban_user'] ) ) {
-								if(!empty($_POST['post_id'])) {
-									foreach( $_POST['post_id'] as $check ) {
-									
-										if( $_REQUEST['reason_for_ban'] ) {
-											$reason_for_ban = sanitize_text_field( $_REQUEST['reason_for_ban'] );
+							if( isset( $_POST[ 'ban_user' ] ) ) {
+
+								if(!empty($_POST[ 'post_id' ])) {
+
+									foreach( $_POST[ 'post_id' ] as $check ) {
+										if( $_REQUEST[ 'reason_for_ban' ] ) {
+											$reason_for_ban = sanitize_text_field( $_REQUEST[ 'reason_for_ban' ] );
 										} else {
 											$reason_for_ban = 'No reason given.';
 										}							
-										
 										$set_ban_date = date( 'Y-m-d H:i:s' );
-										
 										$wpdb->query(
 											"UPDATE $regularboardplugin_posts SET post_banned = 1 WHERE post_id = $check"
 										);
@@ -2160,24 +2168,52 @@ if( is_user_logged_in() ) {
 										$wpdb->query(
 											"UPDATE $regularboardplugin_posts SET post_last = '$set_ban_date' WHERE post_id = $check"
 										);
-										
 									}
+
 								}
+
 							}
+
 						}
+						/*
+						 * --------------------
+						 */
 						
-						if( isset( $_POST['delete_posts'] ) ) {
-							if(!empty($_POST['post_id'])) {
-								foreach( $_POST['post_id'] as $check ) {
-									$check_password = sanitize_text_field( wp_hash( $_REQUEST['delete_posts_password'] ) );
+						/**
+						 * Post deletion form handling
+						 * 1: If the submit button for the deletion form has been pressed
+						 * 2: Make sure there is a post actually being targeted
+						 * 3: If both conditions are true, move on to the next phase: 
+						 * 3: - check to make sure there is a password in the field 
+						 * 3: - check that password against the database and determine what to do next
+						 */
+
+						if( isset( $_POST[ 'delete_posts' ] ) ) {
+
+							if(!empty($_POST[ 'post_id' ])) {
+
+								foreach( $_POST[ 'post_id' ] as $check ) {
+
+									/**
+									 * Post parent delete
+									 * 1: Check if the post exists, and that there is a password attached to it.
+									 */
+									$check_password = sanitize_text_field( wp_hash( $_REQUEST[ 'delete_posts_password' ] ) );
 									$check_for_password = $wpdb->get_results (
 										"SELECT post_password FROM $regularboardplugin_posts WHERE post_id = $check LIMIT 1"
 									);
 									$check_exists = $wpdb->get_results (
 										"SELECT post_id FROM $regularboardplugin_posts WHERE post_parent = $check"
-									);	
-									// (1) Logged-in Admin don't need to enter passwords.
+									);
+									/**
+									 * --------------------
+									 */
+									
+									/**
+									 * Admin don't need to have passwords.
+									 */
 									if( $current_user_is_an_admin ) {
+
 										$wpdb->delete (
 											$regularboardplugin_posts, 
 											array(
@@ -2186,12 +2222,26 @@ if( is_user_logged_in() ) {
 											array(
 												'%d'
 											)
-										);							
+										);
+									/**
+									 * --------------------
+									 */
+
 									} else {
-										$check_password = sanitize_text_field( wp_hash( $_REQUEST['delete_posts_password'] ) );
+
+										/**
+										 * Delete all children of post if it was deleted in first step
+										 * 1: Take password from field, sanitize and hash it.
+										 * 2: Grab the post password (also hashed) from the database for the ID(s) being requested.
+										 * 3: For each ID, check the received/hashed password against the one stored in the database.
+										 * 4: If it matches, delete the post (as was requested).
+										 * 5: If it doesn't, do nothing.
+										 */
+
+										$check_password = sanitize_text_field( wp_hash( $_REQUEST[ 'delete_posts_password' ] ) );
 										$check_for_password = $wpdb->get_results (
 											"SELECT post_password FROM $regularboardplugin_posts WHERE post_id = $check LIMIT 1"
-										);									
+										);
 										foreach( $check_for_password as $cfp ) {
 											if( $cfp->post_password == $check_password ) {
 												$wpdb->delete (
@@ -2207,8 +2257,21 @@ if( is_user_logged_in() ) {
 												);
 											}
 										}
+
+										/**
+										 * --------------------
+										 */										
+
 									}
+
 									if( $current_user_is_an_admin ) {
+
+
+										/**
+										 * If the (current) user is an admin, allow them to delete things without 
+										 * requiring a password.
+										 */
+
 										if( count( $check_exists ) == 0 ) {
 											$wpdb->delete (
 												$regularboardplugin_posts, 
@@ -2220,16 +2283,31 @@ if( is_user_logged_in() ) {
 												)
 											);
 										}
+
+										/**
+										 * --------------------
+										 */										
+
 									} else {
-										$check_password = sanitize_text_field( wp_hash( $_REQUEST['delete_posts_password'] ) );
+									
+										/**
+										 * Delete all children of post if it was deleted in first step
+										 * 1: Take password from field, sanitize and hash it.
+										 * 2: Grab the post password (also hashed) from the database for the ID(s) being requested.
+										 * 3: For each ID, check the received/hashed password against the one stored in the database.
+										 * 4: If it matches, delete the post (as was requested).
+										 * 5: If it doesn't, do nothing.
+										 */
+
+										$check_password = sanitize_text_field( wp_hash( $_REQUEST[ 'delete_posts_password' ] ) );
 										$check_for_password = $wpdb->get_results (
 											"SELECT post_password FROM $regularboardplugin_posts WHERE post_id = $check LIMIT 1"
-										);									
+										);
 										foreach( $check_for_password as $cfp ) {
 											if( $cfp->post_password == $check_password ) {
 												if( count( $check_exists ) == 0 ) {
 													$wpdb->delete (
-														$regularboardplugin_posts, 
+														$regularboardplugin_posts,
 														array(
 															'post_parent' => $check
 														),
@@ -2240,20 +2318,33 @@ if( is_user_logged_in() ) {
 												}
 											}
 										}
-									}								
-								}	
+
+										/**
+										 * --------------------
+										 */
+
+									}
+
+								}
+
 							}
+
 						}
 
+						/**
+						 * --------------------
+						 */
+
 					}
+
 				}
+
 			}
-		
+
 		} else {
+
 			echo 'You are not permitted to view this content.';
+
 		}
 		echo '</div>';
-	
 	}
-		
-?>
