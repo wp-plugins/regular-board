@@ -15,12 +15,6 @@ Regular Board attempts to take a fresh approach to the WordPress forum by reduci
 and database additions by reducing every element of the forum itself to its simplest (and, more importantly, most necessary) 
 features, while retaining the functionality we have all come to expect from a vanilla forum installation.
 
-IF UPGRADING, READ THIS:
-v2 is completely re-written from the ground up to address many problems with the v1 branch of the plugin. It 
-is not backwards compatible with the previous versions, and if you have previously installed Regular Board, 
-it WILL delete everything from the original installation (to clean up after itself) and upgrade you to the 
-newest platform.
-
 = Requirements = 
 * WordPress 3.9.1
 * cURL
