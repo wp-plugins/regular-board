@@ -3,7 +3,7 @@ Contributors: boyevul
 Tags: anonymous, bbs, bulletin board system, forum
 Requires at least: 3.9.1
 Tested up to: 4.0
-Stable tag: 2.00.0.7
+Stable tag: 2.00.0.8
 
 Text-based anonymous forum.
 
@@ -41,6 +41,8 @@ newest platform.
 5. Done.
 
 == Changelog ==
+* 2.00.0.8  Individual board functionality added, allowing users to specify where they would like to post.
+* 2.00.0.8  Remove old upgrade procedures.
 * 2.00.0.7  Security Update: ?b URL paramter not being utilized properly (missing quotes).
 * 2.00.0.6  Fitvids (//fitvidsjs.com/) added for media embeds.
 * 2.00.0.6  oEmbeds ditched. Previous method reinstated: imgur, youtube, liveleak, soundcloud, gfycat, funnyordie, vine supported.

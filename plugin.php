@@ -3,7 +3,7 @@
 /**
  *
  * Plugin Name: Regular Board
- * Version: 2.00.0.7
+ * Version: 2.00.0.8
  * License: GNU General Public License v2
  * License URI: //gnu.org/licenses/gpl-2.0.html
  * Author: Matthew Trevino
@@ -232,130 +232,6 @@ if( !function_exists( 'regularboardplugin_uninstall' ) ) {
 // (1) Check to see if Regular Board has been installed previously
 if( !get_option( 'regularboardplugin_installed' ) ) {
 	
-		if( !function_exists( 'clean_up_old_regularboard' ) ) {
-			
-			// Upgrade from previous versions that use outdated code and references
-			register_activation_hook( __FILE__, 'clean_up_old_regularboard' );
-			function clean_up_old_regularboard() {
-			
-				global $wpdb;
-				
-				$rb_table_1 = $wpdb->prefix . 'regular_board_posts';
-				$rb_table_2 = $wpdb->prefix . 'regular_board_boards';
-				$rb_table_3 = $wpdb->prefix . 'regular_board_users';
-				$rb_table_4 = $wpdb->prefix . 'regular_board_bans';
-				$rb_table_5 = $wpdb->prefix . 'regular_board_logs';
-				$rb_table_6 = $wpdb->prefix . 'regular_board_friends';
-				$rb_table_7 = $wpdb->prefix . 'regular_board_messages';
-
-				if( $wpdb->get_var( "SHOW TABLES LIKE '$rb_table_1'" ) == $rb_table_1 ){ 
-
-					$wpdb->query( "DROP TABLE $rb_table_1" );
-
-				}
-
-				if( $wpdb->get_var( "SHOW TABLES LIKE '$rb_table_2'" ) == $rb_table_2 ){ 
-
-					$wpdb->query( "DROP TABLE $rb_table_2" );
-
-				}
-
-				if( $wpdb->get_var( "SHOW TABLES LIKE '$rb_table_3'" ) == $rb_table_3 ){ 
-
-					$wpdb->query( "DROP TABLE $rb_table_3" );
-
-				}
-
-				if( $wpdb->get_var( "SHOW TABLES LIKE '$rb_table_4'" ) == $rb_table_4 ){ 
-
-					$wpdb->query( "DROP TABLE $rb_table_4" );
-
-				}
-
-				if( $wpdb->get_var( "SHOW TABLES LIKE '$rb_table_5'" ) == $rb_table_5 ){ 
-
-					$wpdb->query( "DROP TABLE $rb_table_5" );
-
-				}
-
-				if( $wpdb->get_var( "SHOW TABLES LIKE '$rb_table_6'" ) == $rb_table_6 ){ 
-
-					$wpdb->query( "DROP TABLE $rb_table_6" );
-
-				}
-
-				if( $wpdb->get_var( "SHOW TABLES LIKE '$rb_table_6'" ) == $rb_table_7 ){ 
-
-					$wpdb->query( "DROP TABLE $rb_table_7" );
-
-				}
-
-				// (1) Clean up after the original Regular Board
-				$original_regular_board_options = array( 
-					'regular_board_noindexboards',
-					'regular_board_usercreate',
-					'regular_board_useboards',
-					'regular_board_totaluserallowed',
-					'regular_board_accountsper',
-					'regular_board_registration',
-					'regular_board_protected',
-					'regular_board_wipeper',
-					'regular_board_enableblog',
-					'regular_board_boardbanner',
-					'regular_board_bannedimage',
-					'regular_board_wipeall',
-					'regular_board_wipealldate',
-					'regular_board_frontpage',
-					'regular_board_footer',
-					'regular_board_autourl',
-					'regular_board_formatting',
-					'regular_board_ascii',
-					'regular_board_announcements',
-					'regular_board_hideannouncements',
-					'regular_board_lazyload',
-					'regular_board_robots',
-					'regular_board_maxlinks',
-					'regular_board_css_url',
-					'regular_board_search',
-					'regular_board_displayboards',
-					'regular_board_displaymenu',
-					'regular_board_ids',
-					'regular_board_wipedisplay',
-					'regular_board_focus',
-					'regular_board_archivegate',
-					'regular_board_floodgate',
-					'regular_board_roll',
-					'regular_board_postsper',
-					'regular_board_modcode',
-					'regular_board_usermodcode',
-					'regular_board_enableurl',
-					'regular_board_enablerep',
-					'regular_board_maxbody',
-					'regular_board_maxreplies',
-					'regular_board_maxtext',
-					'regular_board_boards',
-					'regular_board_userflood',
-					'regular_board_imgurid',
-					'regular_board_dnsbl',
-					'regular_board_postingoptions',
-					'regular_board_installation'
-				);
-
-				foreach( $original_regular_board_options as &$o ) {
-
-					if( get_option( $o ) ) {
-
-						delete_option( $o );
-
-					}
-
-				}
-
-			}
-
-		}
-
-
 		// (1) Comment this activation hook out if uninstalling the plugin
 		if( !function_exists( 'regularboardplugin_install' ) ) {
 
@@ -909,7 +785,7 @@ if( is_user_logged_in() ) {
 					$page = regularboardplugin_protocol_relative_url ( get_permalink() .  '?t=' . intval( $_GET[ 't' ] ) );
 				}
 			} elseif( isset( $_GET[ 'b' ] ) ) {
-				$page = regularboardplugin_protocol_relative_url ( get_permalink() .  '?t=' . sanitize_text_field( $_GET[ 'b' ] ) );
+				$page = regularboardplugin_protocol_relative_url ( get_permalink() .  '?b=' . sanitize_text_field( $_GET[ 'b' ] ) );
 			} else {
 				$page = regularboardplugin_protocol_relative_url ( get_permalink() );
 			}
@@ -1340,13 +1216,16 @@ if( is_user_logged_in() ) {
 							if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' || isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode ) {
 
 								$regularboardplugin_posts = $wpdb->prefix . 'regularboardplugin_posts';
-								$blank                     = '';
+								$blank                    = '';
+								
 								$post_provider = $post_domain = $post_id = $post_parent = $post_name = $post_date = $post_email = $post_title = $post_comment = $post_comment_original = $post_edited = $post_moderator_comment = $post_type = $post_url = $post_board = $post_moderator = $post_last = $post_sticky = $post_locked = $post_password = $post_userid = $post_report = $post_reportcount = $post_reply_count = $post_guestip = $post_public = $post_like = $post_dislike = $post_approval_rating = $post_delete_this = $post_id = $blank;
+								
 								if( isset( $_GET[ 't' ] ) ) {
 									$post_parent           = intval( $_GET[ 't' ] );
 								} else {
 									$post_parent           = 0;
 								}
+								
 								$post_banned               = 0;
 								$post_name                 = sanitize_text_field( $_REQUEST[ 'post_name' ] );
 								$post_date                 = date( 'Y-m-d H:i:s' );
@@ -1416,6 +1295,11 @@ if( is_user_logged_in() ) {
 								}
 								
 								$post_board                = $blank;
+								if( '' != $_REQUEST[ 'post_board' ] ) {
+									$post_board = sanitize_text_field( $_REQUEST[ 'post_board' ] );
+									$post_board = preg_replace('~[^\p{L}\p{N}]++~u', ' ', $post_board);
+									$post_board = str_replace( ' ', '', $post_board );
+								}
 								
 								// (1) Set post moderator appropriately based on user level
 								//  - 0 is a user who is not logged in (guest)
@@ -1715,7 +1599,22 @@ if( is_user_logged_in() ) {
 							}
 							echo '><label for="post_password">Password</label><input type="password" id="post_password" name="post_password" value="' . $set_password . '" /></div>
 						</div>';
-						
+						if( !$reply_mode ) {
+
+							$post_to_value = '';
+							if( isset( $_GET[ 'b' ] ) && '' != $_GET[ 'b' ] ) {
+								$post_to_value = sanitize_text_field( $_GET[ 'b' ] );
+								$post_to_value = preg_replace('~[^\p{L}\p{N}]++~u', ' ', $post_to_value);
+								$post_to_value = str_replace( ' ', '', $post_to_value );
+							}
+
+							echo '<div class="clear">
+								<div>
+									<label for="post_board">Post to..</label>
+									<input type="text" id="post_board" name="post_board" value="' . $post_to_value . '" />
+								</div>
+							</div>';
+						}
 						if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode ) {
 							echo '<div class="clear">
 								<label for="post_comment">Comment(*)</label><textarea id="post_comment" name="post_comment"></textarea>
@@ -1741,10 +1640,20 @@ if( is_user_logged_in() ) {
 				}					
 
 				echo '<span class="submission_links">';
-				if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' || isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode ) {			
+				if( isset( $_GET[ 'b' ] ) || isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' || isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode ) {			
 					echo '<a class="return_link" href="' . get_permalink() . '">Return</a>';
 				}
-				echo '<a href="?a=linkpost">Submit a link</a> <a href="?a=selfpost">Submit a text post</a>';
+				
+				$board_self = '';
+				
+				if( isset( $_GET[ 'b' ] ) && '' != $_GET[ 'b' ] ) {
+					$board_self = sanitize_text_field( $_GET[ 'b' ] );
+					$board_self = '&amp;b=' . $board_self;
+					$board_self = preg_replace('~[^\p{L}\p{N}]++~u', ' ', $board_self);
+					$board_self = str_replace( ' ', '', $board_self );
+				}
+				
+				echo '<a href="?a=linkpost' . $board_self . '">Submit a link</a> <a href="?a=selfpost' . $board_self . '">Submit a text post</a>';
 				echo '</span>';
 					
 				if( isset( $_POST[ 'do_post' ] ) ) {
@@ -1843,10 +1752,14 @@ if( is_user_logged_in() ) {
 								
 								echo '<span class="threadMeta">';
 
+								if( '' != $post_board ) {
+									echo '<span><small><a href="' . get_permalink() . '?b=' . $post_board .'">' . $post_board . '</a></small></span>';
+								}
+								
 								if( $post_parent && !$reply_mode ) {
-									echo '<span><small><a href="' . $page . '?t=' . $post_parent . '">+</a></small></span>';
+									echo '<span><small><a href="' . get_permalink() . '?t=' . $post_parent . '">+</a></small></span>';
 								} elseif( !$post_parent && !$reply_mode ) {
-									echo '<span><small><a href="' . $page . '?t=' . $post_id . '">' . $post_reply_count . ' comments</a></small></span>';
+									echo '<span><small><a href="' . get_permalink() . '?t=' . $post_id . '">' . $post_reply_count . ' comments</a></small></span>';
 								} else {
 									
 								}

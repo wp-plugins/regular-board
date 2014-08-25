@@ -140,7 +140,7 @@
 .regularboardplugin_container input[type="checkbox"].confirm {clear:both;margin:5px auto;display:block;}
 .regularboardplugin_container form input[type="submit"] {margin:0;clear:both;display:block;}
 .regularboardplugin_container form.create input#post_url,.regularboardplugin_container form.create input[type="submit"] {width:99%;}
-.regularboardplugin_container form.create textarea {height:150px;width:99%;}
+.regularboardplugin_container form.create textarea {height:150px;width:99%;padding:5px;}
 .regularboardplugin_container form {padding:5px;margin:0 auto;width:100%;}
 .regularboardplugin_container .information {padding:5px;text-align:center;background-color:rgba(0,0,0,.7);color:rgba(255,255,255,.8);margin:0 auto;width:100%;display:block;cursor:default;}
 .regularboardplugin_container .hidden_element {display:none;visibility:Hidden;}
