@@ -3,7 +3,7 @@ Contributors: boyevul
 Tags: anonymous, bbs, bulletin board system, forum
 Requires at least: 3.9.1
 Tested up to: 4.0
-Stable tag: 2.00.0.8
+Stable tag: 2.00.0.9
 
 Text-based anonymous forum.
 
@@ -35,6 +35,7 @@ features, while retaining the functionality we have all come to expect from a va
 5. Done.
 
 == Changelog ==
+* 2.00.0.9  Time-positioned embeds for Youtube (&t=#m#s) enabled.
 * 2.00.0.8  Individual board functionality added, allowing users to specify where they would like to post.
 * 2.00.0.8  Remove old upgrade procedures.
 * 2.00.0.7  Security Update: ?b URL paramter not being utilized properly (missing quotes).

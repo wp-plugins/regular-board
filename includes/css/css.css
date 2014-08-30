@@ -82,8 +82,9 @@
 		}
 .regularboardplugin_container small.domain {font-size:55%;padding:2px;color:rgba(255,255,255,.8);cursor:default;}
 .regularboardplugin_container p {padding:5px;margin:10px;}	
-.regularboardplugin_container .mediaEmbed {margin:-4px auto;display:block;position:relative;z-index:3;width:100%;}
-.regularboardplugin_container .mediaEmbed img {-webkit-box-shadow: 0 0 5px 2px rgba(0,0,0,.1);box-shadow: 0 0 5px 2px rgba(0,0,0,.1);width:100%;}
+.regularboardplugin_container .mediaEmbed:before { clear:both; content: ""; display: table; }
+.regularboardplugin_container .mediaEmbed {margin:-4px auto;display:block;position:relative;z-index:3;width:100%;height:auto;}
+.regularboardplugin_container .mediaEmbed img {-webkit-box-shadow: 0 0 5px 2px rgba(0,0,0,.1);box-shadow: 0 0 5px 2px rgba(0,0,0,.1);width:100%;height:auto;}
 .regularboardplugin_container img {max-width:100%;margin:5px auto;}
 .regularboardplugin_container .mod_comment {color:red;padding:5px 0;}
 .regularboardplugin_container .banned {font-size:75%;padding:2px;background-color:rgba(0,0,0,.8);color:rgba(255,255,255,.9);}

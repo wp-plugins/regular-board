@@ -19,6 +19,3 @@
 	$admin_code            = ' <small class="user">admin</small>';
 	$guest_code            = ' <small class="user">guest</small>';
 	$user_code             = ' <small class="user">user</small>';
-
-	// (1) Block FCC IP Addresses (1 for on, 0 for off)
-	$fuck_the_fcc          = 1;

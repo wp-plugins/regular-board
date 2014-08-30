@@ -3,7 +3,7 @@
 /**
  *
  * Plugin Name: Regular Board
- * Version: 2.00.0.8
+ * Version: 2.00.0.9
  * License: GNU General Public License v2
  * License URI: //gnu.org/licenses/gpl-2.0.html
  * Author: Matthew Trevino
@@ -72,16 +72,44 @@ class regularBoard_mediaEmbed {
 			}
 		}
 		elseif( preg_match( '/\/\/(.*youtube\.com\/.*)/i', $url ) ) {
+
+			// Probably a much better way of doing this..
+			$timeStamp = '';
+			if( strpos( $chck, 't=' ) !== false ) {
+
+				$url_parse = parse_url( $chck );
+				$timeStamp = sanitize_text_field( str_replace( '038;t=', '', $url_parse['fragment']));
+				$minutes   = 0;
+				$seconds   = 0;
+				
+				if( strpos( $timeStamp, 'm' ) !== false && strpos( $timeStamp, 's' ) !== false ){
+					$parts     = str_replace( array( 'm','s' ), '', $timeStamp );
+					list( $minutes, $seconds ) = $parts = str_split( $parts );
+					$minutes   = $minutes * 60;
+					$seconds   = $seconds * 1;
+				} elseif( strpos( $timeStamp, 'm' ) !== true && strpos( $timeStamp, 's' ) !== false ) {
+					$seconds   = str_replace( 's', '', $timeStamp ) * 1;
+				} elseif( strpos( $timeStamp, 'm' ) !== false && strpos( $timeStamp, 's' ) !== true ) {
+					$minutes   = str_replace( 'm', '', $timeStamp ) * 60;
+				} else {
+					$minutes = 0;
+					$seconds = 0;
+				}
+				
+				$timeStamp = $minutes + $seconds;
+
+			}
+
 			if ( preg_match ('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $url, $match ) ) {
 				$match[1] = sanitize_text_field ( $match[1] );
 				$video_id = $match[1];
 				$url      = $video_id;
 			}
 			echo '
-			<object width="640" height="390" data="https://www.youtube.com/v/' . $url . '?version=3">
-				<param name="movie" value="https://www.youtube.com/v/' . $url . '?version=3" />
+			<object width="640" height="390" data="https://www.youtube.com/v/' . $url . '?version=3&amp;start=' . $timeStamp . '">
+				<param name="movie" value="https://www.youtube.com/v/' . $url . '?version=3&amp;start=' . $timeStamp . '" />
 				<param name="allowScriptAccess" value="always" />
-				<embed src="https://www.youtube.com/v/' . $url . '?version=3"
+				<embed src="https://www.youtube.com/v/' . $url . '?version=3&amp;start=' . $timeStamp . '"
 					type="application/x-shockwave-flash"
 					allowscriptaccess="always"
 					width="640" 
@@ -732,31 +760,6 @@ if( is_user_logged_in() ) {
 				}
 				if( $listed ) {
 					$ipaddress === false;
-				}
-				
-				if( $fuck_the_fcc ) {
-					// IP Addresses obtained from:
-					// https://gist.github.com/kyledrake/e6046644115f185f7af0
-					$check_this_ip = ip2long( $ipaddress );
-					$range_1_start = ip2long( "192.133.125.0" );
-					$range_1_end   = ip2long( "192.133.125.24" );
-					$range_2_start = ip2long( "165.135.0.0" );
-					$range_2_end   = ip2long( "165.135.0.24" );
-					$range_3_start = ip2long( "4.21.126.0" );
-					$range_3_end   = ip2long( "4.21.126.24" );
-					$range_4_start = ip2long( "65.125.25.64" );
-					$range_4_end   = ip2long( "65.125.25.26" );
-					$range_5_start = ip2long( "208.23.64.0" );
-					$range_5_end   = ip2long( "208.23.64.25" );
-					if ( 
-						$check_this_ip >= $range_1_start && $check_this_ip <= $range_1_end || 
-						$check_this_ip >= $range_2_start && $check_this_ip <= $range_2_end || 
-						$check_this_ip >= $range_3_start && $check_this_ip <= $range_3_end || 
-						$check_this_ip >= $range_4_start && $check_this_ip <= $range_4_end || 
-						$check_this_ip >= $range_5_start && $check_this_ip <= $range_5_end 
-					) {
-						$ipaddress === false;
-					}
 				}
 				
 			}
