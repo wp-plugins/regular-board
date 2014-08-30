@@ -1651,9 +1651,9 @@ if( is_user_logged_in() ) {
 				
 				if( isset( $_GET[ 'b' ] ) && '' != $_GET[ 'b' ] ) {
 					$board_self = sanitize_text_field( $_GET[ 'b' ] );
-					$board_self = '&amp;b=' . $board_self;
 					$board_self = preg_replace('~[^\p{L}\p{N}]++~u', ' ', $board_self);
 					$board_self = str_replace( ' ', '', $board_self );
+					$board_self = '&amp;b=' . $board_self;
 				}
 				
 				echo '<a href="?a=linkpost' . $board_self . '">Submit a link</a> <a href="?a=selfpost' . $board_self . '">Submit a text post</a>';
