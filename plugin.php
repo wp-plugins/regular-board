@@ -3,7 +3,7 @@
 /**
  *
  * Plugin Name: Regular Board
- * Version: 2.00.0.9
+ * Version: 2.00.1
  * License: GNU General Public License v2
  * License URI: //gnu.org/licenses/gpl-2.0.html
  * Author: Matthew Trevino
@@ -772,6 +772,110 @@ if( is_user_logged_in() ) {
 		
 	}
 	
+	/*
+	 * (1) Regular Board Options Page
+	 * (1) :: Allow the blog admin to set certain options for the display of the board
+	 */
+	add_action( 'admin_enqueue_scripts', 'regular_board_stylesheets' );	 
+	if( !function_exists( 'regular_board_stylesheets' ) ) {
+		function regular_board_stylesheets( $hook ){
+			if( 'settings_page_regularboard' != $hook )
+			return;
+			wp_enqueue_style( 'rb_admin_css', plugins_url() . '/' . plugin_basename ( dirname ( __FILE__ ) ) . '/includes/adminstyle/css.css' );
+			wp_enqueue_style( 'font_awesome', plugins_url() . '/' . plugin_basename ( dirname ( __FILE__ ) ) . '/includes/fontawesome/css/font-awesome.min.css' );
+		}
+	}	 
+	if(current_user_can('manage_options')){
+		// Add options page for plugin to Wordpress backend
+		add_action('admin_menu','regular_board_add_options_page');
+		function regular_board_add_options_page(){
+			add_options_page('Regular Board','Regular Board','manage_options','regularboard','regular_board_page_content'); 
+		}
+
+		if( isset( $_POST[ 'RB_UNINSTALL_EVERYTHING' ] ) ) {
+
+			$option = array( 
+
+				'regularboard_loggedin',
+				'regularboard_dnsbl'
+
+			);
+
+			foreach( $option as &$value ) {
+
+				delete_option( $value );
+
+			}
+
+		} else {	
+			if( isset( $_POST[ 'regularboard_loggedin_submit' ] ) ) { 
+				update_option('regularboard_loggedin',$_REQUEST['regularboard_loggedin']);
+			}
+			if( isset( $_POST[ 'regularboard_dnsbl_submit' ] ) ) { 
+				update_option('regularboard_dnsbl',$_REQUEST['regularboard_dnsbl']);
+			}		
+		}
+		
+		function regular_board_page_content(){ ?>
+			
+			<div class="RBSettings">
+				<div class="setting">
+				<h2>Regular Board</h2>
+				[<a href="//wordpress.org/support/view/plugin-reviews/regular-board">rate/review</a>] 
+				[<a href="//wordpress.org/support/plugin/regular-board">support</a>]
+				</div>
+				<hr />
+				<div class="setting">
+					<?php if( !isset( $_POST[ 'regularboard_delete_step_one' ] ) ) { ?>
+						<form method="post" action="" name="regularboard_delete_step_one">
+						<label for="regularboard_delete_step_one">Initiate uninstall of Regular Board <i class="fa fa-exclamation"></i></label>
+						<input type="submit" id="regularboard_delete_step_one" name="regularboard_delete_step_one" class="hidden" value="Submit" />
+						</form>
+					<?php } ?>
+					<?php if( isset( $_POST[ 'regularboard_delete_step_one' ] ) ) { ?>
+						<form method="post" action="" name="RB_UNINSTALL_EVERYTHING">
+						<label for="RB_UNINSTALL_EVERYTHING">Confirm uninstall &mdash; Cannot be undone <i class="fa fa-exclamation-triangle"></i></label>
+						<input type="submit" id="RB_UNINSTALL_EVERYTHING" name="RB_UNINSTALL_EVERYTHING" class="hidden" value="Submit" />
+						</form>
+					<?php } ?>			
+				</div>
+				<hr />				
+				<div class="setting">
+					<p>
+						<em>Simple Options</em> &mdash; toggle settings on or off<br />
+						<em>key</em> &mdash; <i class="fa fa-toggle-off"> off</i> &mdash; <i class="fa fa-toggle-on"> on</i>
+					</p>
+					<hr />
+					<form method="post" action="" name="regularboard_loggedin">
+						<label for="regularboard_loggedin_submit">Must be logged in to participate
+						<?php if( 1 == get_option( 'regularboard_loggedin' ) ) { ?>
+							<i class="fa fa-toggle-on"></i>
+						<?php } else { ?>
+							<i class="fa fa-toggle-off"></i>
+						<?php }?></label>
+						<input type="text" class="hidden" value="<?php if( 1 == get_option( 'regularboard_loggedin' ) ){ echo 0; } else { echo 1; }?>" name="regularboard_loggedin" />
+						<input type="submit" id="regularboard_loggedin_submit" name="regularboard_loggedin_submit" value="Submit" class="hidden" />
+					</form>
+					<form method="post" action="" name="regularboard_dnsbl">
+						<label for="regularboard_dnsbl_submit">Ignore DNSBL
+						<?php if( 1 == get_option( 'regularboard_dnsbl' ) ) { ?>
+							<i class="fa fa-toggle-on"></i>
+						<?php } else { ?>
+							<i class="fa fa-toggle-off"></i>
+						<?php }?></label>
+						<input type="text" class="hidden" value="<?php if( 1 == get_option( 'regularboard_dnsbl' ) ){ echo 0; } else { echo 1; }?>" name="regularboard_dnsbl" />
+						<input type="submit" id="regularboard_dnsbl_submit" name="regularboard_dnsbl_submit" value="Submit" class="hidden" />
+					</form>					
+				</div>
+			</div>
+			
+		<?php }
+	}
+	/**
+	 * --------------------
+	 */
+	
+	
 	// (1) The connecting IP address has been found to be both:
 	// (1) :: valid
 	// (1) :: not listed on the DNSBL servers provided
@@ -779,6 +883,11 @@ if( is_user_logged_in() ) {
 
 		global $postsperthread, $postsperpage, $page_number, $location, $get, $got, $self_domain, $expires, $page, $wpdb, $wp, $post, $content, $ipaddress, $regularboardplugin_posts_select, $error_no_posts, $posting_mode, $no_url_error, $current_user_is_an_admin, $is_current_logged_in, $is_current_an_admin, $admin_code, $guest_code, $user_code, $supported_providers;
 
+		$regularboard_dnsbl = sanitize_text_field( get_option( 'regularboard_dnsbl' ) );
+		if( 1 == $regularboard_dnsbl ) {
+			$ipaddress = true;
+		}
+		
 		$regularboardplugin_posts = $wpdb->prefix . 'regularboardplugin_posts';
 		echo '<div class="regularboardplugin_container">';
 		if( $ipaddress !== false ) {
@@ -886,7 +995,14 @@ if( is_user_logged_in() ) {
 							}										
 							
 							echo '<section>';
-							echo '<input type="checkbox" class="checkbox" name="unban[]" value="' . $post_id . '" />';
+							if( $regularboard_loggedin && !$is_current_logged_in ) {
+							
+							} else { 
+
+								echo '<input type="checkbox" class="checkbox" name="unban[]" value="' . $post_id . '" />';
+
+							}
+							
 							echo '<p>';
 							if( $post_title ) {
 								echo '<em>';
@@ -1075,472 +1191,478 @@ if( is_user_logged_in() ) {
 				
 				function regularboardplugin_do_post() {
 					global $random_password, $self_domain, $expires, $wpdb, $wp, $post, $ipaddress, $regularboardplugin_posts_select, $no_url_error, $no_comment_error, $no_title_error, $current_user_is_an_admin, $is_current_logged_in, $is_current_an_admin;
-					$reply_mode = 0;
-					$dont_show  = 0;
-					$regularboardplugin_posts = $wpdb->prefix . 'regularboardplugin_posts';
-					if( isset( $_GET[ 't' ] ) ) {
-						if( is_numeric( $_GET[ 't' ] ) ) {
-							$reply_mode = 1;
-						}
-					} elseif( isset( $_GET[ 'b' ] ) ) {
-						$reply_mode = 0;
+					
+					$regularboard_loggedin = get_option( 'regularboard_loggedin' );
+					if( $regularboard_loggedin && !$is_current_logged_in ) {
+					
 					} else {
 						$reply_mode = 0;
-					}				
-					
-					$date_time = date( 'Y-m-d H:i:s' );
-					$check_last_reply  = strtotime("-0 seconds");
-					$check_last_thread = strtotime("-0 seconds");
-					$post_date_micro = $check_current = strtotime($date_time);
-					
-					if( $reply_mode ) {
-						$check_last_post = $wpdb->get_results (
-							"SELECT $regularboardplugin_posts_select FROM $regularboardplugin_posts WHERE post_date_micro >= $check_last_reply AND post_guestip = '$ipaddress' AND post_parent != 0 ORDER BY post_date_micro LIMIT 1"
-						);
-					} else {
-						$check_last_post = $wpdb->get_results (
-							"SELECT $regularboardplugin_posts_select FROM $regularboardplugin_posts WHERE post_date_micro >= $check_last_thread AND post_guestip = '$ipaddress' AND post_parent = 0 ORDER BY post_date_micro LIMIT 1"
-						);					
-					}
-					
-					if( count( $check_last_post ) ) {
-						foreach( $check_last_post as $clp ) {
-							if( $reply_mode ) {
-								$try_again_in = $clp->post_date_micro - $check_last_reply;
-								echo '<span class="information">You\'re doing that too much. Please try again in ' . $try_again_in . ' seconds.</span>';
-							} else {
-								$try_again_in = $clp->post_date_micro - $check_last_thread;
-								echo '<span class="information">You\'re doing that too much. Please try again in ' . $try_again_in . ' seconds.</span>';
+						$dont_show  = 0;
+						$regularboardplugin_posts = $wpdb->prefix . 'regularboardplugin_posts';
+						if( isset( $_GET[ 't' ] ) ) {
+							if( is_numeric( $_GET[ 't' ] ) ) {
+								$reply_mode = 1;
 							}
-						}						
-					} else {
-						$check_for_a_ban = $wpdb->get_results (
-							"SELECT $regularboardplugin_posts_select FROM $regularboardplugin_posts WHERE post_banned = 1 AND post_guestip = '$ipaddress' LIMIT 1"
-						);
+						} elseif( isset( $_GET[ 'b' ] ) ) {
+							$reply_mode = 0;
+						} else {
+							$reply_mode = 0;
+						}				
 						
-						if( count( $check_for_a_ban ) ) {
-
-							foreach( $check_for_a_ban as $cfab ) {
-								$post_id                  = $cfab->post_id;
-								$post_parent              = $cfab->post_parent;
-								$post_name                = $cfab->post_name;
-								$post_date                = $cfab->post_date;
-								$post_date_micro          = $cfab->post_date_micro;
-								$post_email               = $cfab->post_email;
-								$post_title               = str_replace( '\\', '', $cfab->post_title);
-								$post_comment             = str_replace( '\\', '', $cfab->post_comment);
-								$post_comment_original    = $cfab->post_comment_original;
-								$post_edited              = $cfab->post_edited;
-								$post_moderator_comment   = $cfab->post_moderator_comment;
-								$post_type                = $cfab->post_type;
-								$post_url                 = $cfab->post_url;
-								$post_provider            = $cfab->post_provider;
-								$post_domain              = $cfab->post_domain;										
-								$post_board               = $cfab->post_board;
-								$post_moderator           = $cfab->post_moderator;
-								$post_last                = $cfab->post_last;
-								$post_sticky              = $cfab->post_sticky;
-								$post_locked              = $cfab->post_locked;
-								$post_password            = $cfab->post_password;
-								$post_userid              = $cfab->post_userid;
-								$post_report              = $cfab->post_report;
-								$post_reportcount         = $cfab->post_reportcount;
-								$post_reply_count         = $cfab->post_reply_count;
-								$post_guestip             = $cfab->post_guestip;
-								$post_public              = $cfab->post_public;
-								$post_like                = $cfab->post_like;
-								$post_dislike             = $cfab->post_dislike;
-								$post_approval_rating     = $cfab->post_approval_rating;
-								$post_delete_this         = $cfab->post_delete_this;
-								$post_banned              = $cfab->post_banned;
-								
-								echo '<section><h1><strong>You may not post.</strong></h1>';
-								echo 'Your ban was filed on ' . $post_last . '. You were banned for the following post:</section>';
-								
-								if( !$post_name ) {
-									$post_name            = 'anonymous';
-								}
-								if( !$post_title ) {
-									$post_title           = 'no title';
-								}										
-								
-								echo '<section>';
-								echo '<p>';
-								if( $post_title ) {
-									echo '<em>';
-									if( $post_url ) {
-										echo '<a href="' . $post_url . '">' . $post_title . '</a>';
-									} else {										
-										echo $post_title;
-									}
-									echo '</em>';
-								}
-								if( $post_url ) {
-									echo ' <small class="domain"><a href="//' . $post_domain . '">' . $post_domain . '</a></small>';
-								}										
-								
-								echo ' &mdash; <small>no. ' . $post_id . '</small><br />';
-								echo '<small class="name"><a href="?u=' . $post_name . '">' . $post_name . '</a></small>';
-								
-								if( $current_user_is_an_admin ) {
-									echo ' <small class="name">' . $post_guestip . '</small>';
-								}
-								
-
-								echo ' <date>' . regularboardplugin_timesince( $post_date ) . '</date>';
-
-								echo '</p>';
-								
-								if( $post_url ) {
-									echo '</section><div class="mediaEmbed">';
-										new regularBoard_mediaEmbed ( $post_url );
-									echo '</div><section>';
-								}								
-								if( $post_comment ) {
-									echo wpautop( regularboardplugin_comment_format( $post_comment ) );
-								}
-
-								if( $post_moderator_comment || $post_banned ) {
-									echo '<p class="mod_comment">';
-									if( $post_moderator_comment ) {
-										echo $post_moderator_comment . ' ';
-									}
-									if( $post_banned ) {
-										echo '<em class="banned">user was banned for this post.</em>';
-									}
-									echo '</p>';
-								}
-								
-								echo '</section>';										
-								
-								$post_id = $post_parent = $post_name = $post_date_micro = $post_date = $post_email = $post_title = $post_comment = $post_comment_original = $post_edited = $post_moderator_comment = $post_type = $post_url = $post_board = $post_moderator = $post_last = $post_sticky = $post_locked = $post_password = $post_userid = $post_report = $post_reportcount = $post_reply_count = $post_guestip = $post_public = $post_like = $post_dislike = $post_approval_rating = $post_delete_this = '';
-							}
-						} else { 
-							if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' || isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode ) {
-
-								$regularboardplugin_posts = $wpdb->prefix . 'regularboardplugin_posts';
-								$blank                    = '';
-								
-								$post_provider = $post_domain = $post_id = $post_parent = $post_name = $post_date = $post_email = $post_title = $post_comment = $post_comment_original = $post_edited = $post_moderator_comment = $post_type = $post_url = $post_board = $post_moderator = $post_last = $post_sticky = $post_locked = $post_password = $post_userid = $post_report = $post_reportcount = $post_reply_count = $post_guestip = $post_public = $post_like = $post_dislike = $post_approval_rating = $post_delete_this = $post_id = $blank;
-								
-								if( isset( $_GET[ 't' ] ) ) {
-									$post_parent           = intval( $_GET[ 't' ] );
+						$date_time = date( 'Y-m-d H:i:s' );
+						$check_last_reply  = strtotime("-0 seconds");
+						$check_last_thread = strtotime("-0 seconds");
+						$post_date_micro = $check_current = strtotime($date_time);
+						
+						if( $reply_mode ) {
+							$check_last_post = $wpdb->get_results (
+								"SELECT $regularboardplugin_posts_select FROM $regularboardplugin_posts WHERE post_date_micro >= $check_last_reply AND post_guestip = '$ipaddress' AND post_parent != 0 ORDER BY post_date_micro LIMIT 1"
+							);
+						} else {
+							$check_last_post = $wpdb->get_results (
+								"SELECT $regularboardplugin_posts_select FROM $regularboardplugin_posts WHERE post_date_micro >= $check_last_thread AND post_guestip = '$ipaddress' AND post_parent = 0 ORDER BY post_date_micro LIMIT 1"
+							);					
+						}
+						
+						if( count( $check_last_post ) ) {
+							foreach( $check_last_post as $clp ) {
+								if( $reply_mode ) {
+									$try_again_in = $clp->post_date_micro - $check_last_reply;
+									echo '<span class="information">You\'re doing that too much. Please try again in ' . $try_again_in . ' seconds.</span>';
 								} else {
-									$post_parent           = 0;
+									$try_again_in = $clp->post_date_micro - $check_last_thread;
+									echo '<span class="information">You\'re doing that too much. Please try again in ' . $try_again_in . ' seconds.</span>';
 								}
-								
-								$post_banned               = 0;
-								$post_name                 = sanitize_text_field( $_REQUEST[ 'post_name' ] );
-								$post_date                 = date( 'Y-m-d H:i:s' );
-								$post_email                = sanitize_text_field( $_REQUEST[ 'post_email' ] );
-								
-								if( !$reply_mode ) {
-									$post_title            = sanitize_text_field( $_REQUEST[ 'post_title' ] );
-								} else {
-									$post_title            = $blank;
-								}
-								
-								if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode ) {
-									$post_comment          = sanitize_text_field( $_REQUEST[ 'post_comment' ] );
-								} else {
-									$post_comment          = $blank;
-								}
-								
-								$post_comment_original     = $blank;
-								$post_edited               = 0;
-								$post_moderator_comment    = $blank;
-								$post_type                 = $blank;
-								
-								if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' || $reply_mode ) {
-								
-									$validate_this = sanitize_text_field( $_REQUEST[ 'post_url' ] );
-									if( filter_var( "$validate_this", FILTER_VALIDATE_URL ) === false ) {
-										$_REQUEST[ 'post_url' ] = $blank;
-									}
-								
-									$spam_check                = sanitize_text_field( esc_url( $_REQUEST[ 'post_url' ] ) );
-									$check_url                 = sanitize_text_field( esc_url( str_replace( array('http://www.','https://www.'), '', $_REQUEST[ 'post_url' ] ) ) );
+							}						
+						} else {
+							$check_for_a_ban = $wpdb->get_results (
+								"SELECT $regularboardplugin_posts_select FROM $regularboardplugin_posts WHERE post_banned = 1 AND post_guestip = '$ipaddress' LIMIT 1"
+							);
 							
-									if( $spam_check ) {
-										$spam_check = new Blacklist( "$check_url" );
-										if( $spam_check->spam_check ) {
-											$check_url = $blank;
+							if( count( $check_for_a_ban ) ) {
+
+								foreach( $check_for_a_ban as $cfab ) {
+									$post_id                  = $cfab->post_id;
+									$post_parent              = $cfab->post_parent;
+									$post_name                = $cfab->post_name;
+									$post_date                = $cfab->post_date;
+									$post_date_micro          = $cfab->post_date_micro;
+									$post_email               = $cfab->post_email;
+									$post_title               = str_replace( '\\', '', $cfab->post_title);
+									$post_comment             = str_replace( '\\', '', $cfab->post_comment);
+									$post_comment_original    = $cfab->post_comment_original;
+									$post_edited              = $cfab->post_edited;
+									$post_moderator_comment   = $cfab->post_moderator_comment;
+									$post_type                = $cfab->post_type;
+									$post_url                 = $cfab->post_url;
+									$post_provider            = $cfab->post_provider;
+									$post_domain              = $cfab->post_domain;										
+									$post_board               = $cfab->post_board;
+									$post_moderator           = $cfab->post_moderator;
+									$post_last                = $cfab->post_last;
+									$post_sticky              = $cfab->post_sticky;
+									$post_locked              = $cfab->post_locked;
+									$post_password            = $cfab->post_password;
+									$post_userid              = $cfab->post_userid;
+									$post_report              = $cfab->post_report;
+									$post_reportcount         = $cfab->post_reportcount;
+									$post_reply_count         = $cfab->post_reply_count;
+									$post_guestip             = $cfab->post_guestip;
+									$post_public              = $cfab->post_public;
+									$post_like                = $cfab->post_like;
+									$post_dislike             = $cfab->post_dislike;
+									$post_approval_rating     = $cfab->post_approval_rating;
+									$post_delete_this         = $cfab->post_delete_this;
+									$post_banned              = $cfab->post_banned;
+									
+									echo '<section><h1><strong>You may not post.</strong></h1>';
+									echo 'Your ban was filed on ' . $post_last . '. You were banned for the following post:</section>';
+									
+									if( !$post_name ) {
+										$post_name            = 'anonymous';
+									}
+									if( !$post_title ) {
+										$post_title           = 'no title';
+									}										
+									
+									echo '<section>';
+									echo '<p>';
+									if( $post_title ) {
+										echo '<em>';
+										if( $post_url ) {
+											echo '<a href="' . $post_url . '">' . $post_title . '</a>';
+										} else {										
+											echo $post_title;
 										}
+										echo '</em>';
+									}
+									if( $post_url ) {
+										echo ' <small class="domain"><a href="//' . $post_domain . '">' . $post_domain . '</a></small>';
+									}										
+									
+									echo ' &mdash; <small>no. ' . $post_id . '</small><br />';
+									echo '<small class="name"><a href="?u=' . $post_name . '">' . $post_name . '</a></small>';
+									
+									if( $current_user_is_an_admin ) {
+										echo ' <small class="name">' . $post_guestip . '</small>';
 									}
 									
-									if( $check_url ) {
-										$ch   = curl_init();
-										$opts = array (
-											CURLOPT_RETURNTRANSFER => true,
-											CURLOPT_URL            => $check_url,
-											CURLOPT_NOBODY         => true,
-											CURLOPT_TIMEOUT        => 10
-										);
-										curl_setopt_array ( $ch, $opts );
-										curl_exec ( $ch );
-										$status = curl_getinfo ( $ch, CURLINFO_HTTP_CODE );
-										curl_close ( $ch );
-										$path_info = pathinfo( $check_url );
-										$url_present = 0;
-										$post_type             = 'link';
-										$post_provider         = 'link';
-										$post_url              = $check_url;
-									}
 
+									echo ' <date>' . regularboardplugin_timesince( $post_date ) . '</date>';
+
+									echo '</p>';
+									
 									if( $post_url ) {
-										$post_url = $check_url;
-										$parsed = parse_url( $check_url );
-										$post_domain = $parsed[ 'host' ];
+										echo '</section><div class="mediaEmbed">';
+											new regularBoard_mediaEmbed ( $post_url );
+										echo '</div><section>';
+									}								
+									if( $post_comment ) {
+										echo wpautop( regularboardplugin_comment_format( $post_comment ) );
 									}
-								} else {
-									$check_url = $post_url = $spam_check = $blank;
-									$post_type = 'text';
-								}
-								
-								$post_board                = $blank;
-								if( '' != $_REQUEST[ 'post_board' ] ) {
-									$post_board = sanitize_text_field( $_REQUEST[ 'post_board' ] );
-									$post_board = preg_replace('~[^\p{L}\p{N}]++~u', ' ', $post_board);
-									$post_board = str_replace( ' ', '', $post_board );
-								}
-								
-								// (1) Set post moderator appropriately based on user level
-								//  - 0 is a user who is not logged in (guest)
-								//  - 1 is a user who is logged in AND an admin
-								//  - 2 is a user who is logged in and IS NOT an admin
-								$post_moderator            = 0;
-								if( $current_user_is_an_admin ) {
-									$post_moderator        = 1;
-								}
-								if( $is_current_logged_in && !$current_user_is_an_admin ) {
-									$post_moderator        = 2;
-								}
-								
-								$post_last                 = $post_date;
-								$post_sticky               = 0;
-								$post_locked               = 0;
-								
-								$sent_password             = sanitize_text_field( $_REQUEST[ 'post_password' ] );
-								$post_password             = sanitize_text_field( wp_hash( $_REQUEST[ 'post_password' ] ) );
-								if( !$post_password || !$sent_password ) {
-									$sent_password = $random_password;
-									$post_password = wp_hash( $random_password );
-								}
 
-								$post_userid               = 0;
-								$post_report               = 0;
-								$post_reportcount          = 0;
-								$post_reply_count          = 0;
-								$post_guestip              = $ipaddress;
-								$post_public               = 0;
-								$post_like                 = 1;
-								$post_dislike              = 0;
-								$post_approval_rating      = 1;
-								$post_delete_this          = 0;
+									if( $post_moderator_comment || $post_banned ) {
+										echo '<p class="mod_comment">';
+										if( $post_moderator_comment ) {
+											echo $post_moderator_comment . ' ';
+										}
+										if( $post_banned ) {
+											echo '<em class="banned">user was banned for this post.</em>';
+										}
+										echo '</p>';
+									}
+									
+									echo '</section>';										
+									
+									$post_id = $post_parent = $post_name = $post_date_micro = $post_date = $post_email = $post_title = $post_comment = $post_comment_original = $post_edited = $post_moderator_comment = $post_type = $post_url = $post_board = $post_moderator = $post_last = $post_sticky = $post_locked = $post_password = $post_userid = $post_report = $post_reportcount = $post_reply_count = $post_guestip = $post_public = $post_like = $post_dislike = $post_approval_rating = $post_delete_this = '';
+								}
+							} else { 
+								if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' || isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode ) {
 
-								if( $post_parent ) {
-									if( $post_email != strtolower( 'sage' ) ) {
+									$regularboardplugin_posts = $wpdb->prefix . 'regularboardplugin_posts';
+									$blank                    = '';
+									
+									$post_provider = $post_domain = $post_id = $post_parent = $post_name = $post_date = $post_email = $post_title = $post_comment = $post_comment_original = $post_edited = $post_moderator_comment = $post_type = $post_url = $post_board = $post_moderator = $post_last = $post_sticky = $post_locked = $post_password = $post_userid = $post_report = $post_reportcount = $post_reply_count = $post_guestip = $post_public = $post_like = $post_dislike = $post_approval_rating = $post_delete_this = $post_id = $blank;
+									
+									if( isset( $_GET[ 't' ] ) ) {
+										$post_parent           = intval( $_GET[ 't' ] );
+									} else {
+										$post_parent           = 0;
+									}
+									
+									$post_banned               = 0;
+									$post_name                 = sanitize_text_field( $_REQUEST[ 'post_name' ] );
+									$post_date                 = date( 'Y-m-d H:i:s' );
+									$post_email                = sanitize_text_field( $_REQUEST[ 'post_email' ] );
+									
+									if( !$reply_mode ) {
+										$post_title            = sanitize_text_field( $_REQUEST[ 'post_title' ] );
+									} else {
+										$post_title            = $blank;
+									}
+									
+									if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode ) {
+										$post_comment          = sanitize_text_field( $_REQUEST[ 'post_comment' ] );
+									} else {
+										$post_comment          = $blank;
+									}
+									
+									$post_comment_original     = $blank;
+									$post_edited               = 0;
+									$post_moderator_comment    = $blank;
+									$post_type                 = $blank;
+									
+									if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' || $reply_mode ) {
+									
+										$validate_this = sanitize_text_field( $_REQUEST[ 'post_url' ] );
+										if( filter_var( "$validate_this", FILTER_VALIDATE_URL ) === false ) {
+											$_REQUEST[ 'post_url' ] = $blank;
+										}
+									
+										$spam_check                = sanitize_text_field( esc_url( $_REQUEST[ 'post_url' ] ) );
+										$check_url                 = sanitize_text_field( esc_url( str_replace( array('http://www.','https://www.'), '', $_REQUEST[ 'post_url' ] ) ) );
+								
+										if( $spam_check ) {
+											$spam_check = new Blacklist( "$check_url" );
+											if( $spam_check->spam_check ) {
+												$check_url = $blank;
+											}
+										}
+										
+										if( $check_url ) {
+											$ch   = curl_init();
+											$opts = array (
+												CURLOPT_RETURNTRANSFER => true,
+												CURLOPT_URL            => $check_url,
+												CURLOPT_NOBODY         => true,
+												CURLOPT_TIMEOUT        => 10
+											);
+											curl_setopt_array ( $ch, $opts );
+											curl_exec ( $ch );
+											$status = curl_getinfo ( $ch, CURLINFO_HTTP_CODE );
+											curl_close ( $ch );
+											$path_info = pathinfo( $check_url );
+											$url_present = 0;
+											$post_type             = 'link';
+											$post_provider         = 'link';
+											$post_url              = $check_url;
+										}
+
+										if( $post_url ) {
+											$post_url = $check_url;
+											$parsed = parse_url( $check_url );
+											$post_domain = $parsed[ 'host' ];
+										}
+									} else {
+										$check_url = $post_url = $spam_check = $blank;
+										$post_type = 'text';
+									}
+									
+									$post_board                = $blank;
+									if( '' != $_REQUEST[ 'post_board' ] ) {
+										$post_board = sanitize_text_field( $_REQUEST[ 'post_board' ] );
+										$post_board = preg_replace('~[^\p{L}\p{N}]++~u', ' ', $post_board);
+										$post_board = str_replace( ' ', '', $post_board );
+									}
+									
+									// (1) Set post moderator appropriately based on user level
+									//  - 0 is a user who is not logged in (guest)
+									//  - 1 is a user who is logged in AND an admin
+									//  - 2 is a user who is logged in and IS NOT an admin
+									$post_moderator            = 0;
+									if( $current_user_is_an_admin ) {
+										$post_moderator        = 1;
+									}
+									if( $is_current_logged_in && !$current_user_is_an_admin ) {
+										$post_moderator        = 2;
+									}
+									
+									$post_last                 = $post_date;
+									$post_sticky               = 0;
+									$post_locked               = 0;
+									
+									$sent_password             = sanitize_text_field( $_REQUEST[ 'post_password' ] );
+									$post_password             = sanitize_text_field( wp_hash( $_REQUEST[ 'post_password' ] ) );
+									if( !$post_password || !$sent_password ) {
+										$sent_password = $random_password;
+										$post_password = wp_hash( $random_password );
+									}
+
+									$post_userid               = 0;
+									$post_report               = 0;
+									$post_reportcount          = 0;
+									$post_reply_count          = 0;
+									$post_guestip              = $ipaddress;
+									$post_public               = 0;
+									$post_like                 = 1;
+									$post_dislike              = 0;
+									$post_approval_rating      = 1;
+									$post_delete_this          = 0;
+
+									if( $post_parent ) {
+										if( $post_email != strtolower( 'sage' ) ) {
+											$wpdb->query(
+												"UPDATE $regularboardplugin_posts SET post_last = '$post_date' WHERE post_id = $post_parent"
+											);
+										}
 										$wpdb->query(
-											"UPDATE $regularboardplugin_posts SET post_last = '$post_date' WHERE post_id = $post_parent"
+											"UPDATE $regularboardplugin_posts SET post_reply_count = post_reply_count + 1 WHERE post_id = $post_parent"
 										);
 									}
 									$wpdb->query(
-										"UPDATE $regularboardplugin_posts SET post_reply_count = post_reply_count + 1 WHERE post_id = $post_parent"
+										"UPDATE $regularboardplugin_posts SET post_type = 'link' WHERE post_type = 'embed'"
 									);
-								}
-								$wpdb->query(
-									"UPDATE $regularboardplugin_posts SET post_type = 'link' WHERE post_type = 'embed'"
-								);
-								$wpdb->query(
-									"UPDATE $regularboardplugin_posts SET post_type = 'link' WHERE post_type = 'image'"
-								);
-								$wpdb->query(
-									"UPDATE $regularboardplugin_posts SET post_type = 'text' WHERE post_type = ''"
-								);
-								$duplicate_found = 0;
-								$no_url          = 0;
-								$no_comment      = 0;
-								$no_title        = 0;
-								if( !$post_title && !$post_parent ) {
-									$no_title = 1;
-								}
-								if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode && !$post_url ) {
-									if( !$post_comment ) {
-										$no_comment = 1;
+									$wpdb->query(
+										"UPDATE $regularboardplugin_posts SET post_type = 'link' WHERE post_type = 'image'"
+									);
+									$wpdb->query(
+										"UPDATE $regularboardplugin_posts SET post_type = 'text' WHERE post_type = ''"
+									);
+									$duplicate_found = 0;
+									$no_url          = 0;
+									$no_comment      = 0;
+									$no_title        = 0;
+									if( !$post_title && !$post_parent ) {
+										$no_title = 1;
 									}
-								}
-								if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' && !$post_url ) {
-									$no_url = 1;
-								}
-								
-								if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' ) {
-									$check_for_duplicate = " WHERE post_comment LIKE '%$post_comment%' ";
-								} elseif( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' ) {
-									$check_for_duplicate = " WHERE post_url LIKE '%$post_url%' ";
-								} else {
-									if( $post_url && !$post_comment ) {
-										$check_for_duplicate = " WHERE post_url LIKE '%$post_url%' AND post_url != '' ";
-									} elseif ( !$post_url && $post_comment ) {
-										$check_for_duplicate = " WHERE post_comment LIKE '%$post_comment%' AND post_comment != '' ";
-									} else {
-										$check_for_duplicate = " WHERE post_comment LIKE '%$post_comment%' AND post_comment != '' ";
-									}
-								}							
-								$check_duplicates = $wpdb->get_results (
-									"SELECT $regularboardplugin_posts_select FROM $regularboardplugin_posts $check_for_duplicate"
-								);
-								if( count( $check_duplicates ) >= 1 ) {
-									$duplicate_found = 1;
-								}
-								if( !$duplicate_found && !$no_comment && !$no_title && !$no_url ) {
-									$wpdb->query( 
-										$wpdb->prepare( 
-											"INSERT INTO $regularboardplugin_posts 
-											(
-												post_id,
-												post_parent,
-												post_name,
-												post_date,
-												post_date_micro,
-												post_email,
-												post_title,
-												post_comment,
-												post_comment_original,
-												post_edited,
-												post_moderator_comment,
-												post_type,
-												post_url,
-												post_provider, 
-												post_domain, 
-												post_board,
-												post_moderator,
-												post_last,
-												post_sticky,
-												post_locked,
-												post_password,
-												post_userid,
-												post_report,
-												post_reportcount,
-												post_reply_count,
-												post_guestip,
-												post_public,
-												post_like,
-												post_dislike,
-												post_approval_rating,
-												post_delete_this,
-												post_banned
-											) VALUES (
-												%d,
-												%d,
-												%s,
-												%s,
-												%s,
-												%s,
-												%s,
-												%s,
-												%s,
-												%d,
-												%s,
-												%s,
-												%s,
-												%s,
-												%s,
-												%s,
-												%d,
-												%s,
-												%d,
-												%d,
-												%s,
-												%d,
-												%d,
-												%d,
-												%d,
-												%s,
-												%d,
-												%d,
-												%d,
-												%d,
-												%d,
-												%d
-											)",
-											$post_id,
-											$post_parent,
-											$post_name,
-											$post_date,
-											$post_date_micro,
-											$post_email,
-											$post_title,
-											$post_comment,
-											$post_comment_original,
-											$post_edited,
-											$post_moderator_comment,
-											$post_type,
-											$post_url,
-											$post_provider, 
-											$post_domain, 
-											$post_board,
-											$post_moderator,
-											$post_last,
-											$post_sticky,
-											$post_locked,
-											$post_password,
-											$post_userid,
-											$post_report,
-											$post_reportcount,
-											$post_reply_count,
-											$post_guestip,
-											$post_public,
-											$post_like,
-											$post_dislike,
-											$post_approval_rating,
-											$post_delete_this,
-											$post_banned
-										)
-									);
-										
-									// (1) Clean-up posts that somehow got through with no comment that are NOT replies
-									$wpdb->delete (
-										$regularboardplugin_posts, 
-										array(
-											'post_parent' => 0,
-											'post_comment' => '',
-											'post_url' => ''
-										),
-										array(
-											'%d',
-											'%s',
-											'%s'
-										)
-									);
-
-									$get_last_post = $wpdb->get_results (
-										"SELECT $regularboardplugin_posts_select FROM $regularboardplugin_posts WHERE post_guestip = '$ipaddress' AND post_name = '$post_name' AND post_comment = '$post_comment' AND post_url = '$post_url' ORDER BY post_last DESC LIMIT 1"
-									);
-									
-									if( $reply_mode ) {
-										echo '<span class="information">Post successful!</span>';
-									} else {
-										if( count( $get_last_post ) ) {
-											foreach( $get_last_post as $glp ) {
-												if( $glp->post_parent ) {
-													$post_location = '?t=' . $glp->post_parent . '#' . $glp->post_id;
-												} else {
-													$post_location = '?t=' . $glp->post_id;
-												}
-												echo '<span class="information">Post successful! Click <a href="' . $post_location . '">here</a> to go to it.</span>';
-											}
+									if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode && !$post_url ) {
+										if( !$post_comment ) {
+											$no_comment = 1;
 										}
 									}
-								} else {
+									if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' && !$post_url ) {
+										$no_url = 1;
+									}
 									
-									if( $no_comment ) {
-										echo $no_comment_error;
-									} elseif( $no_title ) {
-										echo $no_title_error;
-									} elseif( $no_url ) {
-										echo $no_url_error;
-									} elseif( $duplicate_found ) {
-										echo '<span class="information">Duplicate content found - post discarded.</span>';
+									if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' ) {
+										$check_for_duplicate = " WHERE post_comment LIKE '%$post_comment%' ";
+									} elseif( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' ) {
+										$check_for_duplicate = " WHERE post_url LIKE '%$post_url%' ";
+									} else {
+										if( $post_url && !$post_comment ) {
+											$check_for_duplicate = " WHERE post_url LIKE '%$post_url%' AND post_url != '' ";
+										} elseif ( !$post_url && $post_comment ) {
+											$check_for_duplicate = " WHERE post_comment LIKE '%$post_comment%' AND post_comment != '' ";
+										} else {
+											$check_for_duplicate = " WHERE post_comment LIKE '%$post_comment%' AND post_comment != '' ";
+										}
+									}							
+									$check_duplicates = $wpdb->get_results (
+										"SELECT $regularboardplugin_posts_select FROM $regularboardplugin_posts $check_for_duplicate"
+									);
+									if( count( $check_duplicates ) >= 1 ) {
+										$duplicate_found = 1;
+									}
+									if( !$duplicate_found && !$no_comment && !$no_title && !$no_url ) {
+										$wpdb->query( 
+											$wpdb->prepare( 
+												"INSERT INTO $regularboardplugin_posts 
+												(
+													post_id,
+													post_parent,
+													post_name,
+													post_date,
+													post_date_micro,
+													post_email,
+													post_title,
+													post_comment,
+													post_comment_original,
+													post_edited,
+													post_moderator_comment,
+													post_type,
+													post_url,
+													post_provider, 
+													post_domain, 
+													post_board,
+													post_moderator,
+													post_last,
+													post_sticky,
+													post_locked,
+													post_password,
+													post_userid,
+													post_report,
+													post_reportcount,
+													post_reply_count,
+													post_guestip,
+													post_public,
+													post_like,
+													post_dislike,
+													post_approval_rating,
+													post_delete_this,
+													post_banned
+												) VALUES (
+													%d,
+													%d,
+													%s,
+													%s,
+													%s,
+													%s,
+													%s,
+													%s,
+													%s,
+													%d,
+													%s,
+													%s,
+													%s,
+													%s,
+													%s,
+													%s,
+													%d,
+													%s,
+													%d,
+													%d,
+													%s,
+													%d,
+													%d,
+													%d,
+													%d,
+													%s,
+													%d,
+													%d,
+													%d,
+													%d,
+													%d,
+													%d
+												)",
+												$post_id,
+												$post_parent,
+												$post_name,
+												$post_date,
+												$post_date_micro,
+												$post_email,
+												$post_title,
+												$post_comment,
+												$post_comment_original,
+												$post_edited,
+												$post_moderator_comment,
+												$post_type,
+												$post_url,
+												$post_provider, 
+												$post_domain, 
+												$post_board,
+												$post_moderator,
+												$post_last,
+												$post_sticky,
+												$post_locked,
+												$post_password,
+												$post_userid,
+												$post_report,
+												$post_reportcount,
+												$post_reply_count,
+												$post_guestip,
+												$post_public,
+												$post_like,
+												$post_dislike,
+												$post_approval_rating,
+												$post_delete_this,
+												$post_banned
+											)
+										);
+											
+										// (1) Clean-up posts that somehow got through with no comment that are NOT replies
+										$wpdb->delete (
+											$regularboardplugin_posts, 
+											array(
+												'post_parent' => 0,
+												'post_comment' => '',
+												'post_url' => ''
+											),
+											array(
+												'%d',
+												'%s',
+												'%s'
+											)
+										);
+
+										$get_last_post = $wpdb->get_results (
+											"SELECT $regularboardplugin_posts_select FROM $regularboardplugin_posts WHERE post_guestip = '$ipaddress' AND post_name = '$post_name' AND post_comment = '$post_comment' AND post_url = '$post_url' ORDER BY post_last DESC LIMIT 1"
+										);
+										
+										if( $reply_mode ) {
+											echo '<span class="information">Post successful!</span>';
+										} else {
+											if( count( $get_last_post ) ) {
+												foreach( $get_last_post as $glp ) {
+													if( $glp->post_parent ) {
+														$post_location = '?t=' . $glp->post_parent . '#' . $glp->post_id;
+													} else {
+														$post_location = '?t=' . $glp->post_id;
+													}
+													echo '<span class="information">Post successful! Click <a href="' . $post_location . '">here</a> to go to it.</span>';
+												}
+											}
+										}
+									} else {
+										
+										if( $no_comment ) {
+											echo $no_comment_error;
+										} elseif( $no_title ) {
+											echo $no_title_error;
+										} elseif( $no_url ) {
+											echo $no_url_error;
+										} elseif( $duplicate_found ) {
+											echo '<span class="information">Duplicate content found - post discarded.</span>';
+										}
 									}
 								}
 							}
@@ -1656,20 +1778,30 @@ if( is_user_logged_in() ) {
 					$board_self = '&amp;b=' . $board_self;
 				}
 				
-				echo '<a href="?a=linkpost' . $board_self . '">Submit a link</a> <a href="?a=selfpost' . $board_self . '">Submit a text post</a>';
+				$regularboard_loggedin = get_option( 'regularboard_loggedin' );
+				if( $regularboard_loggedin && !$is_current_logged_in ) {
+				
+				} else {
+					echo '<a href="?a=linkpost' . $board_self . '">Submit a link</a> <a href="?a=selfpost' . $board_self . '">Submit a text post</a>';
+				}
+				
 				echo '</span>';
 					
 				if( isset( $_POST[ 'do_post' ] ) ) {
 					regularboardplugin_do_post();
 				}
 				
-				if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' || isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode ) {
-					if( $reply_mode && count( $results ) > 0 || $reply_mode && count( $replies ) > 0 || !$reply_mode ) {
-						echo $posting_mode;
-						if( $reply_mode ) { 
-							echo '</span>';
-						}						
-						regularboardplugin_do_post_form();
+				if( $regularboard_loggedin && !$is_current_logged_in ) {
+					echo '<span class="information reply_mode_toggle">Visitor mode: Must be logged in to participate</span>';
+				} else {
+					if( isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'linkpost' || isset( $_GET[ 'a' ] ) && $_GET[ 'a' ] == 'selfpost' || $reply_mode ) {
+						if( $reply_mode && count( $results ) > 0 || $reply_mode && count( $replies ) > 0 || !$reply_mode ) {
+							echo $posting_mode;
+							if( $reply_mode ) { 
+								echo '</span>';
+							}						
+							regularboardplugin_do_post_form();
+						}
 					}
 				}
 		
@@ -1737,7 +1869,13 @@ if( is_user_logged_in() ) {
 								}
 								
 								echo '<section>';
+								if( $regularboard_loggedin && !$is_current_logged_in ) {
+
+								} else { 
+
 								echo '<input type="checkbox" class="checkbox" name="post_id[]" value="' . $post_id . '" />';
+
+								}
 
 								if( $post_title ) {
 									echo '<p><em>';
@@ -1855,7 +1993,13 @@ if( is_user_logged_in() ) {
 									}										
 									
 									echo '<section id="' . $post_id . '">';
-									echo '<input type="checkbox" class="checkbox" name="post_id[]" value="' . $post_id . '" />';
+									if( $regularboard_loggedin && !$is_current_logged_in ) {
+
+									} else { 
+
+										echo '<input type="checkbox" class="checkbox" name="post_id[]" value="' . $post_id . '" />';
+
+									}
 									echo '<p>';
 									if( $post_url ) {
 										echo ' <small class="domain"><a href="//' . $post_domain . '">' . $post_domain . '</a></small>';
@@ -1965,7 +2109,11 @@ if( is_user_logged_in() ) {
 									</div>
 								</div>';
 							}
-							echo '<div class="small"><input type="password" value="' . $set_password . '" name="delete_posts_password" id="delete_posts_password" /><input type="submit" name="delete_posts" id="delete_posts" value="Delete" /></div>';
+							if( $regularboard_loggedin && !$is_current_logged_in ) {
+							
+							} else {
+								echo '<div class="small"><input type="password" value="' . $set_password . '" name="delete_posts_password" id="delete_posts_password" /><input type="submit" name="delete_posts" id="delete_posts" value="Delete" /></div>';
+							}
 						echo '</div>';
 						echo '</form>';
 						
@@ -2105,142 +2253,146 @@ if( is_user_logged_in() ) {
 						 */
 
 						if( isset( $_POST[ 'delete_posts' ] ) ) {
+							if( $regularboard_loggedin && !$is_current_logged_in ) {
+							
+							} else { 
 
-							if(!empty($_POST[ 'post_id' ])) {
+								if(!empty($_POST[ 'post_id' ])) {
 
-								foreach( $_POST[ 'post_id' ] as $check ) {
-
-									/**
-									 * Post parent delete
-									 * 1: Check if the post exists, and that there is a password attached to it.
-									 */
-									$check_password = sanitize_text_field( wp_hash( $_REQUEST[ 'delete_posts_password' ] ) );
-									$check_for_password = $wpdb->get_results (
-										"SELECT post_password FROM $regularboardplugin_posts WHERE post_id = $check LIMIT 1"
-									);
-									$check_exists = $wpdb->get_results (
-										"SELECT post_id FROM $regularboardplugin_posts WHERE post_parent = $check"
-									);
-									/**
-									 * --------------------
-									 */
-									
-									/**
-									 * Admin don't need to have passwords.
-									 */
-									if( $current_user_is_an_admin ) {
-
-										$wpdb->delete (
-											$regularboardplugin_posts, 
-											array(
-												'post_id' => $check
-											),
-											array(
-												'%d'
-											)
-										);
-									/**
-									 * --------------------
-									 */
-
-									} else {
+									foreach( $_POST[ 'post_id' ] as $check ) {
 
 										/**
-										 * Delete all children of post if it was deleted in first step
-										 * 1: Take password from field, sanitize and hash it.
-										 * 2: Grab the post password (also hashed) from the database for the ID(s) being requested.
-										 * 3: For each ID, check the received/hashed password against the one stored in the database.
-										 * 4: If it matches, delete the post (as was requested).
-										 * 5: If it doesn't, do nothing.
+										 * Post parent delete
+										 * 1: Check if the post exists, and that there is a password attached to it.
 										 */
-
 										$check_password = sanitize_text_field( wp_hash( $_REQUEST[ 'delete_posts_password' ] ) );
 										$check_for_password = $wpdb->get_results (
 											"SELECT post_password FROM $regularboardplugin_posts WHERE post_id = $check LIMIT 1"
 										);
-										foreach( $check_for_password as $cfp ) {
-											if( $cfp->post_password == $check_password ) {
-												$wpdb->delete (
-													$regularboardplugin_posts, 
-													array(
-														'post_password' => $check_password,
-														'post_id' => $check
-													),
-													array(
-														'%s',
-														'%d'
-													)
-												);
-											}
-										}
-
+										$check_exists = $wpdb->get_results (
+											"SELECT post_id FROM $regularboardplugin_posts WHERE post_parent = $check"
+										);
 										/**
 										 * --------------------
-										 */										
-
-									}
-
-									if( $current_user_is_an_admin ) {
-
-
-										/**
-										 * If the (current) user is an admin, allow them to delete things without 
-										 * requiring a password.
 										 */
+										
+										/**
+										 * Admin don't need to have passwords.
+										 */
+										if( $current_user_is_an_admin ) {
 
-										if( count( $check_exists ) == 0 ) {
 											$wpdb->delete (
 												$regularboardplugin_posts, 
 												array(
-													'post_parent' => $check
+													'post_id' => $check
 												),
 												array(
 													'%d'
 												)
 											);
-										}
-
 										/**
 										 * --------------------
-										 */										
-
-									} else {
-									
-										/**
-										 * Delete all children of post if it was deleted in first step
-										 * 1: Take password from field, sanitize and hash it.
-										 * 2: Grab the post password (also hashed) from the database for the ID(s) being requested.
-										 * 3: For each ID, check the received/hashed password against the one stored in the database.
-										 * 4: If it matches, delete the post (as was requested).
-										 * 5: If it doesn't, do nothing.
 										 */
 
-										$check_password = sanitize_text_field( wp_hash( $_REQUEST[ 'delete_posts_password' ] ) );
-										$check_for_password = $wpdb->get_results (
-											"SELECT post_password FROM $regularboardplugin_posts WHERE post_id = $check LIMIT 1"
-										);
-										foreach( $check_for_password as $cfp ) {
-											if( $cfp->post_password == $check_password ) {
-												if( count( $check_exists ) == 0 ) {
+										} else {
+
+											/**
+											 * Delete all children of post if it was deleted in first step
+											 * 1: Take password from field, sanitize and hash it.
+											 * 2: Grab the post password (also hashed) from the database for the ID(s) being requested.
+											 * 3: For each ID, check the received/hashed password against the one stored in the database.
+											 * 4: If it matches, delete the post (as was requested).
+											 * 5: If it doesn't, do nothing.
+											 */
+
+											$check_password = sanitize_text_field( wp_hash( $_REQUEST[ 'delete_posts_password' ] ) );
+											$check_for_password = $wpdb->get_results (
+												"SELECT post_password FROM $regularboardplugin_posts WHERE post_id = $check LIMIT 1"
+											);
+											foreach( $check_for_password as $cfp ) {
+												if( $cfp->post_password == $check_password ) {
 													$wpdb->delete (
-														$regularboardplugin_posts,
+														$regularboardplugin_posts, 
 														array(
-															'post_parent' => $check
+															'post_password' => $check_password,
+															'post_id' => $check
 														),
 														array(
+															'%s',
 															'%d'
 														)
 													);
 												}
 											}
+
+											/**
+											 * --------------------
+											 */										
+
 										}
 
-										/**
-										 * --------------------
-										 */
+										if( $current_user_is_an_admin ) {
+
+
+											/**
+											 * If the (current) user is an admin, allow them to delete things without 
+											 * requiring a password.
+											 */
+
+											if( count( $check_exists ) == 0 ) {
+												$wpdb->delete (
+													$regularboardplugin_posts, 
+													array(
+														'post_parent' => $check
+													),
+													array(
+														'%d'
+													)
+												);
+											}
+
+											/**
+											 * --------------------
+											 */										
+
+										} else {
+										
+											/**
+											 * Delete all children of post if it was deleted in first step
+											 * 1: Take password from field, sanitize and hash it.
+											 * 2: Grab the post password (also hashed) from the database for the ID(s) being requested.
+											 * 3: For each ID, check the received/hashed password against the one stored in the database.
+											 * 4: If it matches, delete the post (as was requested).
+											 * 5: If it doesn't, do nothing.
+											 */
+
+											$check_password = sanitize_text_field( wp_hash( $_REQUEST[ 'delete_posts_password' ] ) );
+											$check_for_password = $wpdb->get_results (
+												"SELECT post_password FROM $regularboardplugin_posts WHERE post_id = $check LIMIT 1"
+											);
+											foreach( $check_for_password as $cfp ) {
+												if( $cfp->post_password == $check_password ) {
+													if( count( $check_exists ) == 0 ) {
+														$wpdb->delete (
+															$regularboardplugin_posts,
+															array(
+																'post_parent' => $check
+															),
+															array(
+																'%d'
+															)
+														);
+													}
+												}
+											}
+
+											/**
+											 * --------------------
+											 */
+
+										}
 
 									}
-
 								}
 
 							}

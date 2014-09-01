@@ -3,7 +3,7 @@ Contributors: boyevul
 Tags: anonymous, bbs, bulletin board system, forum
 Requires at least: 3.9.1
 Tested up to: 4.0
-Stable tag: 2.00.0.9
+Stable tag: 2.00.1
 
 Text-based anonymous forum.
 
@@ -32,9 +32,13 @@ features, while retaining the functionality we have all come to expect from a va
 2. Place the contents of /regular-board/ into your plugins folder.
 3. Activate the plugin.
 4. Add [regular board] (shortcode) to a page or post.
-5. Done.
+5. You'll find settings under Dashboard->Settings->Regular Board
+6. Done.
 
 == Changelog ==
+* 2.00.1    Options page added.
+* 2.00.1     - Set whether or not users must be logged in to participate.
+* 2.00.1     - Set whether or not to ignore the DNSBL blocking functionality.
 * 2.00.0.9  Time-positioned embeds for Youtube (&t=#m#s) enabled.
 * 2.00.0.8  Individual board functionality added, allowing users to specify where they would like to post.
 * 2.00.0.8  Remove old upgrade procedures.
