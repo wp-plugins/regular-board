@@ -3,7 +3,7 @@
 /**
  *
  * Plugin Name: Regular Board
- * Version: 2.00.1
+ * Version: 2.00.1.0
  * License: GNU General Public License v2
  * License URI: //gnu.org/licenses/gpl-2.0.html
  * Author: Matthew Trevino
@@ -189,7 +189,7 @@ class regularBoard_mediaEmbed {
  *
  */
 function regular_board_scripts(){
-	wp_enqueue_script( 'fittext', plugins_url().'/regular_board/includes/script/script.js', array( 'jquery' ) );
+	wp_enqueue_script( 'regular_board_scripts', plugins_url().'/regular-board/includes/script/script.js', array( 'jquery' ) );
 }
 add_action('wp_enqueue_scripts','regular_board_scripts'); 
 
@@ -351,9 +351,7 @@ if( is_user_logged_in() ) {
 		function regularboardplugin_board_css() {
 			global $post;
 			if( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'regular board') ) {
-				$myStyleFile = WP_PLUGIN_URL . '/regular_board/includes/css/css.css';
-				wp_register_style( 'regular_board', $myStyleFile );
-				wp_enqueue_style( 'regular_board' );
+				wp_enqueue_style( 'regular-board', plugins_url() . '/regular-board/includes/css/css.css' );
 			}
 		}
 	}

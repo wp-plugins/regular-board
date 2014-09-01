@@ -3,7 +3,7 @@ Contributors: boyevul
 Tags: anonymous, bbs, bulletin board system, forum
 Requires at least: 3.9.1
 Tested up to: 4.0
-Stable tag: 2.00.1
+Stable tag: 2.00.1.0
 
 Text-based anonymous forum.
 
@@ -36,6 +36,7 @@ features, while retaining the functionality we have all come to expect from a va
 6. Done.
 
 == Changelog ==
+* 2.00.1.0  /regular_board/ in code altered to /regular-board/ (left over junk code)
 * 2.00.1    Options page added.
 * 2.00.1     - Set whether or not users must be logged in to participate.
 * 2.00.1     - Set whether or not to ignore the DNSBL blocking functionality.
